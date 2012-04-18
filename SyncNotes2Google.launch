@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/calendar-sync/src/main/java/com/googlecode/syncnotes2google/SyncNotes2Google.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="Path" value="D:/Programme/Java/tolina_jdk1.6.0_27_multilang_crypto/jre/bin/client;D:/Programme/Java/tolina_jdk1.6.0_27_multilang_crypto/jre/bin;D:/Programme/Java/tolina_jdk1.6.0_27_multilang_crypto/jre/lib/i386;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\system32\WindowsPowerShell\v1.0;c:\programme\GnuWin32\bin;C:\Programme\Gemeinsame Dateien\Teleca Shared;d:\programme;d:\programme\scripts;D:\Programme\Java\apache-maven\bin;D:\Programme\gitPortable\cmd;C:\Programme\PSPad editor;C:\Programme\TortoiseGit\bin;C:\Programme\Internet Explorer;D:\Programme\Mercurial\;C:\Programme\Git\cmd;C:\Programme\Astaro\Astaro SSL VPN Client\bin;C:\Programme\SSH Communications Security\SSH Secure Shell;D:\Benutzerdaten\jakop\Desktop;c:\Programme\IBM\Lotus\Notes"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.googlecode.syncnotes2google.SyncNotes2Google"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="calendar-sync"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dhttp.proxyHost=proxy.tolina.local -Dhttp.proxyPort=3128 -Dhttps.proxyHost=proxy.tolina.local -Dhttps.proxyPort=3128"/>
+</launchConfiguration>
