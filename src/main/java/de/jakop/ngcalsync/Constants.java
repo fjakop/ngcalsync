@@ -44,7 +44,7 @@ public class Constants {
 
 	/* filenames */
 	/** */
-	public static final String FILENAME_SETTINGS_DIR = ".syncnotes2google";
+	public static final String FILENAME_SETTINGS_DIR = ".ngcalsync";
 	/** */
 	public static final String FILENAME_SYNC_PROPERTIES = "sync.properties";
 	/** */

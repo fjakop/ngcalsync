@@ -23,9 +23,9 @@ h1. Running
 
 h2. First start
 
-p. Just run the application. It will create a folder __.syncnotes2google__ in your home directory. Now you can edit the created file __sync.properties__ according to your needs.
+p. Just run the application. It will create a folder __.ngcalsync__ in your home directory. Now you can edit the created file __sync.properties__ according to your needs.
 
-p. All configuration is done in __.syncnotes2google/sync.properties__, which is read at program startup. This file is well-documented.
+p. All configuration is done in __.ngcalsync/sync.properties__, which is read at program startup. This file is well-documented.
 
 h2. First time authorisation
 
@@ -43,7 +43,7 @@ h3. Google
 Now run the application.
 
 # Since you haven't yet authorized the application to access your google calendar, it will open the authorisation website in your favourite browser, if possible. If not, it will prompt the URL to console, so you can manually go to the website.
-# On the website, click __allow__  to authorize the application to access your google calendar. It will give you an access token, which you can paste into your console and hit __enter__. The application will store your access token in __.syncnotes2google/user.secrets__.
+# On the website, click __allow__  to authorize the application to access your google calendar. It will give you an access token, which you can paste into your console and hit __enter__. The application will store your access token in __.ngcalsync/user.secrets__.
 
 Afterwards the application will synchronize your Google calendar according to your Lotus Notes calendar and log a summary of the changes.
 
