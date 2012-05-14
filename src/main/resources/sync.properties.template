@@ -17,7 +17,7 @@ google.account.email=
 # WARNING # 
 # This calendar's events will be deleted if not present in Lotus Notes 
 # WARNING #
-google.calendar.name=
+google.calendar.name=<this calendar's events may be deleted by synchronisation>
 
 # Google default reminder time
 google.calendar.reminderminutes=30
