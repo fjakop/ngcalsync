@@ -1,3 +1,6 @@
+
+p. Fixed a NPE with completely empty Google calendar.
+
 *0.1.0*
 
 p. Initial release. Synchronizing works taking start and end dates into account. OAuth2 is used for authentication with Google.

@@ -141,12 +141,14 @@ public class GoogleCalendarDAO {
 					.setSingleEvents(Boolean.TRUE)//
 					.execute();
 
+			// if no entry is present in the Google calendar, the list is null
+			if (events.getItems() == null) {
+				return new ArrayList<CalendarEvent>();
+			}
 			for (Event entry : events.getItems()) {
 				entries.add(convEntry(entry));
 			}
-		} catch (IOException e) {
-			throw new SynchronisationException(e);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new SynchronisationException(e);
 		}
 
