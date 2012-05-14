@@ -1,5 +1,3 @@
-{toc}
-
 h1. What's this?
 
 Did you ever wanted to synchronize your company meetings from Lotus Notes with your Google calendar?
@@ -54,8 +52,9 @@ p. Regardless which kinds of events you choose to synchronize to your Google cal
 p. Let's say, you have an 3 hour meeting with John and Jane at 11 o'clock a.m. on 2001/11/9 in your company's meeting room at World Trade Plaza, New York, discussing international flight regulations.
 
 p. When you synchronize this to Google, it will be seen as 
+
 | __Summary__ | Meeting |
-| __Starting at__ | 2001/9/11, 11 a.m. |   
+| __Starting at__ | 2001/9/11, 11 a.m.  |
 | __Ending at__ | 2001/9/11, 2 p.m |
 | __Description__ | - |
 | __Attendees__ | - |
