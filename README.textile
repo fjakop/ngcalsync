@@ -1,0 +1,69 @@
+{toc}
+
+h1. What's this?
+
+Did you ever wanted to synchronize your company meetings from Lotus Notes with your Google calendar?
+Yes? Then you are facing some obstacles:
+
+* your sensitive data must not go to Google ("Meeting at 12 o'clock with customer John Doe ...")
+* you do not want to get your Lotus Notes calendar tainted by your private entries from Google
+* you do not want to have your colleagues' birthdays in Google
+* you like to select which kinds of calendar events are synchronized
+* you are using Lotus Notes :-)
+
+Since I did not find an application offering solutions to all these problems at the same time, I decided to write my own.
+ 
+h1. A word of warning
+
+This application is designed to make your Google calendar a (partial) copy of your Lotus Notes calendar.
+This means, it will erase all events in your configured Google calendar which are not in your Lotus Notes calendar or excluded from synchronisation by your settings.
+*Be sure to use a dedicated Google calendar for synchronisation.*  
+
+h1. Running
+
+h2. First start
+
+p. Just run the application. It will create a folder __.syncnotes2google__ in your home directory. Now you can edit the created file __sync.properties__ according to your needs.
+
+p. All configuration is done in __.syncnotes2google/sync.properties__, which is read at program startup. This file is well-documented.
+
+h2. First time authorisation
+
+h3. Lotus Notes
+
+# Include the path to your Lotus Notes client installation in your PATH-variable.
+# Start your Lotus Notes client.
+# Click File -> Security -> User Security (Macintosh OS X users: Lotus Notes -> Security -> User Security).
+# Click Security Basics, and select "Don't prompt for a password from other Lotus Notes-based programs (reduces security)" under "Your Login and Password Settings."
+
+You can also skip steps 3 & 4, but then you have to enter your Lotus Notes password in the console every time you start the application.
+
+h3. Google
+
+Now run the application.
+
+# Since you haven't yet authorized the application to access your google calendar, it will open the authorisation website in your favourite browser, if possible. If not, it will prompt the URL to console, so you can manually go to the website.
+# On the website, click __allow__  to authorize the application to access your google calendar. It will give you an access token, which you can paste into your console and hit __enter__. The application will store your access token in __.syncnotes2google/user.secrets__.
+
+Afterwards the application will synchronize your Google calendar according to your Lotus Notes calendar and log a summary of the changes.
+
+h1. Sensitive data protection
+
+p. Regardless which kinds of events you choose to synchronize to your Google calendar, the application will *never* write sensitive data to Google. All event data is obfuscated by setting the title to the type of the event and removing everything but the start and end date and time. 
+
+p. Let's say, you have an 3 hour meeting with John and Jane at 11 o'clock a.m. on 2001/11/9 in your company's meeting room at World Trade Plaza, New York, discussing international flight regulations.
+
+p. When you synchronize this to Google, it will be seen as 
+| __Summary__ | Meeting |
+| __Starting at__ | 2001/9/11, 11 a.m. |   
+| __Ending at__ | 2001/9/11, 2 p.m |
+| __Description__ | - |
+| __Attendees__ | - |
+
+No sensitive data is writte to Google.
+
+h1. Bug reporting
+
+Feel free to report bugs. If I have the time, I will look at them, if not, I won't.
+
+Enjoy!

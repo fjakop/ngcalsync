@@ -1,0 +1,60 @@
+##############################################################################
+## Environment information
+
+#Proxy
+
+# insert your proxy's hostname or ip and port. Leave blank, if you are not behind a proxy. 
+proxy.host=
+proxy.port=
+
+##############################################################################
+## Google information
+
+# Google account email (e.g. john.doe@gmail.com)
+google.account.email=
+
+# Google calendar name to sync with (e.g. "work")
+# WARNING # 
+# This calendar's events will be deleted if not present in Lotus Notes 
+# WARNING #
+google.calendar.name=
+
+# Google default reminder time
+google.calendar.reminderminutes=30
+
+##############################################################################
+## Notes information
+
+# Notes server name
+#  in Notes go to
+#  File/Preferences/Location Preferences.../Servers/'Home/mail server', if there 
+#  are \ in the path replace them with /
+#  Leave blank for local database.
+notes.domino.server=
+
+# Notes database name
+#  in Notes go to
+#  Notes File/Preferences/Location Preferences.../Mail/'Mail file', if there are \ 
+#  in the path replace them with /
+#  e.g. "mail/johndoe.nsf" 
+notes.mail.db.file=
+
+##############################################################################
+## Sync information
+
+# Number of days (ex. 15d) or month (ex. 2m) back in time, default 14 days
+sync.start=14d
+
+# Number of days(ex. 15d) or month (ex. 2m) in the future, default 3 month
+sync.end=3m
+
+# Types of events to sync (comma separated)
+# 0 = Normal event
+# 1 = Anniversary
+# 2 = All day event
+# 3 = Meeting
+# 4 = Reminder
+# e.g. "1,3,4"
+sync.types=3
+
+# EOF
