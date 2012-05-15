@@ -3,7 +3,6 @@ package de.jakop.ngcalsync;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +10,10 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Properties;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,39 +35,47 @@ import de.jakop.ngcalsync.oauth.PromptReceiver;
  */
 public class Settings {
 
-	private static final String SYNC_TYPES = "sync.types";
-	private static final String SYNC_END = "sync.end";
-	private static final String SYNC_START = "sync.start";
-	private static final String NOTES_MAIL_DB_FILE = "notes.mail.db.file";
-	private static final String NOTES_DOMINO_SERVER = "notes.domino.server";
-	private static final String GOOGLE_CALENDAR_REMINDERMINUTES = "google.calendar.reminderminutes";
-	private static final String GOOGLE_CALENDAR_NAME = "google.calendar.name";
-	private static final String GOOGLE_ACCOUNT_EMAIL = "google.account.email";
-	private static final String PROXY_PORT = "proxy.port";
-	private static final String PROXY_HOST = "proxy.host";
+	private enum Parameter {
+
+		SYNC_TYPES("sync.types", "3"), //
+		SYNC_END("sync.end", "3m"), //
+		SYNC_START("sync.start", "14d"), //
+		NOTES_MAIL_DB_FILE("notes.mail.db.file", ""), //
+		NOTES_DOMINO_SERVER("notes.domino.server", ""), //
+		GOOGLE_CALENDAR_REMINDERMINUTES("google.calendar.reminderminutes", "30"), //
+		GOOGLE_CALENDAR_NAME("google.calendar.name", ""), //
+		GOOGLE_ACCOUNT_EMAIL("google.account.email", ""), //
+		PROXY_PORT("proxy.port", ""), //
+		PROXY_HOST("proxy.host", ""), //
+		PROXY_USER("proxy.user", ""), //
+		PROXY_PASSWORD("proxy.password", "");
+
+		private final String key;
+		private final String defaultvalue;
+
+		Parameter(String key, String defaultvalue) {
+			this.key = key;
+			this.defaultvalue = defaultvalue;
+		}
+
+		String getKey() {
+			return key;
+		}
+
+		String getDefaultValue() {
+			return defaultvalue;
+		}
+
+	}
+
 
 	private final Log log = LogFactory.getLog(getClass());
 
-	private String googleAccountName;
-	private String googleCalendarName;
+	private Configuration configuration;
+
 	private com.google.api.services.calendar.Calendar calendarService = null;
 
-
-	private int reminderMinutes;
-	private int[] syncAppointmentTypes;
-
-	private String dominoServer;
-	private String notesCalendarDbFilePath;
-
-	private Calendar syncStartDate;
-	private Calendar syncEndDate;
 	private Calendar syncLastDateTime;
-	private Calendar syncStart;
-
-	private String proxyHost;
-	private String proxyPort;
-	private String proxyUserName;
-	private String proxyPassword;
 
 	private File settingsDir;
 
@@ -92,12 +101,12 @@ public class Settings {
 
 	/**
 	 * 
-	 * @throws FileNotFoundException
 	 * @throws IOException
+	 * @throws ConfigurationException 
 	 */
-	public void load() throws FileNotFoundException, IOException {
+	public void load() throws IOException, ConfigurationException {
 
-		Properties p = new Properties();
+
 
 		File settingsFile = getFile(Constants.FILENAME_SYNC_PROPERTIES);
 		if (!settingsFile.exists()) {
@@ -107,54 +116,7 @@ public class Settings {
 			System.exit(0);
 		}
 
-		p.load(new FileInputStream(settingsFile));
-
-		setProxyHost(getProperty(p, PROXY_HOST));
-		setProxyPort(getProperty(p, PROXY_PORT));
-
-		setGoogleAccountName(getProperty(p, GOOGLE_ACCOUNT_EMAIL));
-		setGoogleCalendarName(getProperty(p, GOOGLE_CALENDAR_NAME, Constants.DEFAULT_GOOGLE_CALENDAR_NAME));
-		setReminderMinutes(Integer.parseInt(getProperty(p, GOOGLE_CALENDAR_REMINDERMINUTES, Constants.DEFAULT_GOOGLE_CALENDAR_REMINDERMINUTES)));
-
-		setDominoServer(getProperty(p, NOTES_DOMINO_SERVER));
-		setNotesCalendarDbFilePath(getProperty(p, NOTES_MAIL_DB_FILE));
-
-		String start = getProperty(p, SYNC_START);
-
-		int periodType;
-		int period;
-		try {
-			periodType = parsePeriodType(start);
-			period = parsePeriod(start);
-		} catch (FormatException e) {
-			periodType = Calendar.DAY_OF_YEAR;
-			period = 14;
-		}
-
-		Calendar sdt = Calendar.getInstance();
-		sdt.add(periodType, -period);
-		setSyncStartDate(sdt);
-
-		String end = getProperty(p, SYNC_END);
-		try {
-			periodType = parsePeriodType(end);
-			period = parsePeriod(end);
-		} catch (FormatException e) {
-			periodType = Calendar.MONTH;
-			period = 3;
-		}
-		Calendar edt = Calendar.getInstance();
-		edt.add(periodType, period);
-		setSyncEndDate(edt);
-		syncStart = Calendar.getInstance();
-
-		// Art der Kalendereinträge, die synchronisiert werden
-		String typesRaw = getProperty(p, SYNC_TYPES, "3");
-		String[] types = StringUtils.split(typesRaw, ",");
-		syncAppointmentTypes = new int[types.length];
-		for (int i = 0; i < types.length; i++) {
-			syncAppointmentTypes[i] = Integer.parseInt(types[i].trim());
-		}
+		configuration = new PropertiesConfiguration(settingsFile);
 
 		// letzte Synchronisierung lesen
 		File file = getFile(Constants.FILENAME_LAST_SYNC_TIME);
@@ -168,77 +130,77 @@ public class Settings {
 		if (line != null) {
 			syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
 		}
+	}
 
+	private String getString(Parameter parameter) {
+		return configuration.getString(parameter.getKey(), parameter.getDefaultValue());
 	}
 
 	/**
 	 * @return Login-Name des Google-Accounts
 	 */
 	public String getGoogleAccountName() {
-		return googleAccountName;
-	}
-
-	/**
-	 * @param googleAccountName Login-Name des Google-Accounts
-	 */
-	public void setGoogleAccountName(String googleAccountName) {
-		this.googleAccountName = googleAccountName;
+		return getString(Parameter.GOOGLE_ACCOUNT_EMAIL);
 	}
 
 	/**
 	 * @return Name des Domino-Servers
 	 */
 	public String getDominoServer() {
-		return dominoServer;
-	}
-
-	/**
-	 * @param dominoServer Name des Domino-Servers
-	 */
-	public void setDominoServer(String dominoServer) {
-		this.dominoServer = dominoServer;
+		return getString(Parameter.NOTES_DOMINO_SERVER);
 	}
 
 	/**
 	 * @return Pfad zur Kalender-Datenbank
 	 */
 	public String getNotesCalendarDbFilePath() {
-		return notesCalendarDbFilePath;
+		return getString(Parameter.NOTES_MAIL_DB_FILE);
 	}
 
 	/**
-	 * @param notesCalendarDbFilePath Pfad zur Kalender-Datenbank
+	 * @return sync only events starting after this date
+	 *  
+	 * @throws ConfigurationException 
 	 */
-	public void setNotesCalendarDbFilePath(String notesCalendarDbFilePath) {
-		this.notesCalendarDbFilePath = notesCalendarDbFilePath;
-	}
+	public Calendar getSyncStartDate() throws ConfigurationException {
 
-	/**
-	 * @return sync only events starting after this date 
-	 */
-	public Calendar getSyncStartDate() {
-		return syncStartDate;
-	}
+		String start = getString(Parameter.SYNC_START);
+		int periodType;
+		int period;
+		try {
+			periodType = parsePeriodType(start);
+			period = parsePeriod(start);
+		} catch (FormatException e) {
+			throw new ConfigurationException(String.format("Unable to parse start date shift '%s'.", start), e);
+		}
 
-	/**
-	 * @param syncStartDate sync only events starting after this date
-	 */
-	public void setSyncStartDate(Calendar syncStartDate) {
-		this.syncStartDate = syncStartDate;
+		Calendar sdt = Calendar.getInstance();
+		sdt.add(periodType, -period);
+
+		return sdt;
 	}
 
 	/**
 	 * @return sync only events starting before this date
+	 * 
+	 * @throws ConfigurationException 
 	 */
-	public Calendar getSyncEndDate() {
-		return syncEndDate;
-	}
+	public Calendar getSyncEndDate() throws ConfigurationException {
 
-	/**
-	 * @param syncEndDate sync only events starting before this date
-	 */
-	public void setSyncEndDate(Calendar syncEndDate) {
-		this.syncEndDate = syncEndDate;
+		String end = getString(Parameter.SYNC_END);
+		int periodType;
+		int period;
+		try {
+			periodType = parsePeriodType(end);
+			period = parsePeriod(end);
+		} catch (FormatException e) {
+			throw new ConfigurationException(String.format("Unable to parse end date shift '%s'.", end), e);
+		}
+
+		Calendar edt = Calendar.getInstance();
+		edt.add(periodType, period);
+
+		return edt;
 	}
 
 	/**
@@ -270,95 +232,45 @@ public class Settings {
 	}
 
 	/**
-	 * @param proxyHost hostname of the proxy, empty if none present
-	 */
-	public void setProxyHost(String proxyHost) {
-		this.proxyHost = proxyHost;
-	}
-
-	/**
 	 * @return hostname of the proxy, empty if none present
 	 */
 	public String getProxyHost() {
-		return proxyHost;
-	}
-
-	/**
-	 * @param proxyPort port number of the proxy, empty if none present
-	 */
-	public void setProxyPort(String proxyPort) {
-		this.proxyPort = proxyPort;
+		return getString(Parameter.PROXY_HOST);
 	}
 
 	/**
 	 * @return port number of the proxy, empty if none present
 	 */
 	public String getProxyPort() {
-		return proxyPort;
-	}
-
-	/**
-	 * @param proxyUserName user name of the proxy user, empty if no authentification required
-	 */
-	public void setProxyUserName(String proxyUserName) {
-		this.proxyUserName = proxyUserName;
+		return getString(Parameter.PROXY_PORT);
 	}
 
 	/**
 	 * @return user name of the proxy user, empty if no authentification required
 	 */
 	public String getProxyUserName() {
-		return proxyUserName;
-	}
-
-	/**
-	 * @param proxyPassword password of the proxy user, empty if no authentification required
-	 */
-	public void setProxyPassword(String proxyPassword) {
-		this.proxyPassword = proxyPassword;
+		return getString(Parameter.PROXY_USER);
 	}
 
 	/**
 	 * @return password of the proxy user, empty if no authentification required
 	 */
 	public String getProxyPassword() {
-		return proxyPassword;
+		return getString(Parameter.PROXY_PASSWORD);
 	}
 
 	/**
 	 * @return name of the google calendar to sync into
 	 */
 	public String getGoogleCalendarName() {
-		return googleCalendarName;
-	}
-
-	/**
-	 * @param calendarName name of the google calendar to sync into
-	 */
-	public void setGoogleCalendarName(String calendarName) {
-		googleCalendarName = calendarName;
+		return getString(Parameter.GOOGLE_CALENDAR_NAME);
 	}
 
 	/**
 	 * @return default reminder time in minutes
 	 */
 	public int getReminderMinutes() {
-		return reminderMinutes;
-	}
-
-	/**
-	 * 
-	 * @param reminderMinutes default reminder time in minutes
-	 */
-	public void setReminderMinutes(int reminderMinutes) {
-		this.reminderMinutes = reminderMinutes;
-	}
-
-	/**
-	 * @return start time of this sync run
-	 */
-	public Calendar getSyncStart() {
-		return syncStart;
+		return Integer.parseInt(getString(Parameter.GOOGLE_CALENDAR_REMINDERMINUTES));
 	}
 
 	/**
@@ -366,15 +278,15 @@ public class Settings {
 	 * @see de.jakop.ngcalsync.CalendarEvent.EventType
 	 */
 	public int[] getSyncAppointmentTypes() {
-		return syncAppointmentTypes;
-	}
 
-	/**
-	 * @param syncAppointmentTypes numeric values of Lotus Notes appointment types to sync
-	 * @see de.jakop.ngcalsync.CalendarEvent.EventType
-	 */
-	public void setSyncAppointmentTypes(int[] syncAppointmentTypes) {
-		this.syncAppointmentTypes = syncAppointmentTypes;
+		String typesRaw = getString(Parameter.SYNC_TYPES);
+		String[] types = StringUtils.split(typesRaw, ",");
+		int[] syncAppointmentTypes = new int[types.length];
+		for (int i = 0; i < types.length; i++) {
+			syncAppointmentTypes[i] = Integer.parseInt(types[i].trim());
+		}
+
+		return syncAppointmentTypes;
 	}
 
 	/**
@@ -407,18 +319,6 @@ public class Settings {
 			}
 		}
 		return calendarService;
-	}
-
-
-
-
-
-	private String getProperty(Properties p, String propertyName) {
-		return System.getProperty(propertyName, p.getProperty(propertyName));
-	}
-
-	private String getProperty(Properties p, String propertyName, String defaultValue) {
-		return System.getProperty(propertyName, p.getProperty(propertyName, defaultValue));
 	}
 
 	private int parsePeriod(String start) throws FormatException {

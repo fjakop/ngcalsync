@@ -3,6 +3,7 @@ package de.jakop.ngcalsync;
 import java.io.IOException;
 import java.util.Calendar;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,8 +31,9 @@ public class StartApplication {
 	 * 
 	 * @param args
 	 * @throws IOException
+	 * @throws ConfigurationException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ConfigurationException {
 
 		log.info(Constants.MSG_SYNC_STARTED);
 

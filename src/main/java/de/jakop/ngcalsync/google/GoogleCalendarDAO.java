@@ -178,6 +178,11 @@ public class GoogleCalendarDAO {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+
+			if (calendar == null) {
+				// calendar with given name does not exist
+				throw new SynchronisationException(String.format("Google calendar '%s' does not exist.", settings.getGoogleCalendarName()));
+			}
 		}
 		return calendar;
 	}
