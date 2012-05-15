@@ -29,7 +29,7 @@ import de.jakop.ngcalsync.oauth.PromptReceiver;
 
 /**
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class Settings {

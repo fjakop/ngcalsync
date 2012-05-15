@@ -11,7 +11,7 @@ public class CalendarEvent {
 	/**
 	 * Types of Events
 	 * 
-	 * @author jakop
+	 * @author fjakop
 	 *
 	 */
 	public enum EventType {

@@ -7,7 +7,7 @@ import de.jakop.ngcalsync.CalendarEvent.EventType;
  * Obfuscates everything but the dates and sets the {@link CalendarEvent}'s title to the 
  * representation of its {@link EventType}
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class TypeOnlyObfuscator implements ICalendarEntryObfuscator {

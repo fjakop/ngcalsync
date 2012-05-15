@@ -9,7 +9,7 @@ import de.jakop.ngcalsync.CalendarEvent.EventType;
 /**
  * Filters {@link CalendarEvent}s by {@link EventType}.
  * 
- * @author jakop
+ * @author fjakop
  */
 public class AppointmentTypeFilter implements ICalendarEntryFilter {
 

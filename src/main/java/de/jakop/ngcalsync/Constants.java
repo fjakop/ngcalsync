@@ -2,7 +2,7 @@ package de.jakop.ngcalsync;
 
 /**
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class Constants {

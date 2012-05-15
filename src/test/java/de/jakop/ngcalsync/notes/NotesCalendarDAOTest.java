@@ -27,7 +27,7 @@ import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 
 /**
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class NotesCalendarDAOTest {

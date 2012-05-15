@@ -25,6 +25,8 @@ import de.jakop.ngcalsync.obfuscator.ICalendarEntryObfuscator;
 
 /**
  * Synchronisiert vom {@link NotesCalendarDAO} in das {@link GoogleCalendarDAO}
+ * 
+ * @author fjakop
  *
  */
 public class SyncService {

@@ -7,7 +7,7 @@ import de.bea.domingo.DSession;
 
 /**
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class NotesClientOpenDatabaseStrategy implements IOpenDatabaseStrategy {

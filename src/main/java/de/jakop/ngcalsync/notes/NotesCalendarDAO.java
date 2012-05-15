@@ -31,6 +31,7 @@ import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 /**
  * Zugriff auf Notes-Kalendereinträge 
  *
+ * @author fjakop
  */
 public class NotesCalendarDAO {
 

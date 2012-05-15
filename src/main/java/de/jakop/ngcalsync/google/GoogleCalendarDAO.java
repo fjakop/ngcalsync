@@ -30,6 +30,8 @@ import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 
 /**
  * Zugriff auf Google-Kalendereinträge 
+ * 
+ * @author fjakop
  *
  */
 public class GoogleCalendarDAO {

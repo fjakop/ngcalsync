@@ -16,8 +16,10 @@ import de.jakop.ngcalsync.obfuscator.TypeOnlyObfuscator;
 import de.jakop.ngcalsync.service.SyncService;
 
 /**
+ * Starts the application which synchronizes the Lotus Notes calendar events to
+ * a configured Google calendar.
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public class StartApplication {

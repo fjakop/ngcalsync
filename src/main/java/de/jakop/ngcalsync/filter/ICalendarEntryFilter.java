@@ -5,7 +5,7 @@ import de.jakop.ngcalsync.CalendarEvent;
 /**
  * Filter for selection of {@link CalendarEvent}s
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public interface ICalendarEntryFilter {

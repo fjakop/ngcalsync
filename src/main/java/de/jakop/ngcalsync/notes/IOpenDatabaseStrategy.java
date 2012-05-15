@@ -4,7 +4,7 @@ import de.bea.domingo.DDatabase;
 
 /**
  * 
- * @author jakop
+ * @author fjakop
  *
  */
 public interface IOpenDatabaseStrategy {

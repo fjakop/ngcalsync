@@ -2,7 +2,7 @@ package de.jakop.ngcalsync;
 
 /**
  * Exception für Fehler bei Synchronisierung
- * @author jakop
+ * @author fjakop
  */
 public class SynchronisationException extends RuntimeException {
 
