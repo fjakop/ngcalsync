@@ -11,7 +11,11 @@ public class Constants {
 	/** */
 	public static final String MSG_FIRST_START = "First start detected. Please edit %s according to your needs and restart.";
 	/** */
+	public static final String MSG_CONFIGURATION_UPGRADED = "The configuration file %s was upgraded, please check the keys %s and restart.";
+	/** */
 	public static final String MSG_ENTER_CLIENT_ID_AND_SECRET = "Please enter your client ID and secret from the Google APIs Console in %s.";
+	/** */
+	public static final String MSG_UNABLE_TO_PARSE_DATE_SHIFT = "Unable to parse start date shift '%s'.";
 	/** */
 	public static final String MSG_FAILED_TO_OPEN_BROWSER = "Failed to open browser.";
 	/** */

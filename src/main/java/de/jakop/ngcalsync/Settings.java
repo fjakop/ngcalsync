@@ -5,16 +5,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,27 +34,57 @@ import de.jakop.ngcalsync.oauth.PromptReceiver;
  */
 public class Settings {
 
+	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
+
 	private enum Parameter {
 
-		SYNC_TYPES("sync.types", "3"), //
-		SYNC_END("sync.end", "3m"), //
-		SYNC_START("sync.start", "14d"), //
-		NOTES_MAIL_DB_FILE("notes.mail.db.file", ""), //
-		NOTES_DOMINO_SERVER("notes.domino.server", ""), //
-		GOOGLE_CALENDAR_REMINDERMINUTES("google.calendar.reminderminutes", "30"), //
-		GOOGLE_CALENDAR_NAME("google.calendar.name", ""), //
-		GOOGLE_ACCOUNT_EMAIL("google.account.email", ""), //
-		PROXY_PORT("proxy.port", ""), //
-		PROXY_HOST("proxy.host", ""), //
-		PROXY_USER("proxy.user", ""), //
-		PROXY_PASSWORD("proxy.password", "");
+		SYNC_TYPES("sync.types", "3", "# Types of events to sync\n" + //
+				"# 0 = Normal event\n" + //
+				"# 1 = Anniversary\n" + //
+				"# 2 = All day event\n" + //
+				"# 3 = Meeting\n" + //
+				"# 4 = Reminder\n" + //
+				"# e.g. \"1,3,4\""), //
+
+		SYNC_END("sync.end", "3m", "# Number of days(ex. 15d) or month (ex. 2m) in the future, default 3 month"), //
+
+		SYNC_START("sync.start", "14d", "# Number of days (ex. 15d) or month (ex. 2m) back in time, default 14 days"), //
+
+		NOTES_MAIL_DB_FILE("notes.mail.db.file", "", "# Notes database name\n" + //
+				"#  in Notes go to\n" + //
+				"#  Notes File/Preferences/Location Preferences.../Mail/'Mail file', if there \n" + //
+				"#  are \\ in the path replace them with /"), //
+
+		NOTES_DOMINO_SERVER("notes.domino.server", "", "# Notes server name\n" + //
+				"#  in Notes go to\n" + //
+				"#  File/Preferences/Location Preferences.../Servers/'Home/mail server', if there \n" + //
+				"#  are \\ in the path replace them with /\n" + //
+				"#  Leave blank for local."), //
+
+		GOOGLE_CALENDAR_REMINDERMINUTES("google.calendar.reminderminutes", "30", "# Google default reminder time"), //
+
+		GOOGLE_CALENDAR_NAME("google.calendar.name", "", "# Google calendar name to sync with (e.g. \"work\")\n" + //
+				"# WARNING #\n" + // 
+				"# This calendar's events will be deleted if not present in Lotus Notes"), //
+
+		GOOGLE_ACCOUNT_EMAIL("google.account.email", "", "# Google account email"), //
+
+		PROXY_HOST("proxy.host", "", "# Hostname or IP of the proxy server, if you are behind a proxy"), //
+
+		PROXY_PORT("proxy.port", "", "# Port of the proxy server, if you are behind a proxy"), //
+
+		PROXY_USER("proxy.user", "", "# Username, if the proxy requires authentication"), //
+
+		PROXY_PASSWORD("proxy.password", "", "# Password, if the proxy requires authentication");
 
 		private final String key;
 		private final String defaultvalue;
+		private final String comment;
 
-		Parameter(String key, String defaultvalue) {
+		Parameter(String key, String defaultvalue, String comment) {
 			this.key = key;
 			this.defaultvalue = defaultvalue;
+			this.comment = comment;
 		}
 
 		String getKey() {
@@ -66,12 +95,16 @@ public class Settings {
 			return defaultvalue;
 		}
 
+		String getComment() {
+			return comment;
+		}
+
 	}
 
 
 	private final Log log = LogFactory.getLog(getClass());
 
-	private Configuration configuration;
+	private PropertiesConfiguration configuration;
 
 	private com.google.api.services.calendar.Calendar calendarService = null;
 
@@ -106,17 +139,19 @@ public class Settings {
 	 */
 	public void load() throws IOException, ConfigurationException {
 
-
-
 		File settingsFile = getFile(Constants.FILENAME_SYNC_PROPERTIES);
-		if (!settingsFile.exists()) {
-			InputStream template = getClass().getResourceAsStream("/" + Constants.FILENAME_SYNC_PROPERTIES + ".template");
-			FileUtils.copyInputStreamToFile(template, settingsFile);
+
+		boolean firstStart = !settingsFile.exists();
+		configuration = new PropertiesConfiguration(settingsFile);
+
+		// Check if all keys exist and insert new / missing keys with default values
+		upgradeConfigurationIfNecessary(settingsFile);
+
+		// on first start the user 
+		if (firstStart) {
 			log.info(String.format(Constants.MSG_FIRST_START, settingsFile.getAbsolutePath()));
 			System.exit(0);
 		}
-
-		configuration = new PropertiesConfiguration(settingsFile);
 
 		// letzte Synchronisierung lesen
 		File file = getFile(Constants.FILENAME_LAST_SYNC_TIME);
@@ -129,6 +164,40 @@ public class Settings {
 		String line = br.readLine();
 		if (line != null) {
 			syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
+		}
+	}
+
+	/**
+	 * Checks for missing keys in configuration files. Missing keys are added with default values.
+	 * Upon missing key detection the program will print a message and exit.
+	 * 
+	 * @param settingsFile
+	 * @throws ConfigurationException
+	 */
+	private void upgradeConfigurationIfNecessary(File settingsFile) throws ConfigurationException {
+		List<String> addedKeys = new ArrayList<String>();
+		// duplicate the old configuration and insert new keys
+		// appending is not preserving the desired ordering, so we need to copy
+		PropertiesConfiguration newConfiguration = new PropertiesConfiguration();
+
+		newConfiguration.getLayout().setHeaderComment(HEADER_COMMENT);
+
+		for (Parameter parameter : Parameter.values()) {
+			String key = parameter.getKey();
+			if (configuration.containsKey(key)) {
+				newConfiguration.addProperty(key, configuration.getProperty(key));
+			} else {
+				newConfiguration.addProperty(key, parameter.getDefaultValue());
+				addedKeys.add(key);
+			}
+			newConfiguration.getLayout().setBlancLinesBefore(key, 1);
+			newConfiguration.getLayout().setComment(key, parameter.getComment());
+		}
+		if (!addedKeys.isEmpty()) {
+			// save the new config, if the old lacked a key
+			newConfiguration.save(settingsFile);
+			log.info(String.format(Constants.MSG_CONFIGURATION_UPGRADED, settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
+			System.exit(0);
 		}
 	}
 
@@ -171,7 +240,7 @@ public class Settings {
 			periodType = parsePeriodType(start);
 			period = parsePeriod(start);
 		} catch (FormatException e) {
-			throw new ConfigurationException(String.format("Unable to parse start date shift '%s'.", start), e);
+			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, start), e);
 		}
 
 		Calendar sdt = Calendar.getInstance();
@@ -194,7 +263,7 @@ public class Settings {
 			periodType = parsePeriodType(end);
 			period = parsePeriod(end);
 		} catch (FormatException e) {
-			throw new ConfigurationException(String.format("Unable to parse end date shift '%s'.", end), e);
+			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, end), e);
 		}
 
 		Calendar edt = Calendar.getInstance();
