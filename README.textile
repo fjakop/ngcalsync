@@ -21,7 +21,7 @@ h1. Running
 
 h2. First start
 
-p. Just run the application. It will create a folder __.ngcalsync__ in your home directory. Now you can edit the created file __sync.properties__ according to your needs.
+p. Just run the application. It will create a folder __.ngcalsync__ in your home directory, create all necessary files with default values, prompt a message and exit. Now you can edit the created file __sync.properties__ according to your needs.
 
 p. All configuration is done in __.ngcalsync/sync.properties__, which is read at program startup. This file is well-documented.
 
@@ -60,6 +60,12 @@ p. When you synchronize this to Google, it will be seen as
 | __Attendees__ | - |
 
 No sensitive data is writte to Google.
+
+h1. Upgrading
+
+p. Upgrading to a new program version is easy, since the data is separated from the code, so just delete the old code and use the new one.
+If there has been a change to the configuration (e.g. a property was added), the program behaves much like on first start. You will be prompted a message which parameters were added and will exit.
+You can now verify the new parameters' defaults and restart.
 
 h1. Bug reporting
 

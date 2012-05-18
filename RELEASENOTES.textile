@@ -1,3 +1,6 @@
+p. The amount of data transferred to Google (title, description, location) is configurable in the settings file. If the event's title is not transfered, it will be replaced with the event's type.
+
+p. The configuration file is upgraded automatically, if there are missing parameters. In this case these parameters are added and a message is prompted, asking the user to verify the default values and to restart.
 
 p. Fixed a NPE with completely empty Google calendar.
 
