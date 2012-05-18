@@ -16,6 +16,7 @@
 			<directory>${project.basedir}</directory>
 			<includes>
 				<include>README*</include>
+				<include>RELEASENOTES*</include>
 				<include>LICENSE</include>
 			</includes>
 		</fileSet>
