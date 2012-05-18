@@ -11,13 +11,14 @@ Yes? Then you are facing some obstacles:
 
 Since I did not find an application offering solutions to all these problems at the same time, I decided to write my own.
  
-h1. A word of warning
+
+h1. Running
+
+h2. A word of warning
 
 This application is designed to make your Google calendar a (partial) copy of your Lotus Notes calendar.
 This means, it will erase all events in your configured Google calendar which are not in your Lotus Notes calendar or excluded from synchronisation by your settings.
 *Be sure to use a dedicated Google calendar for synchronisation.*  
-
-h1. Running
 
 h2. First start
 
