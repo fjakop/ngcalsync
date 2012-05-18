@@ -15,13 +15,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.Settings;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 import de.jakop.ngcalsync.obfuscator.ICalendarEntryObfuscator;
+import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * Synchronisiert vom {@link NotesCalendarDAO} in das {@link GoogleCalendarDAO}

@@ -15,6 +15,7 @@ import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
 import de.jakop.ngcalsync.obfuscator.ICalendarEntryObfuscator;
 import de.jakop.ngcalsync.obfuscator.TypeOnlyObfuscator;
 import de.jakop.ngcalsync.service.SyncService;
+import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * Starts the application which synchronizes the Lotus Notes calendar events to

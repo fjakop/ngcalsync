@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.settings;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +15,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,6 +25,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
+import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.PromptReceiver;
 
@@ -36,7 +39,7 @@ public class Settings {
 
 	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
-	private enum Parameter {
+	enum Parameter {
 
 		SYNC_TYPES("sync.types", "3", "# Types of events to sync\n" + //
 				"# 0 = Normal event\n" + //
@@ -81,7 +84,7 @@ public class Settings {
 		private final String defaultvalue;
 		private final String comment;
 
-		Parameter(String key, String defaultvalue, String comment) {
+		Parameter(final String key, final String defaultvalue, final String comment) {
 			this.key = key;
 			this.defaultvalue = defaultvalue;
 			this.comment = comment;
@@ -102,7 +105,9 @@ public class Settings {
 	}
 
 
-	private final Log log = LogFactory.getLog(getClass());
+	private final Log log;
+	private final ISettingsFileAccessor settingsFileAccessor;
+	private final IExitStrategy exitStrategy;
 
 	private PropertiesConfiguration configuration;
 
@@ -110,27 +115,33 @@ public class Settings {
 
 	private Calendar syncLastDateTime;
 
-	private File settingsDir;
 
-	private File getSettingsDir() {
-		if (settingsDir == null) {
-			settingsDir = new File(System.getProperty("user.home"), Constants.FILENAME_SETTINGS_DIR);
-			if (!settingsDir.isDirectory()) {
-				settingsDir.mkdirs();
-			}
-		}
-		return settingsDir;
+	/**
+	 * 
+	 */
+	public Settings() {
+		this(new DefaultSettingsFileAccessor(), //
+				new IExitStrategy() {
+
+					@Override
+					public void exit(final int code) {
+						System.exit(code);
+					}
+				}, LogFactory.getLog(Settings.class));
 	}
 
 	/**
 	 * 
-	 * @param name
-	 * @return the {@link File} containing the date of the last sync
+	 * @param settingsFileAccessor
 	 */
-	private File getFile(String name) {
-		return new File(getSettingsDir(), name);
+	public Settings(final ISettingsFileAccessor settingsFileAccessor, final IExitStrategy exitStrategy, final Log log) {
+		Validate.notNull(settingsFileAccessor);
+		Validate.notNull(exitStrategy);
+		Validate.notNull(log);
+		this.settingsFileAccessor = settingsFileAccessor;
+		this.exitStrategy = exitStrategy;
+		this.log = log;
 	}
-
 
 	/**
 	 * 
@@ -139,29 +150,33 @@ public class Settings {
 	 */
 	public void load() throws IOException, ConfigurationException {
 
-		File settingsFile = getFile(Constants.FILENAME_SYNC_PROPERTIES);
+		final File settingsFile = settingsFileAccessor.getFile(Constants.FILENAME_SYNC_PROPERTIES);
 
-		boolean firstStart = !settingsFile.exists();
+		final boolean firstStart = !settingsFile.exists();
 		configuration = new PropertiesConfiguration(settingsFile);
 
 		// Check if all keys exist and insert new / missing keys with default values
-		upgradeConfigurationIfNecessary(settingsFile);
+		final boolean upgraded = upgradeConfigurationIfNecessary(settingsFile);
 
-		// on first start the user 
+		// on first start the user has to review the entire file 
 		if (firstStart) {
 			log.info(String.format(Constants.MSG_FIRST_START, settingsFile.getAbsolutePath()));
-			System.exit(0);
+			exitStrategy.exit(0);
+		}
+		if (upgraded) {
+			exitStrategy.exit(0);
 		}
 
+
 		// letzte Synchronisierung lesen
-		File file = getFile(Constants.FILENAME_LAST_SYNC_TIME);
+		final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
 		syncLastDateTime = Calendar.getInstance();
 		if (!file.exists()) {
 			syncLastDateTime.setTimeInMillis(0);
 			return;
 		}
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		String line = br.readLine();
+		final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+		final String line = br.readLine();
 		if (line != null) {
 			syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
 		}
@@ -169,21 +184,22 @@ public class Settings {
 
 	/**
 	 * Checks for missing keys in configuration files. Missing keys are added with default values.
-	 * Upon missing key detection the program will print a message and exit.
+	 * Upon missing key detection the program will print a message.
 	 * 
 	 * @param settingsFile
+	 * @return <code>true</code>, if at least one key was added and the configuration was upgraded
 	 * @throws ConfigurationException
 	 */
-	private void upgradeConfigurationIfNecessary(File settingsFile) throws ConfigurationException {
-		List<String> addedKeys = new ArrayList<String>();
+	private boolean upgradeConfigurationIfNecessary(final File settingsFile) throws ConfigurationException {
+		final List<String> addedKeys = new ArrayList<String>();
 		// duplicate the old configuration and insert new keys
 		// appending is not preserving the desired ordering, so we need to copy
-		PropertiesConfiguration newConfiguration = new PropertiesConfiguration();
+		final PropertiesConfiguration newConfiguration = new PropertiesConfiguration();
 
 		newConfiguration.getLayout().setHeaderComment(HEADER_COMMENT);
 
-		for (Parameter parameter : Parameter.values()) {
-			String key = parameter.getKey();
+		for (final Parameter parameter : Parameter.values()) {
+			final String key = parameter.getKey();
 			if (configuration.containsKey(key)) {
 				newConfiguration.addProperty(key, configuration.getProperty(key));
 			} else {
@@ -197,11 +213,12 @@ public class Settings {
 			// save the new config, if the old lacked a key
 			newConfiguration.save(settingsFile);
 			log.info(String.format(Constants.MSG_CONFIGURATION_UPGRADED, settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
-			System.exit(0);
+			return true;
 		}
+		return false;
 	}
 
-	private String getString(Parameter parameter) {
+	private String getString(final Parameter parameter) {
 		return configuration.getString(parameter.getKey(), parameter.getDefaultValue());
 	}
 
@@ -233,17 +250,17 @@ public class Settings {
 	 */
 	public Calendar getSyncStartDate() throws ConfigurationException {
 
-		String start = getString(Parameter.SYNC_START);
+		final String start = getString(Parameter.SYNC_START);
 		int periodType;
 		int period;
 		try {
 			periodType = parsePeriodType(start);
 			period = parsePeriod(start);
-		} catch (FormatException e) {
+		} catch (final FormatException e) {
 			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, start), e);
 		}
 
-		Calendar sdt = Calendar.getInstance();
+		final Calendar sdt = Calendar.getInstance();
 		sdt.add(periodType, -period);
 
 		return sdt;
@@ -256,17 +273,17 @@ public class Settings {
 	 */
 	public Calendar getSyncEndDate() throws ConfigurationException {
 
-		String end = getString(Parameter.SYNC_END);
+		final String end = getString(Parameter.SYNC_END);
 		int periodType;
 		int period;
 		try {
 			periodType = parsePeriodType(end);
 			period = parsePeriod(end);
-		} catch (FormatException e) {
+		} catch (final FormatException e) {
 			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, end), e);
 		}
 
-		Calendar edt = Calendar.getInstance();
+		final Calendar edt = Calendar.getInstance();
 		edt.add(periodType, period);
 
 		return edt;
@@ -282,7 +299,7 @@ public class Settings {
 	/**
 	 * @param syncLastDateTime last sync start time
 	 */
-	public void setSyncLastDateTime(Calendar syncLastDateTime) {
+	public void setSyncLastDateTime(final Calendar syncLastDateTime) {
 		this.syncLastDateTime = syncLastDateTime;
 	}
 
@@ -291,11 +308,11 @@ public class Settings {
 	 */
 	public void save() {
 		try {
-			File file = getFile(Constants.FILENAME_LAST_SYNC_TIME);
-			FileWriter fw = new FileWriter(file);
+			final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
+			final FileWriter fw = new FileWriter(file);
 			fw.write(System.currentTimeMillis() + "\n");
 			fw.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -348,9 +365,9 @@ public class Settings {
 	 */
 	public int[] getSyncAppointmentTypes() {
 
-		String typesRaw = getString(Parameter.SYNC_TYPES);
-		String[] types = StringUtils.split(typesRaw, ",");
-		int[] syncAppointmentTypes = new int[types.length];
+		final String typesRaw = getString(Parameter.SYNC_TYPES);
+		final String[] types = StringUtils.split(typesRaw, ",");
+		final int[] syncAppointmentTypes = new int[types.length];
 		for (int i = 0; i < types.length; i++) {
 			syncAppointmentTypes[i] = Integer.parseInt(types[i].trim());
 		}
@@ -374,31 +391,31 @@ public class Settings {
 			}
 
 			try {
-				HttpTransport httpTransport = new NetHttpTransport();
-				JacksonFactory jsonFactory = new JacksonFactory();
+				final HttpTransport httpTransport = new NetHttpTransport();
+				final JacksonFactory jsonFactory = new JacksonFactory();
 
-				List<String> scopes = Arrays.asList(CalendarScopes.CALENDAR);
-				GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, new PromptReceiver(), getFile(Constants.FILENAME_USER_SECRETS));
-				Credential credential = googleOAuth2DAO.authorize(scopes, getGoogleAccountName());
+				final List<String> scopes = Arrays.asList(CalendarScopes.CALENDAR);
+				final GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, new PromptReceiver(), settingsFileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
+				final Credential credential = googleOAuth2DAO.authorize(scopes, getGoogleAccountName());
 
 				calendarService = com.google.api.services.calendar.Calendar.builder(httpTransport, jsonFactory).setApplicationName(Constants.APPLICATION_NAME)
 						.setHttpRequestInitializer(credential).build();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
 		return calendarService;
 	}
 
-	private int parsePeriod(String start) throws FormatException {
+	private int parsePeriod(final String start) throws FormatException {
 		try {
 			return Integer.parseInt(start.substring(0, start.length() - 1));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FormatException();
 		}
 	}
 
-	private int parsePeriodType(String start) throws FormatException {
+	private int parsePeriodType(final String start) throws FormatException {
 		if (start.endsWith("d")) {
 			return Calendar.DAY_OF_YEAR;
 		} else if (start.endsWith("m")) {

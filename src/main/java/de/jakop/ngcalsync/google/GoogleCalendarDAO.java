@@ -22,11 +22,11 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.Settings;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.CalendarEvent.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * Zugriff auf Google-Kalendereinträge 
