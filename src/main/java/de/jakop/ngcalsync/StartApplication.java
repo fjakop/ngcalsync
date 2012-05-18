@@ -12,8 +12,8 @@ import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
-import de.jakop.ngcalsync.obfuscator.ICalendarEntryObfuscator;
-import de.jakop.ngcalsync.obfuscator.TypeOnlyObfuscator;
+import de.jakop.ngcalsync.obfuscator.DefaultCalendarEventObfuscator;
+import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.service.SyncService;
 import de.jakop.ngcalsync.settings.Settings;
 
@@ -34,21 +34,21 @@ public class StartApplication {
 	 * @throws IOException
 	 * @throws ConfigurationException 
 	 */
-	public static void main(String[] args) throws IOException, ConfigurationException {
+	public static void main(final String[] args) throws IOException, ConfigurationException {
 
 		log.info(Constants.MSG_SYNC_STARTED);
 
-		Settings settings = new Settings();
+		final Settings settings = new Settings();
 		settings.load();
 
 		// Execute synchronization
-		SyncService ss = new SyncService();
+		final SyncService ss = new SyncService();
 
-		ICalendarEntryFilter typeFilter = new AppointmentTypeFilter(settings.getSyncAppointmentTypes());
-		ICalendarEntryObfuscator typeObfuscator = new TypeOnlyObfuscator();
+		final ICalendarEntryFilter typeFilter = new AppointmentTypeFilter(settings.getSyncAppointmentTypes());
+		final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
 
-		ICalendarEntryFilter[] filters = new ICalendarEntryFilter[] { typeFilter };
-		ICalendarEntryObfuscator[] obfuscators = new ICalendarEntryObfuscator[] { typeObfuscator };
+		final ICalendarEntryFilter[] filters = new ICalendarEntryFilter[] { typeFilter };
+		final ICalendarEventObfuscator[] obfuscators = new ICalendarEventObfuscator[] { typeObfuscator };
 		ss.executeSync(new NotesCalendarDAO(new NotesClientOpenDatabaseStrategy(), settings.getDominoServer(), settings.getNotesCalendarDbFilePath(), settings.getSyncStartDate(),
 				settings.getSyncEndDate()), new GoogleCalendarDAO(settings), filters, obfuscators, settings);
 

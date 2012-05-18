@@ -7,7 +7,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
  * 
  * @author fjakop
  */
-public interface ICalendarEntryObfuscator {
+public interface ICalendarEventObfuscator {
 
 	/**
 	 * Modifies this {@link CalendarEvent}s values.

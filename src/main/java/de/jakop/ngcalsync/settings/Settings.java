@@ -35,7 +35,7 @@ import de.jakop.ngcalsync.oauth.PromptReceiver;
  * @author fjakop
  *
  */
-public class Settings {
+public final class Settings {
 
 	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
@@ -52,6 +52,12 @@ public class Settings {
 		SYNC_END("sync.end", "3m", "# Number of days(ex. 15d) or month (ex. 2m) in the future, default 3 month"), //
 
 		SYNC_START("sync.start", "14d", "# Number of days (ex. 15d) or month (ex. 2m) back in time, default 14 days"), //
+
+		SYNC_TRANSFER_TITLE("sync.transfer.title", "false", "# Transfer original event title to Google (true|false)"), //
+
+		SYNC_TRANSFER_DESCRIPTION("sync.transfer.description", "false", "# Transfer original event description to Google (true|false)"), //
+
+		SYNC_TRANSFER_LOCATION("sync.transfer.location", "false", "# Transfer original event location to Google (true|false)"), //
 
 		NOTES_MAIL_DB_FILE("notes.mail.db.file", "", "# Notes database name\n" + //
 				"#  in Notes go to\n" + //
@@ -104,13 +110,12 @@ public class Settings {
 
 	}
 
-
 	private final Log log;
 	private final ISettingsFileAccessor settingsFileAccessor;
 	private final IExitStrategy exitStrategy;
 
 	private PropertiesConfiguration configuration;
-
+	private PrivacySettings privacySettings;
 	private com.google.api.services.calendar.Calendar calendarService = null;
 
 	private Calendar syncLastDateTime;
@@ -220,6 +225,10 @@ public class Settings {
 
 	private String getString(final Parameter parameter) {
 		return configuration.getString(parameter.getKey(), parameter.getDefaultValue());
+	}
+
+	private boolean getBoolean(final Parameter parameter) {
+		return configuration.getBoolean(parameter.getKey(), Boolean.valueOf(parameter.getDefaultValue()).booleanValue());
 	}
 
 	/**
@@ -373,6 +382,21 @@ public class Settings {
 		}
 
 		return syncAppointmentTypes;
+	}
+
+	/**
+	 * 
+	 * @return the settings for protecting privacy of event's data
+	 */
+	public PrivacySettings getPrivacySettings() {
+		if (privacySettings == null) {
+			privacySettings = new PrivacySettings(//
+					getBoolean(Parameter.SYNC_TRANSFER_TITLE), //
+					getBoolean(Parameter.SYNC_TRANSFER_DESCRIPTION), //
+					getBoolean(Parameter.SYNC_TRANSFER_LOCATION));
+		}
+
+		return privacySettings;
 	}
 
 	/**

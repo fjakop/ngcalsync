@@ -20,7 +20,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
-import de.jakop.ngcalsync.obfuscator.ICalendarEntryObfuscator;
+import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
@@ -39,7 +39,7 @@ public class SyncService {
 	 * @param googleDao
 	 * @param settings TODO
 	 */
-	public void executeSync(NotesCalendarDAO notesDao, GoogleCalendarDAO googleDao, ICalendarEntryFilter[] filters, ICalendarEntryObfuscator[] obfuscators, Settings settings) {
+	public void executeSync(NotesCalendarDAO notesDao, GoogleCalendarDAO googleDao, ICalendarEntryFilter[] filters, ICalendarEventObfuscator[] obfuscators, Settings settings) {
 		Collection<CalendarEvent> notesEntries = notesDao.getEntries(filters);
 		Collection<CalendarEvent> googleEntries = googleDao.getEntries(filters);
 
@@ -85,7 +85,7 @@ public class SyncService {
 		log.info(String.format(Constants.MSG_ADDING_EVENTS_TO_GOOGLE, new Integer(addToGoogle.size())));
 		for (CalendarEvent baseDoc : addToGoogle) {
 			// obfuscate
-			for (ICalendarEntryObfuscator obfuscator : obfuscators) {
+			for (ICalendarEventObfuscator obfuscator : obfuscators) {
 				obfuscator.obfuscate(baseDoc);
 			}
 			insert(googleDao, baseDoc);
@@ -94,7 +94,7 @@ public class SyncService {
 		log.info(String.format(Constants.MSG_UPDATING_EVENTS_TO_GOOGLE, new Integer(updateToGoogle.size())));
 		for (CalendarEvent notesEntry : updateToGoogle.keySet()) {
 			// obfuscate
-			for (ICalendarEntryObfuscator obfuscator : obfuscators) {
+			for (ICalendarEventObfuscator obfuscator : obfuscators) {
 				obfuscator.obfuscate(notesEntry);
 			}
 			update(googleDao, updateToGoogle.get(notesEntry).getId(), notesEntry);
