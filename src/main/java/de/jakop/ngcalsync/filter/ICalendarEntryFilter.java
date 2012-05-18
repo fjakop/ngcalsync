@@ -1,6 +1,6 @@
 package de.jakop.ngcalsync.filter;
 
-import de.jakop.ngcalsync.CalendarEvent;
+import de.jakop.ngcalsync.calendar.CalendarEvent;
 
 /**
  * Filter for selection of {@link CalendarEvent}s

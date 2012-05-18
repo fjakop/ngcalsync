@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.calendar;
 
 import java.text.DateFormat;
 import java.util.Calendar;

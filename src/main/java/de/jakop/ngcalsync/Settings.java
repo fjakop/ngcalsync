@@ -344,7 +344,7 @@ public class Settings {
 
 	/**
 	 * @return numeric values of Lotus Notes appointment types to sync
-	 * @see de.jakop.ngcalsync.CalendarEvent.EventType
+	 * @see de.jakop.ngcalsync.calendar.CalendarEvent.EventType
 	 */
 	public int[] getSyncAppointmentTypes() {
 

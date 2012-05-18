@@ -3,8 +3,8 @@ package de.jakop.ngcalsync.filter;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 
-import de.jakop.ngcalsync.CalendarEvent;
-import de.jakop.ngcalsync.CalendarEvent.EventType;
+import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.calendar.CalendarEvent.EventType;
 
 /**
  * Filters {@link CalendarEvent}s by {@link EventType}.

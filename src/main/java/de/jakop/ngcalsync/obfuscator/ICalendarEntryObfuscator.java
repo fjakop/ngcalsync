@@ -1,6 +1,6 @@
 package de.jakop.ngcalsync.obfuscator;
 
-import de.jakop.ngcalsync.CalendarEvent;
+import de.jakop.ngcalsync.calendar.CalendarEvent;
 
 /**
  * Obfuscate some of the {@link CalendarEvent}'s values.

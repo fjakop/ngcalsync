@@ -14,10 +14,10 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jakop.ngcalsync.CalendarEvent;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.Settings;
 import de.jakop.ngcalsync.SynchronisationException;
+import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
