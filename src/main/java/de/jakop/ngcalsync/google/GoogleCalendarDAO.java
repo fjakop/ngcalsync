@@ -24,8 +24,8 @@ import com.google.api.services.calendar.model.Events;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.calendar.CalendarEvent.EventType;
-import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.calendar.EventType;
+import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
@@ -120,7 +120,7 @@ public class GoogleCalendarDAO {
 	 * @param filters
 	 * @return alle Kalendereinträge
 	 */
-	public List<CalendarEvent> getEntries(final ICalendarEntryFilter[] filters) throws SynchronisationException {
+	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
 
 		List<CalendarEvent> entries = new ArrayList<CalendarEvent>();
@@ -245,7 +245,7 @@ public class GoogleCalendarDAO {
 		DateTime edt = null;
 		if (entry.getStart().getDateTime() == null) {
 			// all day event - no DateTime, only Date present
-			bd.setApptype(EventType.ALL_DAY_EVENT);
+			bd.setEventType(EventType.ALL_DAY_EVENT);
 			sdt = new DateTime(dateFormatDateOnly.parse(entry.getStart().getDate()));
 			edt = new DateTime(dateFormatDateOnly.parse(entry.getEnd().getDate()));
 		} else {
@@ -254,9 +254,9 @@ public class GoogleCalendarDAO {
 			edt = entry.getEnd().getDateTime();
 
 			if (sdt.getValue() == edt.getValue()) {
-				bd.setApptype(EventType.REMINDER);
+				bd.setEventType(EventType.REMINDER);
 			} else {
-				bd.setApptype(EventType.NORMAL_EVENT);
+				bd.setEventType(EventType.NORMAL_EVENT);
 			}
 		}
 

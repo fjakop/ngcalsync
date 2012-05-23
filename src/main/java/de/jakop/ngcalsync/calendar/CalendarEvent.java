@@ -8,80 +8,25 @@ import java.util.Calendar;
  */
 public class CalendarEvent {
 
-	/**
-	 * Types of Events
-	 * 
-	 * @author fjakop
-	 *
-	 */
-	public enum EventType {
-		/**  */
-		NORMAL_EVENT(0, "Termin"), //
-		/**  */
-		ANNIVERSARY(1, "Jahrestag"), //
-		/**  */
-		ALL_DAY_EVENT(2, "Ganztägig"), //
-		/**  */
-		MEETING(3, "Besprechung"), //+
-		/**  */
-		REMINDER(4, "Erinnerung");
-
-		private final int value;
-		private final String name;
-
-		private EventType(final int value, final String name) {
-			this.value = value;
-			this.name = name;
-		}
-
-		/**
-		 * @return integer representation of the {@link EventType}
-		 */
-		public int getIntegerValue() {
-			return value;
-		}
-
-		/**
-		 * @return human readable name of this {@link EventType}
-		 * TODO i18n
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * Creates {@link EventType} for integer value 
-		 * @param type
-		 * @return the created {@link EventType}
-		 * @throws IllegalArgumentException for invalid integer value
-		 */
-		public static EventType create(int type) {
-			switch (type) {
-				case 0:
-					return EventType.NORMAL_EVENT;
-				case 1:
-					return EventType.ANNIVERSARY;
-				case 2:
-					return EventType.ALL_DAY_EVENT;
-				case 3:
-					return EventType.MEETING;
-				case 4:
-					return EventType.REMINDER;
-				default:
-					throw new IllegalArgumentException(String.format("Appointment type %s not recognized", new Integer(type)));
-			}
-		}
-
-	}
+	private final static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+	private final static String toStringFormat = "" + //
+			"ID             : %s%n" + //
+			"Title          : %s%n" + //
+			"Content        : %s%n" + //
+			"StartDateTime  : %s%n" + //
+			"EndDateTime    : %s%n" + //
+			"Location       : %s%n" + //
+			"LastUpdated    : %s%n" + //
+			"EventType      : %s";
 
 	private String id;
 	private String title;
 	private String content;
-	private Calendar startDateTime; // xs:date format ex) 2009-05-20T12:00:00+09:00
-	private Calendar endDateTime; // xs:date format ex) 2009-05-20T12:00:00+09:00
+	private Calendar startDateTime;
+	private Calendar endDateTime;
 	private String location;
-	private Calendar lastupdated; // xs:date format ex) 2009-05-20T12:00:00+09:00
-	private EventType apptype; // Appointment type
+	private Calendar lastUpdated;
+	private EventType eventType;
 	private boolean _private;
 
 
@@ -89,18 +34,22 @@ public class CalendarEvent {
 	// This method is for debugging.
 	@Override
 	public String toString() {
-		StringBuffer l = new StringBuffer();
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.FULL);
-		l.append("ID             : " + id + "\n");
-		l.append("Title          : " + title + "\n");
-		l.append("Content        : " + content + "\n");
-		l.append("startDateTime  : " + (startDateTime != null ? df.format(startDateTime.getTime()) : "") + "\n");
-		l.append("endDateTime    : " + (endDateTime != null ? df.format(endDateTime.getTime()) : "") + "\n");
-		l.append("location       : " + location + "\n");
-		l.append("lastupdated    : " + (lastupdated != null ? (lastupdated == null ? "" : df.format(lastupdated.getTime())) : "") + "\n");
-		l.append("apptype        : " + apptype + "\n");
+		return String.format(toStringFormat, //
+				id, //
+				title, //
+				content, //
+				format(startDateTime), //
+				format(endDateTime), //
+				location, //
+				format(lastUpdated), //
+				eventType);
+	}
 
-		return l.toString();
+	private static String format(final Calendar date) {
+		if (date == null) {
+			return null;
+		}
+		return df.format(date.getTime());
 	}
 
 	/**
@@ -113,7 +62,7 @@ public class CalendarEvent {
 	/**
 	 * @param id technische Id des Kalendereintrags
 	 */
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
@@ -127,7 +76,7 @@ public class CalendarEvent {
 	/**
 	 * @param title Titel des Kalendereintrags
 	 */
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -141,7 +90,7 @@ public class CalendarEvent {
 	/**
 	 * @param content Beschreibung des Kalendereintrags
 	 */
-	public void setContent(String content) {
+	public void setContent(final String content) {
 		this.content = content;
 	}
 
@@ -155,7 +104,7 @@ public class CalendarEvent {
 	/**
 	 * @param startDateTime Startzeit des Kalendereintrags
 	 */
-	public void setStartDateTime(Calendar startDateTime) {
+	public void setStartDateTime(final Calendar startDateTime) {
 		this.startDateTime = startDateTime;
 	}
 
@@ -169,14 +118,14 @@ public class CalendarEvent {
 	/**
 	 * @param endDateTime Endzeit des Kalendereintrags
 	 */
-	public void setEndDateTime(Calendar endDateTime) {
+	public void setEndDateTime(final Calendar endDateTime) {
 		this.endDateTime = endDateTime;
 	}
 
 	/**
 	 * @param location Ort des Kalendereintrags
 	 */
-	public void setLocation(String location) {
+	public void setLocation(final String location) {
 		this.location = location;
 	}
 
@@ -190,35 +139,35 @@ public class CalendarEvent {
 	/**
 	 * @param lastupdated Letze Änderung des Kalendereintrags
 	 */
-	public void setLastUpdated(Calendar lastupdated) {
-		this.lastupdated = lastupdated;
+	public void setLastUpdated(final Calendar lastupdated) {
+		lastUpdated = lastupdated;
 	}
 
 	/**
 	 * @return letze Änderung des Kalendereintrags
 	 */
 	public Calendar getLastUpdated() {
-		return lastupdated;
+		return lastUpdated;
 	}
 
 	/**
 	 * @param appType Art des Kalendereintrags
 	 */
-	public void setApptype(EventType appType) {
-		apptype = appType;
+	public void setEventType(final EventType appType) {
+		eventType = appType;
 	}
 
 	/**
 	 * @return Art des Kalendereintrags
 	 */
-	public EventType getApptype() {
-		return apptype;
+	public EventType getEventType() {
+		return eventType;
 	}
 
 	/**
 	 * @param _private Privat-Flag des Kalendereintrags
 	 */
-	public void setPrivate(boolean _private) {
+	public void setPrivate(final boolean _private) {
 		this._private = _private;
 	}
 
@@ -234,7 +183,7 @@ public class CalendarEvent {
 	 * @return <code>true</code>, if all day event
 	 */
 	public boolean isAllDay() {
-		return getApptype() == EventType.ALL_DAY_EVENT || getApptype() == EventType.ANNIVERSARY;
+		return getEventType() == EventType.ALL_DAY_EVENT || getEventType() == EventType.ANNIVERSARY;
 	}
 
 }

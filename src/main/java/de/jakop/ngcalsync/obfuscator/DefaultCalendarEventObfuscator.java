@@ -23,7 +23,7 @@ public class DefaultCalendarEventObfuscator implements ICalendarEventObfuscator 
 	@Override
 	public void obfuscate(final CalendarEvent event) {
 		if (!privacySettings.isTransferTitle()) {
-			event.setTitle(event.getApptype().getName());
+			event.setTitle(event.getEventType().getName());
 		}
 		if (!privacySettings.isTransferDescription()) {
 			event.setContent("");

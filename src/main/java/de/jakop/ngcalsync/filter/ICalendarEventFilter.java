@@ -8,7 +8,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
  * @author fjakop
  *
  */
-public interface ICalendarEntryFilter {
+public interface ICalendarEventFilter {
 
 	/**
 	 * 

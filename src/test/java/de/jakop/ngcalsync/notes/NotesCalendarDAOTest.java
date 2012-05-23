@@ -21,7 +21,7 @@ import de.bea.domingo.DView;
 import de.bea.domingo.DViewEntry;
 import de.bea.domingo.util.GregorianDateTime;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.notes.IOpenDatabaseStrategy;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 
@@ -97,7 +97,7 @@ public class NotesCalendarDAOTest {
 		when(view.getAllEntriesByKey(start, end, false)).thenReturn(viewEntries.iterator());
 
 		NotesCalendarDAO dao = new NotesCalendarDAO(openDatabaseStrategy, "", "", start, end);
-		List<CalendarEvent> entries = dao.getEntries(new ICalendarEntryFilter[] {});
+		List<CalendarEvent> entries = dao.getEntries(new ICalendarEventFilter[] {});
 
 		// Event #1 is missing, because of Notes' date filter
 		assertEquals(2, entries.size());

@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
@@ -37,15 +37,21 @@ public class SyncService {
 	 * 
 	 * @param notesDao
 	 * @param googleDao
-	 * @param settings TODO
+	 * @param settings 
 	 */
-	public void executeSync(NotesCalendarDAO notesDao, GoogleCalendarDAO googleDao, ICalendarEntryFilter[] filters, ICalendarEventObfuscator[] obfuscators, Settings settings) {
-		Collection<CalendarEvent> notesEntries = notesDao.getEntries(filters);
-		Collection<CalendarEvent> googleEntries = googleDao.getEntries(filters);
+	public void executeSync(final NotesCalendarDAO notesDao, final GoogleCalendarDAO googleDao, final ICalendarEventFilter[] filters, final ICalendarEventObfuscator[] obfuscators,
+			final Settings settings) {
+
+		Validate.notNull(notesDao);
+		Validate.notNull(googleDao);
+		Validate.notNull(settings);
+
+		final Collection<CalendarEvent> notesEntries = notesDao.getEntries(filters);
+		final Collection<CalendarEvent> googleEntries = googleDao.getEntries(filters);
 
 		// schedule Events existing in Google but not in Notes for removal
-		List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
-		for (CalendarEvent baseDoc : googleEntries) {
+		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
+		for (final CalendarEvent baseDoc : googleEntries) {
 			if (CollectionUtils.select(notesEntries, new BaseDocEqualsPredicate(baseDoc)).isEmpty()) {
 				removeFromGoogle.add(baseDoc);
 				log.debug(String.format("Scheduling for removal: %s", BaseDocEqualsPredicate.getComparisonString(baseDoc)));
@@ -53,10 +59,10 @@ public class SyncService {
 		}
 
 		// schedule Events existing in Notes but not in Google for addition
-		List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
-		Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
-		for (CalendarEvent notesEntry : notesEntries) {
-			Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new BaseDocEqualsPredicate(notesEntry));
+		final List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
+		final Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
+		for (final CalendarEvent notesEntry : notesEntries) {
+			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new BaseDocEqualsPredicate(notesEntry));
 			if (matchingEntries.isEmpty()) {
 				addToGoogle.add(notesEntry);
 				log.debug(String.format("Scheduling for addition: %s", BaseDocEqualsPredicate.getComparisonString(notesEntry)));
@@ -64,7 +70,7 @@ public class SyncService {
 				if (matchingEntries.size() > 1) {
 					throw new SynchronisationException(String.format("Duplicate match (%s) for %s", new Integer(matchingEntries.size()), notesEntry));
 				}
-				CalendarEvent matchingEntry = matchingEntries.iterator().next();
+				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
 				// check modification and update eventually
 				if (notesEntry.getLastUpdated().after(settings.getSyncLastDateTime())) {
 					updateToGoogle.put(notesEntry, matchingEntry);
@@ -78,26 +84,26 @@ public class SyncService {
 		// actually do it
 
 		log.info(String.format(Constants.MSG_REMOVING_EVENTS_FROM_GOOGLE, new Integer(removeFromGoogle.size())));
-		for (CalendarEvent baseDoc : removeFromGoogle) {
-			delete(googleDao, baseDoc.getId());
+		for (final CalendarEvent event : removeFromGoogle) {
+			delete(googleDao, event.getId());
 		}
 
 		log.info(String.format(Constants.MSG_ADDING_EVENTS_TO_GOOGLE, new Integer(addToGoogle.size())));
-		for (CalendarEvent baseDoc : addToGoogle) {
+		for (final CalendarEvent event : addToGoogle) {
 			// obfuscate
-			for (ICalendarEventObfuscator obfuscator : obfuscators) {
-				obfuscator.obfuscate(baseDoc);
+			for (final ICalendarEventObfuscator obfuscator : obfuscators) {
+				obfuscator.obfuscate(event);
 			}
-			insert(googleDao, baseDoc);
+			insert(googleDao, event);
 		}
 
 		log.info(String.format(Constants.MSG_UPDATING_EVENTS_TO_GOOGLE, new Integer(updateToGoogle.size())));
-		for (CalendarEvent notesEntry : updateToGoogle.keySet()) {
+		for (final CalendarEvent event : updateToGoogle.keySet()) {
 			// obfuscate
-			for (ICalendarEventObfuscator obfuscator : obfuscators) {
-				obfuscator.obfuscate(notesEntry);
+			for (final ICalendarEventObfuscator obfuscator : obfuscators) {
+				obfuscator.obfuscate(event);
 			}
-			update(googleDao, updateToGoogle.get(notesEntry).getId(), notesEntry);
+			update(googleDao, updateToGoogle.get(event).getId(), event);
 		}
 
 
@@ -105,14 +111,15 @@ public class SyncService {
 
 	static class BaseDocEqualsPredicate implements Predicate<CalendarEvent> {
 
-		private CalendarEvent baseDoc;
+		private final CalendarEvent baseDoc;
 
-		public BaseDocEqualsPredicate(CalendarEvent baseDoc) {
+		public BaseDocEqualsPredicate(final CalendarEvent baseDoc) {
 			Validate.notNull(baseDoc);
 			this.baseDoc = baseDoc;
 		}
 
-		public boolean evaluate(CalendarEvent object) {
+		@Override
+		public boolean evaluate(final CalendarEvent object) {
 
 			if (object.isAllDay() && baseDoc.isAllDay()) {
 				return object.getStartDateTime().get(Calendar.YEAR) == baseDoc.getStartDateTime().get(Calendar.YEAR) && //
@@ -136,10 +143,10 @@ public class SyncService {
 		 * @param doc
 		 * @return a condensed representation of the event
 		 */
-		public static String getComparisonString(CalendarEvent doc) {
-			DateFormat df = DateFormat.getDateTimeInstance();
+		public static String getComparisonString(final CalendarEvent doc) {
+			final DateFormat df = DateFormat.getDateTimeInstance();
 			return new StringBuilder()//
-					.append(doc.getApptype() == null ? null : doc.getApptype().getName())//
+					.append(doc.getEventType() == null ? null : doc.getEventType().getName())//
 					.append(": ")//
 					.append(doc.getStartDateTime() == null ? null : df.format(doc.getStartDateTime().getTime()))//
 					.append(" -> ")//
@@ -151,14 +158,15 @@ public class SyncService {
 
 	class BaseDocLastUpdatedAfterPredicate implements Predicate<CalendarEvent> {
 
-		private Calendar calendar;
+		private final Calendar calendar;
 
-		public BaseDocLastUpdatedAfterPredicate(Calendar calendar) {
+		public BaseDocLastUpdatedAfterPredicate(final Calendar calendar) {
 			Validate.notNull(calendar);
 			this.calendar = calendar;
 		}
 
-		public boolean evaluate(CalendarEvent object) {
+		@Override
+		public boolean evaluate(final CalendarEvent object) {
 			if (object.getLastUpdated() == null || object.getLastUpdated().after(calendar)) {
 				return true;
 			}
@@ -166,21 +174,21 @@ public class SyncService {
 		}
 	}
 
-	private void insert(GoogleCalendarDAO dao, CalendarEvent entry) {
+	private void insert(final GoogleCalendarDAO dao, final CalendarEvent entry) {
 		try {
 			dao.insert(entry);
-		} catch (SynchronisationException e) {
+		} catch (final SynchronisationException e) {
 			log.error("Error inserting entry");
 			log.error(entry);
 			e.printStackTrace();
 		}
 	}
 
-	private void delete(GoogleCalendarDAO dao, String id) {
+	private void delete(final GoogleCalendarDAO dao, final String id) {
 		dao.delete(id);
 	}
 
-	private void update(GoogleCalendarDAO dao, String id, CalendarEvent entry) {
+	private void update(final GoogleCalendarDAO dao, final String id, final CalendarEvent entry) {
 		dao.update(id, entry);
 	}
 }

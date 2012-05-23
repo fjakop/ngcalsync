@@ -4,31 +4,31 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.calendar.CalendarEvent.EventType;
+import de.jakop.ngcalsync.calendar.EventType;
 
 /**
  * Filters {@link CalendarEvent}s by {@link EventType}.
  * 
  * @author fjakop
  */
-public class AppointmentTypeFilter implements ICalendarEntryFilter {
+public class EventTypeFilter implements ICalendarEventFilter {
 
-	private final int[] acceptedAppointmentTypes;
+	private final int[] acceptedEventTypes;
 
 	/**
 	 * 
 	 * @param acceptedType
 	 */
-	public AppointmentTypeFilter(int... acceptedType) {
-		acceptedAppointmentTypes = acceptedType;
+	public EventTypeFilter(int... acceptedType) {
+		acceptedEventTypes = acceptedType;
 	}
 
 	public boolean accept(CalendarEvent calendarEntry) {
 		Validate.notNull(calendarEntry);
-		if (calendarEntry.getApptype() == null) {
+		if (calendarEntry.getEventType() == null) {
 			return false;
 		}
-		if (ArrayUtils.contains(acceptedAppointmentTypes, calendarEntry.getApptype().getIntegerValue())) {
+		if (ArrayUtils.contains(acceptedEventTypes, calendarEntry.getEventType().getIntegerValue())) {
 			return true;
 		}
 		return false;

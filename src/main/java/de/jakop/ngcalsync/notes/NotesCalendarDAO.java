@@ -25,8 +25,8 @@ import de.bea.domingo.util.GregorianDateTime;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.calendar.CalendarEvent.EventType;
-import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.calendar.EventType;
+import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 /**
  * Zugriff auf Notes-Kalendereinträge 
@@ -79,12 +79,12 @@ public class NotesCalendarDAO {
 	 * @param filters
 	 * @return alle Kalendereinträge
 	 */
-	public List<CalendarEvent> getEntries(final ICalendarEntryFilter[] filters) throws SynchronisationException {
+	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_LOTUS_NOTES_EVENTS, mailDb.getFilePath()));
 
 		Predicate<CalendarEvent> predicate = new Predicate<CalendarEvent>() {
 			public boolean evaluate(CalendarEvent baseDoc) {
-				for (ICalendarEntryFilter filter : filters) {
+				for (ICalendarEventFilter filter : filters) {
 					if (!filter.accept(baseDoc)) {
 						return false;
 					}
@@ -190,7 +190,7 @@ public class NotesCalendarDAO {
 			bd.setLastUpdated(doc.getLastModified());
 			String appointType = doc.getItemValueString(FIELDNAME_APPOINTMENT_TYPE);
 			int type = Integer.parseInt(StringUtils.trimToEmpty(appointType));
-			bd.setApptype(EventType.create(type));
+			bd.setEventType(EventType.create(type));
 
 			@SuppressWarnings("unchecked")
 			List<GregorianDateTime> currentStartDateTime = doc.getItemValue(FIELDNAME_START_DATE_TIME);

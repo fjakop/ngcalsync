@@ -7,8 +7,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jakop.ngcalsync.filter.AppointmentTypeFilter;
-import de.jakop.ngcalsync.filter.ICalendarEntryFilter;
+import de.jakop.ngcalsync.filter.EventTypeFilter;
+import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
@@ -44,10 +44,10 @@ public class StartApplication {
 		// Execute synchronization
 		final SyncService ss = new SyncService();
 
-		final ICalendarEntryFilter typeFilter = new AppointmentTypeFilter(settings.getSyncAppointmentTypes());
+		final ICalendarEventFilter typeFilter = new EventTypeFilter(settings.getSyncAppointmentTypes());
 		final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
 
-		final ICalendarEntryFilter[] filters = new ICalendarEntryFilter[] { typeFilter };
+		final ICalendarEventFilter[] filters = new ICalendarEventFilter[] { typeFilter };
 		final ICalendarEventObfuscator[] obfuscators = new ICalendarEventObfuscator[] { typeObfuscator };
 		ss.executeSync(new NotesCalendarDAO(new NotesClientOpenDatabaseStrategy(), settings.getDominoServer(), settings.getNotesCalendarDbFilePath(), settings.getSyncStartDate(),
 				settings.getSyncEndDate()), new GoogleCalendarDAO(settings), filters, obfuscators, settings);

@@ -33,7 +33,7 @@ import de.jakop.ngcalsync.oauth.PromptReceiver;
 /**
  * 
  * @author fjakop
- *
+ * 
  */
 public final class Settings {
 
@@ -370,7 +370,7 @@ public final class Settings {
 
 	/**
 	 * @return numeric values of Lotus Notes appointment types to sync
-	 * @see de.jakop.ngcalsync.calendar.CalendarEvent.EventType
+	 * @see de.jakop.ngcalsync.calendar.EventType
 	 */
 	public int[] getSyncAppointmentTypes() {
 
