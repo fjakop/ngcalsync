@@ -1,5 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<description>Synchronize anonymized Lotus Notes calendar events to your Google calendar</description>
+	<developers>
+		<developer>
+			<name>fjakop</name>
+		</developer>
+	</developers>
+	<inceptionYear>2012</inceptionYear>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/fjakop/ngcalsync/issues</url>
+	</issueManagement>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git://github.com/fjakop/ngcalsync.git</connection>
+		<developerConnection>scm:ssh:git@github.com:fjakop/ngcalsync.git</developerConnection>
+		<url>https://github.com/fjakop/ngcalsync</url>
+	</scm>
+	<url>https://github.com/fjakop/ngcalsync</url>
+
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
@@ -52,6 +77,76 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<check>
+<!-- 						<branchRate>85</branchRate> -->
+<!-- 						<lineRate>85</lineRate> -->
+						<haltOnFailure>true</haltOnFailure>
+						<totalBranchRate>40</totalBranchRate>
+						<totalLineRate>40</totalLineRate>
+<!-- 						<packageLineRate>85</packageLineRate> -->
+<!-- 						<packageBranchRate>85</packageBranchRate> -->
+						<!-- regexes>
+							<regex>
+								<pattern>com.example.reallyimportant.*</pattern>
+								<branchRate>90</branchRate>
+								<lineRate>80</lineRate>
+							</regex>
+							<regex>
+								<pattern>com.example.boringcode.*</pattern>
+								<branchRate>40</branchRate>
+								<lineRate>30</lineRate>
+							</regex>
+						</regexes-->
+					</check>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>2.4</version>
+							<configuration>
+								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.8</version>
+						</plugin>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>cobertura-maven-plugin</artifactId>
+							<version>2.5.1</version>
+							<configuration>
+								<formats>
+									<format>xml</format>
+									<format>html</format>
+								</formats>
+							</configuration>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -89,12 +184,6 @@
 		</dependency>
 
 		<!-- Notes Kram -->
-		<dependency>
-			<groupId>com.ibm.lotus</groupId>
-			<artifactId>notes</artifactId>
-			<version>8.5.2-FP3</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>de.bea</groupId>
 			<artifactId>domingo</artifactId>

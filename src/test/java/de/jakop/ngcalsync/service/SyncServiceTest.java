@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -199,6 +200,7 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
+	@Ignore
 	public void testExecuteSync_AddEventsToGoogle() throws Exception {
 		fail("Not implemented yet");
 	}
@@ -208,6 +210,7 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
+	@Ignore
 	public void testExecuteSync_UpdateEventsToGoogle() throws Exception {
 		fail("Not implemented yet");
 	}
@@ -217,6 +220,7 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
+	@Ignore
 	public void testExecuteSync_DeleteEventsFromGoogle() throws Exception {
 		fail("Not implemented yet");
 	}
@@ -226,6 +230,7 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
+	@Ignore
 	public void testExecuteSync_NoChanges() throws Exception {
 		fail("Not implemented yet");
 	}
