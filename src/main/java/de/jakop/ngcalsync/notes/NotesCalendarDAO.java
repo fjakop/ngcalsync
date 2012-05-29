@@ -67,7 +67,8 @@ public class NotesCalendarDAO {
 	 * @param endDateTime 
 	 * @param openDatabaseStrategy
 	 */
-	public NotesCalendarDAO(IOpenDatabaseStrategy openDatabaseStrategy, String dominoServer, String mailDatabase, Calendar startDateTime, Calendar endDateTime) {
+	public NotesCalendarDAO(final IOpenDatabaseStrategy openDatabaseStrategy, final String dominoServer, final String mailDatabase, final Calendar startDateTime,
+			final Calendar endDateTime) {
 		mailDb = openDatabaseStrategy.openDatabase(dominoServer, mailDatabase);
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
@@ -82,9 +83,10 @@ public class NotesCalendarDAO {
 	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_LOTUS_NOTES_EVENTS, mailDb.getFilePath()));
 
-		Predicate<CalendarEvent> predicate = new Predicate<CalendarEvent>() {
-			public boolean evaluate(CalendarEvent baseDoc) {
-				for (ICalendarEventFilter filter : filters) {
+		final Predicate<CalendarEvent> predicate = new Predicate<CalendarEvent>() {
+			@Override
+			public boolean evaluate(final CalendarEvent baseDoc) {
+				for (final ICalendarEventFilter filter : filters) {
 					if (!filter.accept(baseDoc)) {
 						return false;
 					}
@@ -93,10 +95,11 @@ public class NotesCalendarDAO {
 			}
 		};
 
-		List<CalendarEvent> selected = new ArrayList<CalendarEvent>(CollectionUtils.select(getCalendarEntries(), predicate));
+		final List<CalendarEvent> selected = new ArrayList<CalendarEvent>(CollectionUtils.select(getCalendarEntries(), predicate));
 
 		Collections.sort(selected, new Comparator<CalendarEvent>() {
-			public int compare(CalendarEvent o1, CalendarEvent o2) {
+			@Override
+			public int compare(final CalendarEvent o1, final CalendarEvent o2) {
 				if (o1.getStartDateTime().before(o2.getStartDateTime())) {
 					return -1;
 				}
@@ -111,17 +114,17 @@ public class NotesCalendarDAO {
 
 	private List<CalendarEvent> getCalendarEntries() {
 
-		Set<String> processedNotesDocuments = new HashSet<String>();
-		List<CalendarEvent> entries = new ArrayList<CalendarEvent>();
+		final Set<String> processedNotesDocuments = new HashSet<String>();
+		final List<CalendarEvent> entries = new ArrayList<CalendarEvent>();
 
-		DView calView = mailDb.getView(VIEWNAME_CALENDAR);
+		final DView calView = mailDb.getView(VIEWNAME_CALENDAR);
 
 		@SuppressWarnings("unchecked")
-		Iterator<DViewEntry> viewEntries = calView.getAllEntriesByKey(startDateTime, endDateTime, false);
+		final Iterator<DViewEntry> viewEntries = calView.getAllEntriesByKey(startDateTime, endDateTime, false);
 
 		while (viewEntries.hasNext()) {
-			DViewEntry viewEntry = viewEntries.next();
-			DDocument currentWorkDoc = viewEntry.getDocument();
+			final DViewEntry viewEntry = viewEntries.next();
+			final DDocument currentWorkDoc = viewEntry.getDocument();
 
 			// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
 			if (!processedNotesDocuments.contains(currentWorkDoc.getUniversalID())) {
@@ -132,7 +135,7 @@ public class NotesCalendarDAO {
 						continue;
 					}
 
-					Collection<CalendarEvent> convDocs = convDoc(currentWorkDoc);
+					final Collection<CalendarEvent> convDocs = convDoc(currentWorkDoc);
 					entries.addAll(convDocs);
 					processedNotesDocuments.add(currentWorkDoc.getUniversalID());
 				}
@@ -143,33 +146,33 @@ public class NotesCalendarDAO {
 	}
 
 
-	private Collection<CalendarEvent> convDoc(DDocument doc) {
+	private Collection<CalendarEvent> convDoc(final DDocument doc) {
 		if (doc.hasItem(FIELDNAME_REPEATS)) {
 			return inflateRecurringEvents(doc);
 		} else {
-			Collection<CalendarEvent> docs = new ArrayList<CalendarEvent>();
+			final Collection<CalendarEvent> docs = new ArrayList<CalendarEvent>();
 			docs.add(convSingleDoc(doc));
 			return docs;
 		}
 	}
 
-	private CalendarEvent convSingleDoc(DDocument doc) {
+	private CalendarEvent convSingleDoc(final DDocument doc) {
 
 		//		String generateXML = doc.generateXML();
 		//		log.debug(generateXML);
 
-		CalendarEvent bd = new CalendarEvent();
+		final CalendarEvent bd = new CalendarEvent();
 		try {
-			String subject = doc.getItemValueString(FIELDNAME_SUBJECT);
+			final String subject = doc.getItemValueString(FIELDNAME_SUBJECT);
 			bd.setTitle(StringUtils.trimToEmpty(subject));
-			String body = doc.getItemValueString(FIELDNAME_BODY);
+			final String body = doc.getItemValueString(FIELDNAME_BODY);
 			bd.setContent(StringUtils.trimToEmpty(body));
 
 			bd.setId(doc.getUniversalID());
 			String initloc = doc.getItemValueString(FIELDNAME_LOCATION);
-			initloc = (StringUtils.trimToEmpty(initloc));
+			initloc = StringUtils.trimToEmpty(initloc);
 			String room = doc.getItemValueString(FIELDNAME_ROOM);
-			room = (StringUtils.trimToEmpty(room));
+			room = StringUtils.trimToEmpty(room);
 
 			String loc = "";
 			if (initloc.length() != 0 && room.length() != 0) {
@@ -184,31 +187,31 @@ public class NotesCalendarDAO {
 			bd.setLocation(loc);
 
 			// "OrgConfidential" == 1 Private 
-			String markPrivate = doc.getItemValueString(FIELDNAME_PRIVATE);
+			final String markPrivate = doc.getItemValueString(FIELDNAME_PRIVATE);
 			bd.setPrivate(StringUtils.trimToEmpty(markPrivate).equals("1"));
 
 			bd.setLastUpdated(doc.getLastModified());
-			String appointType = doc.getItemValueString(FIELDNAME_APPOINTMENT_TYPE);
-			int type = Integer.parseInt(StringUtils.trimToEmpty(appointType));
+			final String appointType = doc.getItemValueString(FIELDNAME_APPOINTMENT_TYPE);
+			final int type = Integer.parseInt(StringUtils.trimToEmpty(appointType));
 			bd.setEventType(EventType.create(type));
 
 			@SuppressWarnings("unchecked")
-			List<GregorianDateTime> currentStartDateTime = doc.getItemValue(FIELDNAME_START_DATE_TIME);
-			GregorianDateTime sdt = currentStartDateTime.get(0);
+			final List<GregorianDateTime> currentStartDateTime = doc.getItemValue(FIELDNAME_START_DATE_TIME);
+			final GregorianDateTime sdt = currentStartDateTime.get(0);
 
 			@SuppressWarnings("unchecked")
-			List<GregorianDateTime> currentEndDateTime = doc.getItemValue(FIELDNAME_END_DATE_TIME);
-			GregorianDateTime edt = currentEndDateTime.get(0);
+			final List<GregorianDateTime> currentEndDateTime = doc.getItemValue(FIELDNAME_END_DATE_TIME);
+			final GregorianDateTime edt = currentEndDateTime.get(0);
 
-			Calendar newStartDateTime = Calendar.getInstance();
+			final Calendar newStartDateTime = Calendar.getInstance();
 			newStartDateTime.setTime(sdt.getTime());
 
-			Calendar newEndDateTime = Calendar.getInstance();
+			final Calendar newEndDateTime = Calendar.getInstance();
 			newEndDateTime.setTime(edt.getTime());
 
 			bd.setStartDateTime(newStartDateTime);
 			bd.setEndDateTime(newEndDateTime);
-		} catch (NotesServiceRuntimeException e) {
+		} catch (final NotesServiceRuntimeException e) {
 			log.error(bd.toString());
 			log.error(e.toString());
 			log.error("------------------------------------------------");
@@ -217,16 +220,16 @@ public class NotesCalendarDAO {
 		return bd;
 	}
 
-	private Collection<CalendarEvent> inflateRecurringEvents(DDocument doc) {
-		Collection<CalendarEvent> docs = new ArrayList<CalendarEvent>();
+	private Collection<CalendarEvent> inflateRecurringEvents(final DDocument doc) {
+		final Collection<CalendarEvent> docs = new ArrayList<CalendarEvent>();
 		@SuppressWarnings("unchecked")
-		List<GregorianDateTime> recurrenceItemValue = doc.getItemValue(FIELDNAME_CALENDAR_DATE_TIME);
-		for (GregorianDateTime entryStartDateTime : recurrenceItemValue) {
+		final List<GregorianDateTime> recurrenceItemValue = doc.getItemValue(FIELDNAME_CALENDAR_DATE_TIME);
+		for (final GregorianDateTime entryStartDateTime : recurrenceItemValue) {
 			if (entryStartDateTime.compareTo(startDateTime) >= 0 && entryStartDateTime.compareTo(endDateTime) <= 0) {
-				CalendarEvent event = convSingleDoc(doc);
-				int year = entryStartDateTime.getYear();
-				int month = entryStartDateTime.getMonth();
-				int day = entryStartDateTime.getDay();
+				final CalendarEvent event = convSingleDoc(doc);
+				final int year = entryStartDateTime.getYear();
+				final int month = entryStartDateTime.getMonth();
+				final int day = entryStartDateTime.getDay();
 				event.getStartDateTime().set(year, month, day);
 				event.getEndDateTime().set(year, month, day);
 

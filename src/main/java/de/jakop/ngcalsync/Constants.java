@@ -5,7 +5,7 @@ package de.jakop.ngcalsync;
  * @author fjakop
  *
  */
-public class Constants {
+public interface Constants {
 
 	/* messages */
 	/** */

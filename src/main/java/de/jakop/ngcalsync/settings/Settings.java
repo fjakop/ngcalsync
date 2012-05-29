@@ -1,11 +1,8 @@
 package de.jakop.ngcalsync.settings;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -176,15 +174,19 @@ public final class Settings {
 		// letzte Synchronisierung lesen
 		final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
 		syncLastDateTime = Calendar.getInstance();
+		syncLastDateTime.setTimeInMillis(0);
+
 		if (!file.exists()) {
-			syncLastDateTime.setTimeInMillis(0);
 			return;
 		}
-		final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		final String line = br.readLine();
-		if (line != null) {
-			syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
+
+		final String line = FileUtils.readFileToString(file);
+
+		if (StringUtils.isBlank(line)) {
+			return;
 		}
+
+		syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
 	}
 
 	/**
@@ -265,7 +267,7 @@ public final class Settings {
 		try {
 			periodType = parsePeriodType(start);
 			period = parsePeriod(start);
-		} catch (final FormatException e) {
+		} catch (final ParseException e) {
 			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, start), e);
 		}
 
@@ -288,7 +290,7 @@ public final class Settings {
 		try {
 			periodType = parsePeriodType(end);
 			period = parsePeriod(end);
-		} catch (final FormatException e) {
+		} catch (final ParseException e) {
 			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, end), e);
 		}
 
@@ -308,19 +310,17 @@ public final class Settings {
 	/**
 	 * @param syncLastDateTime last sync start time
 	 */
-	public void setSyncLastDateTime(final Calendar syncLastDateTime) {
+	public void setLastSyncDateTime(final Calendar syncLastDateTime) {
 		this.syncLastDateTime = syncLastDateTime;
 	}
 
 	/**
-	 * Save user settings to file.
+	 * Save last sync time to file.
 	 */
-	public void save() {
+	public void saveLastSyncDateTime() {
 		try {
 			final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
-			final FileWriter fw = new FileWriter(file);
-			fw.write(System.currentTimeMillis() + "\n");
-			fw.close();
+			FileUtils.writeStringToFile(file, String.format("%s%n", Long.valueOf(syncLastDateTime.getTimeInMillis())));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -431,25 +431,18 @@ public final class Settings {
 		return calendarService;
 	}
 
-	private int parsePeriod(final String start) throws FormatException {
-		try {
-			return Integer.parseInt(start.substring(0, start.length() - 1));
-		} catch (final Exception e) {
-			throw new FormatException();
-		}
+	private int parsePeriod(final String start) throws NumberFormatException {
+		return Integer.parseInt(start.substring(0, start.length() - 1));
 	}
 
-	private int parsePeriodType(final String start) throws FormatException {
+	private int parsePeriodType(final String start) throws ParseException {
 		if (start.endsWith("d")) {
 			return Calendar.DAY_OF_YEAR;
 		} else if (start.endsWith("m")) {
 			return Calendar.MONTH;
 		}
-		throw new FormatException();
-	}
-
-	private class FormatException extends Exception {
-		private static final long serialVersionUID = 2485854390296466112L;
+		// TODO i18n
+		throw new ParseException("Unparseable period type, valid values are 'd' (day) or 'm' (month)", start.length() - 1);
 	}
 
 }

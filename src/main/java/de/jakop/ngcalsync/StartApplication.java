@@ -53,8 +53,8 @@ public class StartApplication {
 				settings.getSyncEndDate()), new GoogleCalendarDAO(settings), filters, obfuscators, settings);
 
 		// Update Last Sync Execution Date & Time
-		settings.setSyncLastDateTime(Calendar.getInstance());
-		settings.save();
+		settings.setLastSyncDateTime(Calendar.getInstance());
+		settings.saveLastSyncDateTime();
 
 		log.info(Constants.MSG_SYNC_ENDED);
 

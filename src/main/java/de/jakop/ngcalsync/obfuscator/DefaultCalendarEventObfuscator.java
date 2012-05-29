@@ -1,5 +1,7 @@
 package de.jakop.ngcalsync.obfuscator;
 
+import org.apache.commons.lang.Validate;
+
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.settings.PrivacySettings;
 
@@ -17,6 +19,7 @@ public class DefaultCalendarEventObfuscator implements ICalendarEventObfuscator 
 	 * @param privacySettings
 	 */
 	public DefaultCalendarEventObfuscator(final PrivacySettings privacySettings) {
+		Validate.notNull(privacySettings);
 		this.privacySettings = privacySettings;
 	}
 

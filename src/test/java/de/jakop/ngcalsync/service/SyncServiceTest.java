@@ -176,7 +176,7 @@ public class SyncServiceTest {
 		final Calendar lastSyncTime = now;
 		lastSyncTime.setTimeInMillis(1000000000);
 		event2.setLastUpdated(lastSyncTime);
-		settings.setSyncLastDateTime(lastSyncTime);
+		settings.setLastSyncDateTime(lastSyncTime);
 
 		final List<CalendarEvent> events = Arrays.asList(event1, event2);
 
