@@ -52,9 +52,10 @@ public class SyncService {
 		// schedule Events existing in Google but not in Notes for removal
 		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
 		for (final CalendarEvent baseDoc : googleEntries) {
-			if (CollectionUtils.select(notesEntries, new BaseDocEqualsPredicate(baseDoc)).isEmpty()) {
+			if (CollectionUtils.select(notesEntries, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
 				removeFromGoogle.add(baseDoc);
-				log.debug(String.format("Scheduling for removal: %s", BaseDocEqualsPredicate.getComparisonString(baseDoc)));
+				// TODO i18n
+				log.debug(String.format("Scheduling for removal: %s", CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
 			}
 		}
 
@@ -62,21 +63,25 @@ public class SyncService {
 		final List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
 		final Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
 		for (final CalendarEvent notesEntry : notesEntries) {
-			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new BaseDocEqualsPredicate(notesEntry));
+			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEntry));
 			if (matchingEntries.isEmpty()) {
 				addToGoogle.add(notesEntry);
-				log.debug(String.format("Scheduling for addition: %s", BaseDocEqualsPredicate.getComparisonString(notesEntry)));
+				// TODO i18n
+				log.debug(String.format("Scheduling for addition: %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
 			} else {
 				if (matchingEntries.size() > 1) {
+					// TODO i18n
 					throw new SynchronisationException(String.format("Duplicate match (%s) for %s", new Integer(matchingEntries.size()), notesEntry));
 				}
 				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
 				// check modification and update eventually
 				if (notesEntry.getLastUpdated().after(settings.getSyncLastDateTime())) {
 					updateToGoogle.put(notesEntry, matchingEntry);
-					log.debug(String.format("Scheduling for update: %s", BaseDocEqualsPredicate.getComparisonString(notesEntry)));
+					// TODO i18n
+					log.debug(String.format("Scheduling for update: %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
 				} else {
-					log.debug(String.format("No update scheduled (not modified): %s", BaseDocEqualsPredicate.getComparisonString(notesEntry)));
+					// TODO i18n
+					log.debug(String.format("No update scheduled (not modified): %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
 				}
 			}
 		}
@@ -109,32 +114,32 @@ public class SyncService {
 
 	}
 
-	static class BaseDocEqualsPredicate implements Predicate<CalendarEvent> {
+	static class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
 
-		private final CalendarEvent baseDoc;
+		private final CalendarEvent event;
 
-		public BaseDocEqualsPredicate(final CalendarEvent baseDoc) {
+		public CalendarEventEqualsPredicate(final CalendarEvent baseDoc) {
 			Validate.notNull(baseDoc);
-			this.baseDoc = baseDoc;
+			this.event = baseDoc;
 		}
 
 		@Override
 		public boolean evaluate(final CalendarEvent object) {
 
-			if (object.isAllDay() && baseDoc.isAllDay()) {
-				return object.getStartDateTime().get(Calendar.YEAR) == baseDoc.getStartDateTime().get(Calendar.YEAR) && //
-						object.getStartDateTime().get(Calendar.MONTH) == baseDoc.getStartDateTime().get(Calendar.MONTH) && //
-						object.getStartDateTime().get(Calendar.DAY_OF_YEAR) == baseDoc.getStartDateTime().get(Calendar.DAY_OF_YEAR);
+			if (object.isAllDay() && event.isAllDay()) {
+				return object.getStartDateTime().get(Calendar.YEAR) == event.getStartDateTime().get(Calendar.YEAR) && //
+						object.getStartDateTime().get(Calendar.MONTH) == event.getStartDateTime().get(Calendar.MONTH) && //
+						object.getStartDateTime().get(Calendar.DAY_OF_YEAR) == event.getStartDateTime().get(Calendar.DAY_OF_YEAR);
 			}
-			if (object.getStartDateTime() == null || baseDoc.getStartDateTime() == null) {
+			if (object.getStartDateTime() == null || event.getStartDateTime() == null) {
 				return false;
 			}
-			if (object.getEndDateTime() == null || baseDoc.getEndDateTime() == null) {
+			if (object.getEndDateTime() == null || event.getEndDateTime() == null) {
 				return false;
 			}
 
-			return baseDoc.getStartDateTime().equals(object.getStartDateTime()) && //
-					baseDoc.getEndDateTime().equals(object.getEndDateTime());
+			return event.getStartDateTime().equals(object.getStartDateTime()) && //
+					event.getEndDateTime().equals(object.getEndDateTime());
 
 		}
 
@@ -156,11 +161,11 @@ public class SyncService {
 
 	}
 
-	class BaseDocLastUpdatedAfterPredicate implements Predicate<CalendarEvent> {
+	class CalendarEventLastUpdatedAfterPredicate implements Predicate<CalendarEvent> {
 
 		private final Calendar calendar;
 
-		public BaseDocLastUpdatedAfterPredicate(final Calendar calendar) {
+		public CalendarEventLastUpdatedAfterPredicate(final Calendar calendar) {
 			Validate.notNull(calendar);
 			this.calendar = calendar;
 		}

@@ -14,7 +14,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -32,6 +34,10 @@ import de.jakop.ngcalsync.settings.Settings;
  *
  */
 public class SyncServiceTest {
+
+	/** expected exception */
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Mock
 	private NotesCalendarDAO notesDAO;
@@ -54,8 +60,9 @@ public class SyncServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testExecuteSync_NotesDAOIsNull_NotAllowed() throws Exception {
+		thrown.expect(IllegalArgumentException.class);
 		new SyncService().executeSync(null, null, null, null, null);
 	}
 
@@ -63,8 +70,9 @@ public class SyncServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testExecuteSync_GoogleDAOIsNull_NotAllowed() throws Exception {
+		thrown.expect(IllegalArgumentException.class);
 		new SyncService().executeSync(notesDAO, null, null, null, null);
 	}
 
@@ -72,8 +80,9 @@ public class SyncServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testExecuteSync_SettingsIsNull_NotAllowed() throws Exception {
+		thrown.expect(IllegalArgumentException.class);
 		new SyncService().executeSync(notesDAO, googleDAO, null, null, null);
 	}
 
@@ -125,7 +134,7 @@ public class SyncServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = SynchronisationException.class)
+	@Test
 	public void testExecuteSync_DuplicateEventsMatch_NotAllowed() throws Exception {
 
 		final CalendarEvent event1 = new CalendarEvent();
@@ -142,6 +151,7 @@ public class SyncServiceTest {
 		doReturn(events).when(notesDAO).getEntries(null);
 		doReturn(events).when(googleDAO).getEntries(null);
 
+		thrown.expect(SynchronisationException.class);
 		new SyncService().executeSync(notesDAO, googleDAO, null, null, settings);
 
 		verifyNoMoreInteractions(notesDAO);

@@ -4,7 +4,7 @@ package de.jakop.ngcalsync.calendar;
  * Types of Events
  * 
  * @author fjakop
- *
+ * TODO i18n
  */
 public enum EventType {
 	/**  */
@@ -47,7 +47,7 @@ public enum EventType {
 	 * @return the created {@link EventType}
 	 * @throws IllegalArgumentException for invalid integer value
 	 */
-	public static EventType create(int type) {
+	public static EventType create(final int type) {
 		switch (type) {
 			case 0:
 				return EventType.NORMAL_EVENT;

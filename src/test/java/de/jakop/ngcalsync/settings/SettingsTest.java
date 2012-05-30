@@ -22,7 +22,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -37,6 +39,10 @@ import de.jakop.ngcalsync.IExitStrategy;
  *
  */
 public class SettingsTest {
+
+	/** expected exception */
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Mock
 	private ISettingsFileAccessor settingsFileAccessor;
@@ -182,7 +188,7 @@ public class SettingsTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void testLoad_UnparseableStartPeriodLength_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
@@ -195,6 +201,8 @@ public class SettingsTest {
 		// #2 for testing (without exit check)
 		final Settings settings = loadSettings(false);
 
+		thrown.expect(ConfigurationException.class);
+		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
 		settings.getSyncStartDate();
 
 	}
@@ -203,7 +211,7 @@ public class SettingsTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void testLoad_UnparseableEndPeriodLength_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
@@ -216,6 +224,8 @@ public class SettingsTest {
 		// #2 for testing (without exit check)
 		final Settings settings = loadSettings(false);
 
+		thrown.expect(ConfigurationException.class);
+		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
 		settings.getSyncEndDate();
 
 	}
@@ -224,7 +234,7 @@ public class SettingsTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = ConfigurationException.class)
+	@Test
 	public void testLoad_UnparseableStartPeriodType_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
@@ -237,6 +247,8 @@ public class SettingsTest {
 		// #2 for testing (without exit check)
 		final Settings settings = loadSettings(false);
 
+		thrown.expect(ConfigurationException.class);
+		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
 		settings.getSyncStartDate();
 
 	}
@@ -245,7 +257,7 @@ public class SettingsTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = ConfigurationException.class)
+	@Test
 	public void testLoad_UnparseableEndPeriodType_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
@@ -258,11 +270,11 @@ public class SettingsTest {
 		// #2 for testing (without exit check)
 		final Settings settings = loadSettings(false);
 
+		thrown.expect(ConfigurationException.class);
+		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
 		settings.getSyncEndDate();
 
 	}
-
-
 
 	/**
 	 * 

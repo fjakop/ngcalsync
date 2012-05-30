@@ -5,7 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -18,6 +20,10 @@ import de.jakop.ngcalsync.calendar.EventType;
  *
  */
 public class EventTypeFilterTest {
+
+	/** expected exception */
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Mock
 	private CalendarEvent event;
@@ -36,10 +42,12 @@ public class EventTypeFilterTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAccept_NullEvent_NotAllowed() throws Exception {
 		filter = new EventTypeFilter();
-		assertFalse(filter.accept(null));
+
+		thrown.expect(IllegalArgumentException.class);
+		filter.accept(null);
 	}
 
 	/**

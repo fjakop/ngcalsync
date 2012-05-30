@@ -5,7 +5,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
@@ -18,12 +20,17 @@ import de.jakop.ngcalsync.settings.PrivacySettings;
  */
 public class DefaultCalendarEventObfuscatorTest {
 
+	/** expected exception */
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
 	/**
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testConstructor_NullPrivacySettings_ThrowsException() throws Exception {
+		thrown.expect(IllegalArgumentException.class);
 		new DefaultCalendarEventObfuscator(null);
 	}
 

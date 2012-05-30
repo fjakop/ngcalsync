@@ -262,17 +262,10 @@ public final class Settings {
 	public Calendar getSyncStartDate() throws ConfigurationException {
 
 		final String start = getString(Parameter.SYNC_START);
-		int periodType;
-		int period;
-		try {
-			periodType = parsePeriodType(start);
-			period = parsePeriod(start);
-		} catch (final ParseException e) {
-			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, start), e);
-		}
+		final DateShift dateShift = parseDateShift(start);
 
 		final Calendar sdt = Calendar.getInstance();
-		sdt.add(periodType, -period);
+		sdt.add(dateShift.periodType, -dateShift.periodLength);
 
 		return sdt;
 	}
@@ -285,17 +278,10 @@ public final class Settings {
 	public Calendar getSyncEndDate() throws ConfigurationException {
 
 		final String end = getString(Parameter.SYNC_END);
-		int periodType;
-		int period;
-		try {
-			periodType = parsePeriodType(end);
-			period = parsePeriod(end);
-		} catch (final ParseException e) {
-			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, end), e);
-		}
+		final DateShift dateShift = parseDateShift(end);
 
 		final Calendar edt = Calendar.getInstance();
-		edt.add(periodType, period);
+		edt.add(dateShift.periodType, dateShift.periodLength);
 
 		return edt;
 	}
@@ -431,6 +417,20 @@ public final class Settings {
 		return calendarService;
 	}
 
+	private DateShift parseDateShift(final String shiftExpression) throws ConfigurationException {
+		final DateShift dateShift = new DateShift();
+		try {
+			dateShift.periodType = parsePeriodType(shiftExpression);
+			dateShift.periodLength = parsePeriod(shiftExpression);
+		} catch (final ParseException e) {
+			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, shiftExpression), e);
+		} catch (final NumberFormatException e) {
+			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, shiftExpression), e);
+		}
+		return dateShift;
+	}
+
+
 	private int parsePeriod(final String start) throws NumberFormatException {
 		return Integer.parseInt(start.substring(0, start.length() - 1));
 	}
@@ -445,4 +445,8 @@ public final class Settings {
 		throw new ParseException("Unparseable period type, valid values are 'd' (day) or 'm' (month)", start.length() - 1);
 	}
 
+	private final class DateShift {
+		int periodType;
+		int periodLength;
+	}
 }

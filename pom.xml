@@ -86,8 +86,8 @@
 <!-- 						<branchRate>85</branchRate> -->
 <!-- 						<lineRate>85</lineRate> -->
 						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>40</totalBranchRate>
-						<totalLineRate>40</totalLineRate>
+						<totalBranchRate>60</totalBranchRate>
+						<totalLineRate>55</totalLineRate>
 <!-- 						<packageLineRate>85</packageLineRate> -->
 <!-- 						<packageBranchRate>85</packageBranchRate> -->
 						<!-- regexes>
