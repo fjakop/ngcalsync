@@ -99,7 +99,7 @@ public class SyncServiceTest {
 		new SyncService().executeSync(notesDAO, googleDAO, filters, null, settings);
 
 		verify(notesDAO, times(1)).getEntries(filters);
-		verify(googleDAO, times(1)).getEntries(filters);
+		verify(googleDAO, times(1)).getEvents(filters);
 	}
 
 	/**
@@ -116,12 +116,12 @@ public class SyncServiceTest {
 		final List<CalendarEvent> events = Arrays.asList(event1, event2);
 
 		doReturn(events).when(notesDAO).getEntries(null);
-		doReturn(new ArrayList<CalendarEvent>()).when(googleDAO).getEntries(null);
+		doReturn(new ArrayList<CalendarEvent>()).when(googleDAO).getEvents(null);
 
 		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] { obfuscator1, obfuscator2 }, settings);
 
 		verify(notesDAO, times(1)).getEntries(null);
-		verify(googleDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
 
 		verify(obfuscator1, times(1)).obfuscate(event1);
 		verify(obfuscator1, times(1)).obfuscate(event2);
@@ -149,7 +149,7 @@ public class SyncServiceTest {
 		final List<CalendarEvent> events = Arrays.asList(event1, event2);
 
 		doReturn(events).when(notesDAO).getEntries(null);
-		doReturn(events).when(googleDAO).getEntries(null);
+		doReturn(events).when(googleDAO).getEvents(null);
 
 		thrown.expect(SynchronisationException.class);
 		new SyncService().executeSync(notesDAO, googleDAO, null, null, settings);
@@ -191,12 +191,12 @@ public class SyncServiceTest {
 		final List<CalendarEvent> events = Arrays.asList(event1, event2);
 
 		doReturn(events).when(notesDAO).getEntries(null);
-		doReturn(events).when(googleDAO).getEntries(null);
+		doReturn(events).when(googleDAO).getEvents(null);
 
 		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] { obfuscator1, obfuscator2 }, settings);
 
 		verify(notesDAO, times(1)).getEntries(null);
-		verify(googleDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
 
 		verify(obfuscator1, times(1)).obfuscate(event1);
 		verify(obfuscator1, times(0)).obfuscate(event2);

@@ -40,7 +40,7 @@ public class GoogleCalendarDAO {
 
 	private final com.google.api.services.calendar.Calendar service;
 
-	private Settings settings;
+	private final Settings settings;
 
 	private com.google.api.services.calendar.model.Calendar calendar;
 
@@ -51,7 +51,7 @@ public class GoogleCalendarDAO {
 	 * 
 	 * @param settings
 	 */
-	public GoogleCalendarDAO(Settings settings) {
+	public GoogleCalendarDAO(final Settings settings) {
 		this.settings = settings;
 		service = settings.getGoogleCalendarService();
 	}
@@ -60,23 +60,23 @@ public class GoogleCalendarDAO {
 	/**
 	 * Fügt einen Kalendereintrag ein.
 	 * 
-	 * @param entry
+	 * @param event
 	 * @return die Id des eingefügten Kalendereintrags
 	 */
-	public String insert(CalendarEvent entry) {
-		log.debug(String.format("executing insert: %s", entry.getTitle()));
+	public String insert(final CalendarEvent event) {
+		log.debug(String.format("executing insert: %s", event.getTitle()));
 
-		Event myEntry = new Event();
-		updateCalendarEntryData(entry, myEntry);
+		final Event myEvent = new Event();
+		updateCalendarEventData(event, myEvent);
 
-		Event insertedEntry;
+		Event insertedEvent;
 		try {
-			Insert insert = settings.getGoogleCalendarService().events().insert(getCalendar().getId(), myEntry);
-			insertedEntry = insert.execute();
+			final Insert insert = settings.getGoogleCalendarService().events().insert(getCalendar().getId(), myEvent);
+			insertedEvent = insert.execute();
 
-			String id = insertedEntry.getId();
+			final String id = insertedEvent.getId();
 			return id;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new SynchronisationException(e);
 		}
 	}
@@ -84,16 +84,16 @@ public class GoogleCalendarDAO {
 	/**
 	 * Ändert einen Kalendereintrag.
 	 * @param id 
-	 * @param entry
+	 * @param event
 	 */
-	public void update(String id, CalendarEvent entry) {
-		log.debug(String.format("executing update: %s", entry.getTitle()));
+	public void update(final String id, final CalendarEvent event) {
+		log.debug(String.format("executing update: %s", event.getTitle()));
 
 		try {
-			Event event = service.events().get(getCalendar().getId(), id).execute();
-			updateCalendarEntryData(entry, event);
-			service.events().update(getCalendar().getId(), id, event).execute();
-		} catch (IOException e) {
+			final Event myEvent = service.events().get(getCalendar().getId(), id).execute();
+			updateCalendarEventData(event, myEvent);
+			service.events().update(getCalendar().getId(), id, myEvent).execute();
+		} catch (final IOException e) {
 			throw new SynchronisationException(e);
 		}
 	}
@@ -103,12 +103,12 @@ public class GoogleCalendarDAO {
 	 * 
 	 * @param id
 	 */
-	public void delete(String id) {
+	public void delete(final String id) {
 		log.debug(String.format("executing delete: %s", id));
 
 		try {
 			service.events().delete(getCalendar().getId(), id).execute();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new SynchronisationException(e);
 		}
 
@@ -120,22 +120,22 @@ public class GoogleCalendarDAO {
 	 * @param filters
 	 * @return alle Kalendereinträge
 	 */
-	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
+	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
 
-		List<CalendarEvent> entries = new ArrayList<CalendarEvent>();
+		final List<CalendarEvent> events = new ArrayList<CalendarEvent>();
 		try {
 
-			Calendar sdt = settings.getSyncStartDate();
-			Calendar edt = settings.getSyncEndDate();
+			final Calendar sdt = settings.getSyncStartDate();
+			final Calendar edt = settings.getSyncEndDate();
 
 			// datetimes are in RFC3339-format
-			String startDateTime = new DateTime(sdt.getTime(), sdt.getTimeZone()).toStringRfc3339();
-			String endDateTime = new DateTime(edt.getTime(), edt.getTimeZone()).toStringRfc3339();
+			final String startDateTime = new DateTime(sdt.getTime(), sdt.getTimeZone()).toStringRfc3339();
+			final String endDateTime = new DateTime(edt.getTime(), edt.getTimeZone()).toStringRfc3339();
 
 			//			myQuery.setStringCustomParameter("sortorder", "ascending");
 
-			Events events = service.events().list(getCalendar().getId())//
+			final Events googleEvents = service.events().list(getCalendar().getId())//
 					.setTimeMin(startDateTime).setTimeMax(endDateTime)//
 					.setMaxResults(new Integer(65535))//
 					.setOrderBy("starttime")//
@@ -144,17 +144,17 @@ public class GoogleCalendarDAO {
 					.execute();
 
 			// if no entry is present in the Google calendar, the list is null
-			if (events.getItems() == null) {
+			if (googleEvents.getItems() == null) {
 				return new ArrayList<CalendarEvent>();
 			}
-			for (Event entry : events.getItems()) {
-				entries.add(convEntry(entry));
+			for (final Event googleEvent : googleEvents.getItems()) {
+				events.add(convGoogleEvent(googleEvent));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new SynchronisationException(e);
 		}
 
-		return entries;
+		return events;
 
 	}
 
@@ -165,17 +165,17 @@ public class GoogleCalendarDAO {
 	 */
 	private com.google.api.services.calendar.model.Calendar getCalendar() {
 		if (calendar == null) {
-			com.google.api.services.calendar.Calendar myService = settings.getGoogleCalendarService();
+			final com.google.api.services.calendar.Calendar myService = settings.getGoogleCalendarService();
 			try {
-				CalendarList list = myService.calendarList().list().execute();
-				for (CalendarListEntry entry : list.getItems()) {
+				final CalendarList list = myService.calendarList().list().execute();
+				for (final CalendarListEntry entry : list.getItems()) {
 					if (settings.getGoogleCalendarName().equals(entry.getSummary())) {
-						String id = entry.getId();
+						final String id = entry.getId();
 						calendar = myService.calendars().get(id).execute();
 						break;
 					}
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 
@@ -187,19 +187,19 @@ public class GoogleCalendarDAO {
 		return calendar;
 	}
 
-	private void updateCalendarEntryData(CalendarEvent bd, Event myEntry) {
-		myEntry.setSummary(bd.getTitle());
-		myEntry.setDescription(bd.getContent());
+	private void updateCalendarEventData(final CalendarEvent event, final Event googleEvent) {
+		googleEvent.setSummary(event.getTitle());
+		googleEvent.setDescription(event.getContent());
 
-		Calendar sdt = bd.getStartDateTime();
-		EventDateTime startTime = new EventDateTime();
+		final Calendar sdt = event.getStartDateTime();
+		final EventDateTime startTime = new EventDateTime();
 		startTime.setDateTime(new DateTime(sdt.getTime(), sdt.getTimeZone()));
 
-		Calendar edt = bd.getEndDateTime();
-		EventDateTime endTime = new EventDateTime();
+		final Calendar edt = event.getEndDateTime();
+		final EventDateTime endTime = new EventDateTime();
 		endTime.setDateTime(new DateTime(edt.getTime(), edt.getTimeZone()));
 
-		if (bd.isAllDay()) {
+		if (event.isAllDay()) {
 
 			edt.setTimeInMillis(sdt.getTimeInMillis());
 			edt.add(Calendar.DAY_OF_YEAR, 1);
@@ -211,64 +211,63 @@ public class GoogleCalendarDAO {
 			endTime.setDateTime(null);
 		}
 
-		myEntry.setStart(startTime);
-		myEntry.setEnd(endTime);
+		googleEvent.setStart(startTime);
+		googleEvent.setEnd(endTime);
 
-		myEntry.setLocation(bd.getLocation());
+		googleEvent.setLocation(event.getLocation());
 
-		Reminders reminders = new Reminders();
-		EventReminder eventReminder = new EventReminder();
+		final Reminders reminders = new Reminders();
+		final EventReminder eventReminder = new EventReminder();
 		eventReminder.setMinutes(new Integer(settings.getReminderMinutes()));
 		eventReminder.setMethod("popup");
 		reminders.setOverrides(Arrays.asList(eventReminder));
 		reminders.setUseDefault(Boolean.FALSE);
-		myEntry.setReminders(reminders);
+		googleEvent.setReminders(reminders);
 
 	}
 
-	private CalendarEvent convEntry(Event entry) throws ParseException {
+	private CalendarEvent convGoogleEvent(final Event googleEvent) throws ParseException {
 
-		CalendarEvent bd = new CalendarEvent();
-		bd.setTitle(entry.getSummary());
-		bd.setContent(entry.getDescription());
-		bd.setId(entry.getId());
+		final CalendarEvent myEvent = new CalendarEvent();
+		myEvent.setTitle(googleEvent.getSummary());
+		myEvent.setContent(googleEvent.getDescription());
+		myEvent.setId(googleEvent.getId());
 
-		bd.setLocation(entry.getLocation());
-		Calendar u = Calendar.getInstance();
-		u.setTimeInMillis(entry.getUpdated().getValue());
-		// u.setTimeZone(value)(value)()(entry.getUpdated().getValue());
-		bd.setLastUpdated(u);
+		myEvent.setLocation(googleEvent.getLocation());
+		final Calendar u = Calendar.getInstance();
+		u.setTimeInMillis(googleEvent.getUpdated().getValue());
+		myEvent.setLastUpdated(u);
 
 		// Visibility visibility = entry.getVisibility();
 
 		DateTime sdt = null;
 		DateTime edt = null;
-		if (entry.getStart().getDateTime() == null) {
+		if (googleEvent.getStart().getDateTime() == null) {
 			// all day event - no DateTime, only Date present
-			bd.setEventType(EventType.ALL_DAY_EVENT);
-			sdt = new DateTime(dateFormatDateOnly.parse(entry.getStart().getDate()));
-			edt = new DateTime(dateFormatDateOnly.parse(entry.getEnd().getDate()));
+			myEvent.setEventType(EventType.ALL_DAY_EVENT);
+			sdt = new DateTime(dateFormatDateOnly.parse(googleEvent.getStart().getDate()));
+			edt = new DateTime(dateFormatDateOnly.parse(googleEvent.getEnd().getDate()));
 		} else {
 			// "timed" event - DateTime present
-			sdt = entry.getStart().getDateTime();
-			edt = entry.getEnd().getDateTime();
+			sdt = googleEvent.getStart().getDateTime();
+			edt = googleEvent.getEnd().getDateTime();
 
 			if (sdt.getValue() == edt.getValue()) {
-				bd.setEventType(EventType.REMINDER);
+				myEvent.setEventType(EventType.REMINDER);
 			} else {
-				bd.setEventType(EventType.NORMAL_EVENT);
+				myEvent.setEventType(EventType.NORMAL_EVENT);
 			}
 		}
 
-		Calendar sdtCalendar = Calendar.getInstance();
+		final Calendar sdtCalendar = Calendar.getInstance();
 		sdtCalendar.setTimeInMillis(sdt.getValue());
-		bd.setStartDateTime(sdtCalendar);
+		myEvent.setStartDateTime(sdtCalendar);
 
-		Calendar edtCalendar = Calendar.getInstance();
+		final Calendar edtCalendar = Calendar.getInstance();
 		edtCalendar.setTimeInMillis(edt.getValue());
-		bd.setEndDateTime(edtCalendar);
+		myEvent.setEndDateTime(edtCalendar);
 
-		return bd;
+		return myEvent;
 	}
 
 }

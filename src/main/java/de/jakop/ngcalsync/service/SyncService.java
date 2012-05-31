@@ -47,7 +47,7 @@ public class SyncService {
 		Validate.notNull(settings);
 
 		final Collection<CalendarEvent> notesEntries = notesDao.getEntries(filters);
-		final Collection<CalendarEvent> googleEntries = googleDao.getEntries(filters);
+		final Collection<CalendarEvent> googleEntries = googleDao.getEvents(filters);
 
 		// schedule Events existing in Google but not in Notes for removal
 		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
