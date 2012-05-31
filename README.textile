@@ -22,7 +22,9 @@ This means, it will erase all events in your configured Google calendar which ar
 
 h2. First start
 
-p. Just run the application. It will create a folder __.ngcalsync__ in your home directory, create all necessary files with default values, prompt a message and exit. Now you can edit the created file __sync.properties__ according to your needs.
+p. First edit __sync.bat__ and set your Lotus Notes installation directory.
+
+p. Now just run the application. It will create a folder __.ngcalsync__ in your home directory, create all necessary files with default values, prompt a message and exit. Now you can edit the created file __sync.properties__ according to your needs.
 
 p. All configuration is done in __.ngcalsync/sync.properties__, which is read at program startup. This file is well-documented.
 
