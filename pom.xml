@@ -9,8 +9,8 @@
 	</developers>
 	<inceptionYear>2012</inceptionYear>
 	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/fjakop/ngcalsync/issues</url>
+		<system>SourceForge Issues</system>
+		<url>https://sourceforge.net/p/ngcalsync/tickets/</url>
 	</issueManagement>
 	<licenses>
 		<license>
@@ -19,11 +19,11 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git://github.com/fjakop/ngcalsync.git</connection>
-		<developerConnection>scm:ssh:git@github.com:fjakop/ngcalsync.git</developerConnection>
-		<url>https://github.com/fjakop/ngcalsync</url>
+		<connection>scm:git:git://git.code.sf.net/p/ngcalsync/code</connection>
+		<developerConnection>scm:ssh://fjakop@git.code.sf.net/p/ngcalsync/code</developerConnection>
+		<url>https://sourceforge.net/projects/ngcalsync/</url>
 	</scm>
-	<url>https://github.com/fjakop/ngcalsync</url>
+	<url>https://sourceforge.net/projects/ngcalsync/</url>
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
@@ -86,8 +86,8 @@
 <!-- 						<branchRate>85</branchRate> -->
 <!-- 						<lineRate>85</lineRate> -->
 						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>60</totalBranchRate>
-						<totalLineRate>55</totalLineRate>
+						<totalBranchRate>52</totalBranchRate>
+						<totalLineRate>50</totalLineRate>
 <!-- 						<packageLineRate>85</packageLineRate> -->
 <!-- 						<packageBranchRate>85</packageBranchRate> -->
 						<!-- regexes>
