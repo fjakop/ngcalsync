@@ -1,5 +1,7 @@
 package de.jakop.ngcalsync.oauth;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
@@ -14,13 +16,33 @@ import de.jakop.ngcalsync.Constants;
  */
 public class PromptReceiver implements VerificationCodeReceiver {
 
+	private final InputStream in;
+	private final PrintStream out;
+
+	/**
+	 * 
+	 */
+	public PromptReceiver() {
+		in = System.in;
+		out = System.out;
+	}
+
+	/**
+	 * 
+	 * @param in
+	 * @param out
+	 */
+	public PromptReceiver(final InputStream in, final PrintStream out) {
+		this.in = in;
+		this.out = out;
+	}
 
 	@Override
 	public String waitForCode() {
 		String code;
 		do {
-			System.out.print(Constants.MSG_ENTER_CODE);
-			code = new Scanner(System.in).nextLine();
+			out.print(Constants.MSG_ENTER_CODE);
+			code = new Scanner(in).nextLine();
 		} while (code.isEmpty());
 		return code;
 	}

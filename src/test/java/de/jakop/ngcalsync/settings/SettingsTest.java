@@ -158,6 +158,7 @@ public class SettingsTest {
 	 */
 	@Test
 	public void testGetValuesWithDefaults() throws Exception {
+
 		final Settings settings = loadSettings();
 
 		assertEquals("", settings.getGoogleAccountName());

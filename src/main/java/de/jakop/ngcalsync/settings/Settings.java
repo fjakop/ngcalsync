@@ -117,6 +117,7 @@ public final class Settings {
 	private com.google.api.services.calendar.Calendar calendarService = null;
 
 	private Calendar syncLastDateTime;
+	private final Calendar startTime = Calendar.getInstance();
 
 
 	/**
@@ -173,7 +174,7 @@ public final class Settings {
 
 		// letzte Synchronisierung lesen
 		final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
-		syncLastDateTime = Calendar.getInstance();
+		syncLastDateTime = (Calendar) startTime.clone();
 		syncLastDateTime.setTimeInMillis(0);
 
 		if (!file.exists()) {
@@ -264,7 +265,7 @@ public final class Settings {
 		final String start = getString(Parameter.SYNC_START);
 		final DateShift dateShift = parseDateShift(start);
 
-		final Calendar sdt = Calendar.getInstance();
+		final Calendar sdt = (Calendar) startTime.clone();
 		sdt.add(dateShift.periodType, -dateShift.periodLength);
 
 		return sdt;
@@ -280,7 +281,7 @@ public final class Settings {
 		final String end = getString(Parameter.SYNC_END);
 		final DateShift dateShift = parseDateShift(end);
 
-		final Calendar edt = Calendar.getInstance();
+		final Calendar edt = (Calendar) startTime.clone();
 		edt.add(dateShift.periodType, dateShift.periodLength);
 
 		return edt;
