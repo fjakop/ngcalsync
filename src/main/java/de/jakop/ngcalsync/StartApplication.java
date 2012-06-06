@@ -60,4 +60,41 @@ public class StartApplication {
 
 	}
 
+	//	public final static void setJavaLibraryPath(final String path) throws NoSuchFieldException, IllegalAccessException {
+	//
+	//		final String newPath = path + File.pathSeparator + System.getProperty("java.library.path");
+	//		System.setProperty("java.library.path", newPath);
+	//
+	//		final Field field = java.lang.ClassLoader.class.getDeclaredField("sys_paths");
+	//		field.setAccessible(true);
+	//		if (field != null) {
+	//			field.set(java.lang.System.class.getClassLoader(), null);
+	//		}
+	//	}
+	//
+	//	public static void addDir(final String s) throws IOException {
+	//		try {
+	//			// This enables the java.library.path to be modified at runtime
+	//			// From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
+	//			//
+	//			final Field field = ClassLoader.class.getDeclaredField("sys_paths");
+	//			field.setAccessible(true);
+	//			final String[] paths = (String[]) field.get(null);
+	//			for (final String path : paths) {
+	//				if (s.equals(path)) {
+	//					return;
+	//				}
+	//			}
+	//			final String[] tmp = new String[paths.length + 1];
+	//			System.arraycopy(paths, 0, tmp, 0, paths.length);
+	//			tmp[paths.length] = s;
+	//			field.set(null, tmp);
+	//
+	//			System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + s);
+	//		} catch (final IllegalAccessException e) {
+	//			throw new IOException("Failed to get permissions to set library path");
+	//		} catch (final NoSuchFieldException e) {
+	//			throw new IOException("Failed to get field handle to set library path");
+	//		}
+	//	}
 }

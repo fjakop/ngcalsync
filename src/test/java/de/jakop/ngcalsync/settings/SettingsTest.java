@@ -45,7 +45,7 @@ public class SettingsTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Mock
-	private ISettingsFileAccessor settingsFileAccessor;
+	private IFileAccessor settingsFileAccessor;
 	@Mock
 	private IExitStrategy exitStrategy;
 	@Mock

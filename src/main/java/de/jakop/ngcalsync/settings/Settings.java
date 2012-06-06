@@ -2,11 +2,14 @@ package de.jakop.ngcalsync.settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -109,7 +112,7 @@ public final class Settings {
 	}
 
 	private final Log log;
-	private final ISettingsFileAccessor settingsFileAccessor;
+	private final IFileAccessor fileAccessor;
 	private final IExitStrategy exitStrategy;
 
 	private PropertiesConfiguration configuration;
@@ -124,7 +127,7 @@ public final class Settings {
 	 * 
 	 */
 	public Settings() {
-		this(new DefaultSettingsFileAccessor(), //
+		this(new DefaultFileAccessor(), //
 				new IExitStrategy() {
 
 					@Override
@@ -138,11 +141,11 @@ public final class Settings {
 	 * 
 	 * @param settingsFileAccessor
 	 */
-	public Settings(final ISettingsFileAccessor settingsFileAccessor, final IExitStrategy exitStrategy, final Log log) {
+	public Settings(final IFileAccessor settingsFileAccessor, final IExitStrategy exitStrategy, final Log log) {
 		Validate.notNull(settingsFileAccessor);
 		Validate.notNull(exitStrategy);
 		Validate.notNull(log);
-		this.settingsFileAccessor = settingsFileAccessor;
+		fileAccessor = settingsFileAccessor;
 		this.exitStrategy = exitStrategy;
 		this.log = log;
 	}
@@ -154,26 +157,24 @@ public final class Settings {
 	 */
 	public void load() throws IOException, ConfigurationException {
 
-		final File settingsFile = settingsFileAccessor.getFile(Constants.FILENAME_SYNC_PROPERTIES);
+		final File settingsFile = fileAccessor.getFile(Constants.FILENAME_SYNC_PROPERTIES);
+		final File environmentFile = fileAccessor.getFile(Constants.FILENAME_ENV_PROPERTIES);
 
-		final boolean firstStart = !settingsFile.exists();
 		configuration = new PropertiesConfiguration(settingsFile);
 
 		// Check if all keys exist and insert new / missing keys with default values
-		final boolean upgraded = upgradeConfigurationIfNecessary(settingsFile);
+		boolean restart = upgradeConfigurationIfNecessary(settingsFile);
+		// Check if environment information is present and valid
+		restart = createEnvironmentInformationIfNecessary(environmentFile) || restart;
 
-		// on first start the user has to review the entire file 
-		if (firstStart) {
-			log.info(String.format(Constants.MSG_FIRST_START, settingsFile.getAbsolutePath()));
-			exitStrategy.exit(0);
-		}
-		if (upgraded) {
+		// on configuration/environment changes a restart is necessary
+		if (restart) {
 			exitStrategy.exit(0);
 		}
 
 
 		// letzte Synchronisierung lesen
-		final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
+		final File file = fileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
 		syncLastDateTime = (Calendar) startTime.clone();
 		syncLastDateTime.setTimeInMillis(0);
 
@@ -224,6 +225,55 @@ public final class Settings {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * TODO make this crap nice and tested
+	 * 
+	 * Creates the file with the necessary native environment information, e.g. path to Lotus Notes
+	 * if necessary.
+	 *
+	 * @param environmentInformationFile
+	 * @return <code>true</code>, if the file has been created and a restart is necessary
+	 */
+	private boolean createEnvironmentInformationIfNecessary(final File environmentInformationFile) {
+		try {
+			// check for Lotus Notes
+			System.loadLibrary("nlsxbe");
+		} catch (final UnsatisfiedLinkError e) {
+			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
+			log.warn(String.format("Lotus Notes is not in the library path."));
+
+			// check os and try to determine path to Lotus Notes
+			String lotusNotesHome = "";
+			if (System.getenv("os").contains("Windows")) {
+				lotusNotesHome = WindowsReqistry.readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
+				while (lotusNotesHome.endsWith("\n")) {
+					lotusNotesHome = StringUtils.chomp(lotusNotesHome);
+				}
+				log.info(String.format("Path to Lotus Notes read from Windows registry was %s.", lotusNotesHome));
+			} else {
+				do {
+					System.out.print("Please enter path to Lotus Notes installation: ");
+					lotusNotesHome = new Scanner(System.in).nextLine();
+				} while (lotusNotesHome.isEmpty());
+			}
+
+			PropertiesConfiguration envProperties;
+			try {
+				envProperties = new PropertiesConfiguration(environmentInformationFile);
+				envProperties.getLayout().setGlobalSeparator("=");
+				envProperties.setProperty("NOTES_HOME", lotusNotesHome);
+				envProperties.save();
+				log.info(String.format("Environment information has changed, please restart the application."));
+				return true;
+			} catch (final ConfigurationException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+		}
+		return false;
+
 	}
 
 	private String getString(final Parameter parameter) {
@@ -306,7 +356,7 @@ public final class Settings {
 	 */
 	public void saveLastSyncDateTime() {
 		try {
-			final File file = settingsFileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
+			final File file = fileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
 			FileUtils.writeStringToFile(file, String.format("%s%n", Long.valueOf(syncLastDateTime.getTimeInMillis())));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
@@ -406,7 +456,7 @@ public final class Settings {
 				final JacksonFactory jsonFactory = new JacksonFactory();
 
 				final List<String> scopes = Arrays.asList(CalendarScopes.CALENDAR);
-				final GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, new PromptReceiver(), settingsFileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
+				final GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, new PromptReceiver(), fileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
 				final Credential credential = googleOAuth2DAO.authorize(scopes, getGoogleAccountName());
 
 				calendarService = com.google.api.services.calendar.Calendar.builder(httpTransport, jsonFactory).setApplicationName(Constants.APPLICATION_NAME)
@@ -449,5 +499,64 @@ public final class Settings {
 	private final class DateShift {
 		int periodType;
 		int periodLength;
+	}
+
+	static class WindowsReqistry {
+
+		/**
+		 * 
+		 * @param location path in the registry
+		 * @param key registry key
+		 * @return registry value or null if not found
+		 */
+		public static final String readRegistry(final String location, final String key) {
+			try {
+				// Run reg query, then read output with StreamReader (internal class)
+				final Process process = Runtime.getRuntime().exec("reg query " + '"' + location + "\" /v " + key);
+
+				final StreamReader reader = new StreamReader(process.getInputStream());
+				reader.start();
+				process.waitFor();
+				reader.join();
+				final String output = reader.getResult();
+
+				// Output has the following format:
+				// \n<Version information>\n\n<key>\t<registry type>\t<value>
+				if (!output.contains("\t")) {
+					return null;
+				}
+
+				// Parse out the value
+				final String[] parsed = output.split("\t");
+				return parsed[parsed.length - 1];
+			} catch (final Exception e) {
+				return null;
+			}
+
+		}
+
+		static class StreamReader extends Thread {
+			private final InputStream is;
+			private final StringWriter sw = new StringWriter();
+
+			public StreamReader(final InputStream is) {
+				this.is = is;
+			}
+
+			@Override
+			public void run() {
+				try {
+					int c;
+					while ((c = is.read()) != -1) {
+						sw.write(c);
+					}
+				} catch (final IOException e) {
+				}
+			}
+
+			public String getResult() {
+				return sw.toString();
+			}
+		}
 	}
 }

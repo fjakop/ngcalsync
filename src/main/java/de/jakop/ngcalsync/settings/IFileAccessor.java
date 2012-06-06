@@ -9,7 +9,7 @@ import java.io.File;
  * @author fjakop
  *
  */
-public interface ISettingsFileAccessor {
+public interface IFileAccessor {
 
 	/**
 	 * 

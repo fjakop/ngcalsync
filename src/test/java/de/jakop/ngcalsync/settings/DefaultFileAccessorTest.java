@@ -16,7 +16,7 @@ import de.jakop.ngcalsync.util.TempFileManager;
  * @author fjakop
  *
  */
-public class DefaultSettingsFileAccessorTest {
+public class DefaultFileAccessorTest {
 
 	private TempFileManager manager;
 
@@ -43,7 +43,7 @@ public class DefaultSettingsFileAccessorTest {
 
 		final File expected = new File(System.getProperty("user.home") + File.separator + Constants.FILENAME_SETTINGS_DIR, "foo");
 
-		final DefaultSettingsFileAccessor accessor = new DefaultSettingsFileAccessor();
+		final DefaultFileAccessor accessor = new DefaultFileAccessor();
 		assertEquals(expected, accessor.getFile("foo"));
 	}
 

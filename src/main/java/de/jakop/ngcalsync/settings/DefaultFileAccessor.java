@@ -9,7 +9,7 @@ import de.jakop.ngcalsync.Constants;
  *  
  * @author fjakop
  */
-public class DefaultSettingsFileAccessor implements ISettingsFileAccessor {
+public class DefaultFileAccessor implements IFileAccessor {
 
 	private File settingsDir;
 
