@@ -1,3 +1,7 @@
+*0.3.1*
+
+p. Fixed bug with appointment types not read from config.
+
 *0.3.0*
 
 p. The Lotus Notes installation path is set via configuration file __env.properties__. For Microsoft Windows it is read from the registry on first start. All other os require the user to provide the path.  
