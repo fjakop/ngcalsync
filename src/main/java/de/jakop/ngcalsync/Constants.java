@@ -9,9 +9,9 @@ public interface Constants {
 
 	/* messages */
 	/** */
-	public static final String MSG_FIRST_START = "First start detected. Please edit %s according to your needs and restart.";
-	/** */
 	public static final String MSG_CONFIGURATION_UPGRADED = "The configuration file %s was upgraded, please check the keys %s and restart.";
+	/** */
+	public static final String MSG_ENVIRONMENT_CHANGED = "Environment information has changed, please restart the application.";
 	/** */
 	public static final String MSG_ENTER_CLIENT_ID_AND_SECRET = "Please enter your client ID and secret from the Google APIs Console in %s.";
 	/** */
@@ -61,6 +61,8 @@ public interface Constants {
 	/* global */
 	/** */
 	public static final String APPLICATION_NAME = "ngcalsync";
+	/** */
+	public static final String NOTES_HOME_ENVVAR_NAME = "NOTES_HOME";
 
 
 }

@@ -1,3 +1,5 @@
+p. The Lotus Notes installation path is set via configuration file __env.properties__. For Microsoft Windows it is read from the registry on first start. All other os require the user to provide the path.  
+
 *0.2.0*
 
 p. The amount of data transferred to Google (title, description, location) is configurable in the settings file. If the event's title is not transfered, it will be replaced with the event's type.

@@ -22,9 +22,7 @@ This means, it will erase all events in your configured Google calendar which ar
 
 h2. First start
 
-p. First edit __sync.bat__ and set your Lotus Notes installation directory.
-
-p. Now just run the application. It will create a folder __.ngcalsync__ in your home directory, create all necessary files with default values, prompt a message and exit. Now you can edit the created file __sync.properties__ according to your needs.
+p. Just run the application. It will create a folder __.ngcalsync__ in your home directory, create all necessary files with default values, prompt a message and exit. When you are on MS Windows, the path to your Lotus Notes installation will be obtained from the registry, otherwise the program will prompt for it. Afterwards, you can edit the created file __sync.properties__ according to your needs.
 
 p. All configuration is done in __.ngcalsync/sync.properties__, which is read at program startup. This file is well-documented.
 
@@ -32,12 +30,11 @@ h2. First time authorisation
 
 h3. Lotus Notes
 
-# Include the path to your Lotus Notes client installation in your PATH-variable.
 # Start your Lotus Notes client.
 # Click File -> Security -> User Security (Macintosh OS X users: Lotus Notes -> Security -> User Security).
 # Click Security Basics, and select "Don't prompt for a password from other Lotus Notes-based programs (reduces security)" under "Your Login and Password Settings."
 
-You can also skip steps 3 & 4, but then you have to enter your Lotus Notes password in the console every time you start the application.
+You can also skip steps 2 & 3, but then you have to enter your Lotus Notes password in the console every time you start the application.
 
 h3. Google
 

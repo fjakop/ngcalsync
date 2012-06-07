@@ -31,6 +31,8 @@ import org.mockito.MockitoAnnotations;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.IExitStrategy;
+import de.jakop.ngcalsync.notes.NotesHelper;
+import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 
 /**
@@ -50,6 +52,8 @@ public class SettingsTest {
 	private IExitStrategy exitStrategy;
 	@Mock
 	private Log log;
+	@Mock
+	private NotesHelper notesHelper;
 
 	private File settingsFile;
 	private File lastSyncDateFile;
@@ -67,6 +71,8 @@ public class SettingsTest {
 
 		doReturn(settingsFile).when(settingsFileAccessor).getFile(Matchers.eq(Constants.FILENAME_SYNC_PROPERTIES));
 		doReturn(lastSyncDateFile).when(settingsFileAccessor).getFile(Matchers.eq(Constants.FILENAME_LAST_SYNC_TIME));
+
+		doReturn(Boolean.TRUE).when(notesHelper).isNotesInSystemPath();
 
 		// do not actually exit the program, but do not run further either
 		doThrow(new RuntimeException("#1")).when(exitStrategy).exit(0);
@@ -92,7 +98,12 @@ public class SettingsTest {
 		loadSettings();
 
 		// verify message
-		verify(log, times(1)).info(String.format(Constants.MSG_FIRST_START, settingsFile.getAbsolutePath()));
+		verify(log, times(1))
+				.info(
+						String.format(
+								Constants.MSG_CONFIGURATION_UPGRADED,
+								settingsFile.getAbsolutePath(),
+								"{sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location,notes.mail.db.file,notes.domino.server,google.calendar.reminderminutes,google.calendar.name,google.account.email,proxy.host,proxy.port,proxy.user,proxy.password}"));
 
 		// verify exit
 		verify(exitStrategy, times(1)).exit(0);
@@ -114,7 +125,7 @@ public class SettingsTest {
 		// verify message (build parameter keys array from enum, so it has not to be changed each time we add a parameter)
 		final StringBuilder builder = new StringBuilder();
 		builder.append("{");
-		for (final Settings.Parameter parameter : Settings.Parameter.values()) {
+		for (final ConfigurationParameter parameter : ConfigurationParameter.values()) {
 			builder.append(parameter.getKey()).append(",");
 		}
 		builder.deleteCharAt(builder.length() - 1);
@@ -143,7 +154,7 @@ public class SettingsTest {
 		// load again, no exit and no message happens
 		log = mock(Log.class);
 		exitStrategy = mock(IExitStrategy.class);
-		new Settings(settingsFileAccessor, exitStrategy, log).load();
+		new Settings(settingsFileAccessor, exitStrategy, log, notesHelper).load();
 
 		verifyNoMoreInteractions(log);
 		verifyNoMoreInteractions(exitStrategy);
@@ -353,7 +364,7 @@ public class SettingsTest {
 		final PropertiesConfiguration configuration = new PropertiesConfiguration();
 		configuration.load(settingsFile);
 
-		for (final Settings.Parameter parameter : Settings.Parameter.values()) {
+		for (final ConfigurationParameter parameter : ConfigurationParameter.values()) {
 			final String key = parameter.getKey();
 			assertTrue(configuration.containsKey(key));
 			assertEquals(parameter.getDefaultValue(), configuration.getString(key));
@@ -365,7 +376,7 @@ public class SettingsTest {
 	}
 
 	private Settings loadSettings(final boolean checkExit) throws IOException, ConfigurationException {
-		final Settings settings = new Settings(settingsFileAccessor, exitStrategy, log);
+		final Settings settings = new Settings(settingsFileAccessor, exitStrategy, log, notesHelper);
 		try {
 			settings.load();
 			if (checkExit) {

@@ -2,14 +2,11 @@ package de.jakop.ngcalsync.settings;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -28,8 +25,11 @@ import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.IExitStrategy;
+import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.PromptReceiver;
+import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
+import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
  * 
@@ -40,80 +40,10 @@ public final class Settings {
 
 	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
-	enum Parameter {
-
-		SYNC_TYPES("sync.types", "3", "# Types of events to sync\n" + //
-				"# 0 = Normal event\n" + //
-				"# 1 = Anniversary\n" + //
-				"# 2 = All day event\n" + //
-				"# 3 = Meeting\n" + //
-				"# 4 = Reminder\n" + //
-				"# e.g. \"1,3,4\""), //
-
-		SYNC_END("sync.end", "3m", "# Number of days(ex. 15d) or month (ex. 2m) in the future, default 3 month"), //
-
-		SYNC_START("sync.start", "14d", "# Number of days (ex. 15d) or month (ex. 2m) back in time, default 14 days"), //
-
-		SYNC_TRANSFER_TITLE("sync.transfer.title", "false", "# Transfer original event title to Google (true|false)"), //
-
-		SYNC_TRANSFER_DESCRIPTION("sync.transfer.description", "false", "# Transfer original event description to Google (true|false)"), //
-
-		SYNC_TRANSFER_LOCATION("sync.transfer.location", "false", "# Transfer original event location to Google (true|false)"), //
-
-		NOTES_MAIL_DB_FILE("notes.mail.db.file", "", "# Notes database name\n" + //
-				"#  in Notes go to\n" + //
-				"#  Notes File/Preferences/Location Preferences.../Mail/'Mail file', if there \n" + //
-				"#  are \\ in the path replace them with /"), //
-
-		NOTES_DOMINO_SERVER("notes.domino.server", "", "# Notes server name\n" + //
-				"#  in Notes go to\n" + //
-				"#  File/Preferences/Location Preferences.../Servers/'Home/mail server', if there \n" + //
-				"#  are \\ in the path replace them with /\n" + //
-				"#  Leave blank for local."), //
-
-		GOOGLE_CALENDAR_REMINDERMINUTES("google.calendar.reminderminutes", "30", "# Google default reminder time"), //
-
-		GOOGLE_CALENDAR_NAME("google.calendar.name", "", "# Google calendar name to sync with (e.g. \"work\")\n" + //
-				"# WARNING #\n" + // 
-				"# This calendar's events will be deleted if not present in Lotus Notes"), //
-
-		GOOGLE_ACCOUNT_EMAIL("google.account.email", "", "# Google account email"), //
-
-		PROXY_HOST("proxy.host", "", "# Hostname or IP of the proxy server, if you are behind a proxy"), //
-
-		PROXY_PORT("proxy.port", "", "# Port of the proxy server, if you are behind a proxy"), //
-
-		PROXY_USER("proxy.user", "", "# Username, if the proxy requires authentication"), //
-
-		PROXY_PASSWORD("proxy.password", "", "# Password, if the proxy requires authentication");
-
-		private final String key;
-		private final String defaultvalue;
-		private final String comment;
-
-		Parameter(final String key, final String defaultvalue, final String comment) {
-			this.key = key;
-			this.defaultvalue = defaultvalue;
-			this.comment = comment;
-		}
-
-		String getKey() {
-			return key;
-		}
-
-		String getDefaultValue() {
-			return defaultvalue;
-		}
-
-		String getComment() {
-			return comment;
-		}
-
-	}
-
 	private final Log log;
 	private final IFileAccessor fileAccessor;
 	private final IExitStrategy exitStrategy;
+	private final NotesHelper notesHelper;
 
 	private PropertiesConfiguration configuration;
 	private PrivacySettings privacySettings;
@@ -121,6 +51,7 @@ public final class Settings {
 
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
+
 
 
 	/**
@@ -134,20 +65,23 @@ public final class Settings {
 					public void exit(final int code) {
 						System.exit(code);
 					}
-				}, LogFactory.getLog(Settings.class));
+				}, LogFactory.getLog(Settings.class), new NotesHelper());
 	}
 
 	/**
 	 * 
-	 * @param settingsFileAccessor
+	 * @param fileAccessor
+	 * @param notesHelper 
 	 */
-	public Settings(final IFileAccessor settingsFileAccessor, final IExitStrategy exitStrategy, final Log log) {
-		Validate.notNull(settingsFileAccessor);
+	public Settings(final IFileAccessor fileAccessor, final IExitStrategy exitStrategy, final Log log, final NotesHelper notesHelper) {
+		Validate.notNull(fileAccessor);
 		Validate.notNull(exitStrategy);
 		Validate.notNull(log);
-		fileAccessor = settingsFileAccessor;
+		Validate.notNull(notesHelper);
+		this.fileAccessor = fileAccessor;
 		this.exitStrategy = exitStrategy;
 		this.log = log;
+		this.notesHelper = notesHelper;
 	}
 
 	/**
@@ -207,7 +141,7 @@ public final class Settings {
 
 		newConfiguration.getLayout().setHeaderComment(HEADER_COMMENT);
 
-		for (final Parameter parameter : Parameter.values()) {
+		for (final ConfigurationParameter parameter : ConfigurationParameter.values()) {
 			final String key = parameter.getKey();
 			if (configuration.containsKey(key)) {
 				newConfiguration.addProperty(key, configuration.getProperty(key));
@@ -237,50 +171,32 @@ public final class Settings {
 	 * @return <code>true</code>, if the file has been created and a restart is necessary
 	 */
 	private boolean createEnvironmentInformationIfNecessary(final File environmentInformationFile) {
-		try {
-			// check for Lotus Notes
-			System.loadLibrary("nlsxbe");
-		} catch (final UnsatisfiedLinkError e) {
-			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
-			log.warn(String.format("Lotus Notes is not in the library path."));
 
-			// check os and try to determine path to Lotus Notes
-			String lotusNotesHome = "";
-			if (System.getenv("os").contains("Windows")) {
-				lotusNotesHome = WindowsReqistry.readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
-				while (lotusNotesHome.endsWith("\n")) {
-					lotusNotesHome = StringUtils.chomp(lotusNotesHome);
-				}
-				log.info(String.format("Path to Lotus Notes read from Windows registry was %s.", lotusNotesHome));
-			} else {
-				do {
-					System.out.print("Please enter path to Lotus Notes installation: ");
-					lotusNotesHome = new Scanner(System.in).nextLine();
-				} while (lotusNotesHome.isEmpty());
-			}
+		if (!notesHelper.isNotesInSystemPath()) {
+
+			final String lotusNotesHome = notesHelper.getLotusNotesPath();
 
 			PropertiesConfiguration envProperties;
 			try {
 				envProperties = new PropertiesConfiguration(environmentInformationFile);
 				envProperties.getLayout().setGlobalSeparator("=");
-				envProperties.setProperty("NOTES_HOME", lotusNotesHome);
+				envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
 				envProperties.save();
-				log.info(String.format("Environment information has changed, please restart the application."));
+				log.info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
 				return true;
-			} catch (final ConfigurationException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
+			} catch (final ConfigurationException e) {
+				throw new RuntimeException(e);
 			}
 		}
 		return false;
 
 	}
 
-	private String getString(final Parameter parameter) {
+	private String getString(final ConfigurationParameter parameter) {
 		return configuration.getString(parameter.getKey(), parameter.getDefaultValue());
 	}
 
-	private boolean getBoolean(final Parameter parameter) {
+	private boolean getBoolean(final ConfigurationParameter parameter) {
 		return configuration.getBoolean(parameter.getKey(), Boolean.valueOf(parameter.getDefaultValue()).booleanValue());
 	}
 
@@ -288,21 +204,21 @@ public final class Settings {
 	 * @return Login-Name des Google-Accounts
 	 */
 	public String getGoogleAccountName() {
-		return getString(Parameter.GOOGLE_ACCOUNT_EMAIL);
+		return getString(ConfigurationParameter.GOOGLE_ACCOUNT_EMAIL);
 	}
 
 	/**
 	 * @return Name des Domino-Servers
 	 */
 	public String getDominoServer() {
-		return getString(Parameter.NOTES_DOMINO_SERVER);
+		return getString(ConfigurationParameter.NOTES_DOMINO_SERVER);
 	}
 
 	/**
 	 * @return Pfad zur Kalender-Datenbank
 	 */
 	public String getNotesCalendarDbFilePath() {
-		return getString(Parameter.NOTES_MAIL_DB_FILE);
+		return getString(ConfigurationParameter.NOTES_MAIL_DB_FILE);
 	}
 
 	/**
@@ -312,7 +228,7 @@ public final class Settings {
 	 */
 	public Calendar getSyncStartDate() throws ConfigurationException {
 
-		final String start = getString(Parameter.SYNC_START);
+		final String start = getString(ConfigurationParameter.SYNC_START);
 		final DateShift dateShift = parseDateShift(start);
 
 		final Calendar sdt = (Calendar) startTime.clone();
@@ -328,7 +244,7 @@ public final class Settings {
 	 */
 	public Calendar getSyncEndDate() throws ConfigurationException {
 
-		final String end = getString(Parameter.SYNC_END);
+		final String end = getString(ConfigurationParameter.SYNC_END);
 		final DateShift dateShift = parseDateShift(end);
 
 		final Calendar edt = (Calendar) startTime.clone();
@@ -367,42 +283,42 @@ public final class Settings {
 	 * @return hostname of the proxy, empty if none present
 	 */
 	public String getProxyHost() {
-		return getString(Parameter.PROXY_HOST);
+		return getString(ConfigurationParameter.PROXY_HOST);
 	}
 
 	/**
 	 * @return port number of the proxy, empty if none present
 	 */
 	public String getProxyPort() {
-		return getString(Parameter.PROXY_PORT);
+		return getString(ConfigurationParameter.PROXY_PORT);
 	}
 
 	/**
 	 * @return user name of the proxy user, empty if no authentification required
 	 */
 	public String getProxyUserName() {
-		return getString(Parameter.PROXY_USER);
+		return getString(ConfigurationParameter.PROXY_USER);
 	}
 
 	/**
 	 * @return password of the proxy user, empty if no authentification required
 	 */
 	public String getProxyPassword() {
-		return getString(Parameter.PROXY_PASSWORD);
+		return getString(ConfigurationParameter.PROXY_PASSWORD);
 	}
 
 	/**
 	 * @return name of the google calendar to sync into
 	 */
 	public String getGoogleCalendarName() {
-		return getString(Parameter.GOOGLE_CALENDAR_NAME);
+		return getString(ConfigurationParameter.GOOGLE_CALENDAR_NAME);
 	}
 
 	/**
 	 * @return default reminder time in minutes
 	 */
 	public int getReminderMinutes() {
-		return Integer.parseInt(getString(Parameter.GOOGLE_CALENDAR_REMINDERMINUTES));
+		return Integer.parseInt(getString(ConfigurationParameter.GOOGLE_CALENDAR_REMINDERMINUTES));
 	}
 
 	/**
@@ -411,7 +327,7 @@ public final class Settings {
 	 */
 	public int[] getSyncAppointmentTypes() {
 
-		final String typesRaw = getString(Parameter.SYNC_TYPES);
+		final String typesRaw = getString(ConfigurationParameter.SYNC_TYPES);
 		final String[] types = StringUtils.split(typesRaw, ",");
 		final int[] syncAppointmentTypes = new int[types.length];
 		for (int i = 0; i < types.length; i++) {
@@ -428,9 +344,9 @@ public final class Settings {
 	public PrivacySettings getPrivacySettings() {
 		if (privacySettings == null) {
 			privacySettings = new PrivacySettings(//
-					getBoolean(Parameter.SYNC_TRANSFER_TITLE), //
-					getBoolean(Parameter.SYNC_TRANSFER_DESCRIPTION), //
-					getBoolean(Parameter.SYNC_TRANSFER_LOCATION));
+					getBoolean(ConfigurationParameter.SYNC_TRANSFER_TITLE), //
+					getBoolean(ConfigurationParameter.SYNC_TRANSFER_DESCRIPTION), //
+					getBoolean(ConfigurationParameter.SYNC_TRANSFER_LOCATION));
 		}
 
 		return privacySettings;
@@ -499,64 +415,5 @@ public final class Settings {
 	private final class DateShift {
 		int periodType;
 		int periodLength;
-	}
-
-	static class WindowsReqistry {
-
-		/**
-		 * 
-		 * @param location path in the registry
-		 * @param key registry key
-		 * @return registry value or null if not found
-		 */
-		public static final String readRegistry(final String location, final String key) {
-			try {
-				// Run reg query, then read output with StreamReader (internal class)
-				final Process process = Runtime.getRuntime().exec("reg query " + '"' + location + "\" /v " + key);
-
-				final StreamReader reader = new StreamReader(process.getInputStream());
-				reader.start();
-				process.waitFor();
-				reader.join();
-				final String output = reader.getResult();
-
-				// Output has the following format:
-				// \n<Version information>\n\n<key>\t<registry type>\t<value>
-				if (!output.contains("\t")) {
-					return null;
-				}
-
-				// Parse out the value
-				final String[] parsed = output.split("\t");
-				return parsed[parsed.length - 1];
-			} catch (final Exception e) {
-				return null;
-			}
-
-		}
-
-		static class StreamReader extends Thread {
-			private final InputStream is;
-			private final StringWriter sw = new StringWriter();
-
-			public StreamReader(final InputStream is) {
-				this.is = is;
-			}
-
-			@Override
-			public void run() {
-				try {
-					int c;
-					while ((c = is.read()) != -1) {
-						sw.write(c);
-					}
-				} catch (final IOException e) {
-				}
-			}
-
-			public String getResult() {
-				return sw.toString();
-			}
-		}
 	}
 }

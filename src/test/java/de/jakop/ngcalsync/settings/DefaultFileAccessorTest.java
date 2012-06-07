@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.util.TempFileManager;
+import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 
 /**
  * 
