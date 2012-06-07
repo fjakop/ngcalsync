@@ -178,6 +178,7 @@ public class SettingsTest {
 		assertEquals("", settings.getDominoServer());
 		assertEquals("", settings.getNotesCalendarDbFilePath());
 		final Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(settings.getProgramStartTime().getTimeInMillis());
 		calendar.add(Calendar.DAY_OF_YEAR, -14);
 		assertEquals(calendar, settings.getSyncStartDate());
 		calendar.add(Calendar.DAY_OF_YEAR, 14);

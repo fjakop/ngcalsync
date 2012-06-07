@@ -52,8 +52,6 @@ public final class Settings {
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
 
-
-
 	/**
 	 * 
 	 */
@@ -109,7 +107,7 @@ public final class Settings {
 
 		// letzte Synchronisierung lesen
 		final File file = fileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
-		syncLastDateTime = (Calendar) startTime.clone();
+		syncLastDateTime = cloneStartTime();
 		syncLastDateTime.setTimeInMillis(0);
 
 		if (!file.exists()) {
@@ -231,7 +229,7 @@ public final class Settings {
 		final String start = getString(ConfigurationParameter.SYNC_START);
 		final DateShift dateShift = parseDateShift(start);
 
-		final Calendar sdt = (Calendar) startTime.clone();
+		final Calendar sdt = cloneStartTime();
 		sdt.add(dateShift.periodType, -dateShift.periodLength);
 
 		return sdt;
@@ -247,7 +245,7 @@ public final class Settings {
 		final String end = getString(ConfigurationParameter.SYNC_END);
 		final DateShift dateShift = parseDateShift(end);
 
-		final Calendar edt = (Calendar) startTime.clone();
+		final Calendar edt = cloneStartTime();
 		edt.add(dateShift.periodType, dateShift.periodLength);
 
 		return edt;
@@ -384,6 +382,11 @@ public final class Settings {
 		return calendarService;
 	}
 
+	/* for JUnit-Tests */
+	protected Calendar getProgramStartTime() {
+		return startTime;
+	}
+
 	private DateShift parseDateShift(final String shiftExpression) throws ConfigurationException {
 		final DateShift dateShift = new DateShift();
 		try {
@@ -410,6 +413,12 @@ public final class Settings {
 		}
 		// TODO i18n
 		throw new ParseException("Unparseable period type, valid values are 'd' (day) or 'm' (month)", start.length() - 1);
+	}
+
+	private Calendar cloneStartTime() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(startTime.getTimeInMillis());
+		return calendar;
 	}
 
 	private final class DateShift {
