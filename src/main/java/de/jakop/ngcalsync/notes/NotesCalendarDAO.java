@@ -126,19 +126,26 @@ public class NotesCalendarDAO {
 			final DViewEntry viewEntry = viewEntries.next();
 			final DDocument currentWorkDoc = viewEntry.getDocument();
 
+			log.debug(String.format("Processing document with UNID '%s'", currentWorkDoc.getUniversalID()));
+
 			// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
 			if (!processedNotesDocuments.contains(currentWorkDoc.getUniversalID())) {
 
 				if (FLAG_APPOINTMENT.equals(currentWorkDoc.getItemValueString(FIELDNAME_FORM))) {
 					// If this is a conflict document, skip to next document.
 					if (currentWorkDoc.hasItem(FIELDNAME_CONFLICT)) {
+						log.debug(String.format("Document with UNID '%s' is a conflict document", currentWorkDoc.getUniversalID()));
 						continue;
 					}
 
 					final Collection<CalendarEvent> convDocs = convDoc(currentWorkDoc);
 					entries.addAll(convDocs);
 					processedNotesDocuments.add(currentWorkDoc.getUniversalID());
+				} else {
+					log.debug(String.format("Document with UNID '%s' has no appointment flag", currentWorkDoc.getUniversalID()));
 				}
+			} else {
+				log.debug(String.format("Document with UNID '%s' already processed", currentWorkDoc.getUniversalID()));
 			}
 		}
 
@@ -157,6 +164,7 @@ public class NotesCalendarDAO {
 	}
 
 	private CalendarEvent convSingleDoc(final DDocument doc) {
+		log.debug(String.format("Converting document with UNID '%s'", doc.getUniversalID()));
 
 		//		String generateXML = doc.generateXML();
 		//		log.debug(generateXML);
@@ -211,6 +219,8 @@ public class NotesCalendarDAO {
 
 			bd.setStartDateTime(newStartDateTime);
 			bd.setEndDateTime(newEndDateTime);
+			log.debug(String.format("Conversion of document with UNID '%s' results in %s", doc.getUniversalID(), bd.toString()));
+
 		} catch (final NotesServiceRuntimeException e) {
 			log.error(bd.toString());
 			log.error(e.toString());
