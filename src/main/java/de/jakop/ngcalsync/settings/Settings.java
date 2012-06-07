@@ -325,8 +325,10 @@ public final class Settings {
 	 */
 	public int[] getSyncAppointmentTypes() {
 
-		final String typesRaw = getString(ConfigurationParameter.SYNC_TYPES);
-		final String[] types = StringUtils.split(typesRaw, ",");
+		String[] types = configuration.getStringArray(ConfigurationParameter.SYNC_TYPES.getKey());
+		if (types.length == 0) {
+			types = new String[] { ConfigurationParameter.SYNC_TYPES.getDefaultValue() };
+		}
 		final int[] syncAppointmentTypes = new int[types.length];
 		for (int i = 0; i < types.length; i++) {
 			syncAppointmentTypes[i] = Integer.parseInt(types[i].trim());
