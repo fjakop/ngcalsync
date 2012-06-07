@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync.settings;
+package de.jakop.ngcalsync.util.file;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.util.TempFileManager;
 import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 
 /**

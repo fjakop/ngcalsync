@@ -86,22 +86,17 @@
 <!-- 						<branchRate>85</branchRate> -->
 <!-- 						<lineRate>85</lineRate> -->
 						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>52</totalBranchRate>
-						<totalLineRate>50</totalLineRate>
+						<totalBranchRate>49</totalBranchRate>
+						<totalLineRate>49</totalLineRate>
 <!-- 						<packageLineRate>85</packageLineRate> -->
 <!-- 						<packageBranchRate>85</packageBranchRate> -->
-						<!-- regexes>
+						<regexes>
 							<regex>
-								<pattern>com.example.reallyimportant.*</pattern>
-								<branchRate>90</branchRate>
-								<lineRate>80</lineRate>
+								<pattern>de.jakop.ngcalsync.util.os.*</pattern>
+								<branchRate>0</branchRate>
+								<lineRate>0</lineRate>
 							</regex>
-							<regex>
-								<pattern>com.example.boringcode.*</pattern>
-								<branchRate>40</branchRate>
-								<lineRate>30</lineRate>
-							</regex>
-						</regexes-->
+						</regexes>
 					</check>
 				</configuration>
 				<executions>

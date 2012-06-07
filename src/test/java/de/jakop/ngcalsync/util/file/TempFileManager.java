@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync.util;
+package de.jakop.ngcalsync.util.file;
 
 import java.io.File;
 
