@@ -120,11 +120,15 @@ public class SyncService {
 
 		public CalendarEventEqualsPredicate(final CalendarEvent baseDoc) {
 			Validate.notNull(baseDoc);
-			this.event = baseDoc;
+			event = baseDoc;
 		}
 
 		@Override
 		public boolean evaluate(final CalendarEvent object) {
+
+			if (!object.getEventType().equals(event.getEventType())) {
+				return false;
+			}
 
 			if (object.isAllDay() && event.isAllDay()) {
 				return object.getStartDateTime().get(Calendar.YEAR) == event.getStartDateTime().get(Calendar.YEAR) && //

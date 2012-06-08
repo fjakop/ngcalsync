@@ -32,7 +32,7 @@ public class CalendarEventTest {
 	@Test
 	public void testToString_EmptyObject() throws Exception {
 		final CalendarEvent calendarEvent = new CalendarEvent();
-		assertEquals(String.format(toStringFormat, null, null, null, null, null, null, null, null), calendarEvent.toString());
+		assertEquals(String.format(toStringFormat, null, null, null, null, null, null, null, EventType.NORMAL_EVENT), calendarEvent.toString());
 	}
 
 	/**
@@ -91,6 +91,24 @@ public class CalendarEventTest {
 
 		calendarEvent.setEventType(EventType.ANNIVERSARY);
 		assertTrue(calendarEvent.isAllDay());
+
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testSetGetLocationTitleContentPrivate() {
+		final CalendarEvent calendarEvent = new CalendarEvent();
+		calendarEvent.setLocation("foo");
+		calendarEvent.setTitle("bar");
+		calendarEvent.setContent("content");
+		calendarEvent.setPrivate(true);
+
+		assertEquals("foo", calendarEvent.getLocation());
+		assertEquals("bar", calendarEvent.getTitle());
+		assertEquals("content", calendarEvent.getContent());
+		assertTrue(calendarEvent.isPrivate());
 
 	}
 

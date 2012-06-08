@@ -32,6 +32,7 @@ import org.mockito.MockitoAnnotations;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
+import de.jakop.ngcalsync.rule.TestdataRule;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 
@@ -41,13 +42,17 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  *
  */
 public class SettingsTest {
-
+ 
 	/** expected exception */
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
+	/** access to testdata */
+	@Rule
+	public TestdataRule testdata = new TestdataRule();
+
 	@Mock
-	private IFileAccessor settingsFileAccessor;
+	private IFileAccessor fileAccessor;
 	@Mock
 	private IExitStrategy exitStrategy;
 	@Mock
@@ -69,8 +74,8 @@ public class SettingsTest {
 		settingsFile = File.createTempFile(getClass().getName() + ".settings.", null);
 		FileUtils.writeStringToFile(lastSyncDateFile, "123456");
 
-		doReturn(settingsFile).when(settingsFileAccessor).getFile(Matchers.eq(Constants.FILENAME_SYNC_PROPERTIES));
-		doReturn(lastSyncDateFile).when(settingsFileAccessor).getFile(Matchers.eq(Constants.FILENAME_LAST_SYNC_TIME));
+		doReturn(settingsFile).when(fileAccessor).getFile(Matchers.eq(Constants.FILENAME_SYNC_PROPERTIES));
+		doReturn(lastSyncDateFile).when(fileAccessor).getFile(Matchers.eq(Constants.FILENAME_LAST_SYNC_TIME));
 
 		doReturn(Boolean.TRUE).when(notesHelper).isNotesInSystemPath();
 
@@ -154,7 +159,7 @@ public class SettingsTest {
 		// load again, no exit and no message happens
 		log = mock(Log.class);
 		exitStrategy = mock(IExitStrategy.class);
-		new Settings(settingsFileAccessor, exitStrategy, log, notesHelper).load();
+		new Settings(fileAccessor, exitStrategy, log, notesHelper).load();
 
 		verifyNoMoreInteractions(log);
 		verifyNoMoreInteractions(exitStrategy);
@@ -195,6 +200,22 @@ public class SettingsTest {
 		assertFalse(privacySettings.isTransferLocation());
 		assertFalse(privacySettings.isTransferTitle());
 
+	}
+
+	/**
+	 * Verifies that the parameter 'sync.types' is obtained as string array, because it may contain
+	 * multiple values.
+	 * 
+	 * @throws Exception 
+	 */
+	@Test
+	public void testGetSyncAppointmentTypes_ParsedAsStringArray() throws Exception {
+
+		final File file = testdata.getFile(Constants.FILENAME_SYNC_PROPERTIES);
+		doReturn(file).when(fileAccessor).getFile(Constants.FILENAME_SYNC_PROPERTIES);
+		final Settings settings = loadSettings(false);
+
+		assertArrayEquals(new int[] { 1, 2, 3 }, settings.getSyncAppointmentTypes());
 	}
 
 	/**
@@ -300,7 +321,7 @@ public class SettingsTest {
 		final Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(1234567890);
 
-		settings.setLastSyncDateTime(calendar);
+		settings.setSyncLastDateTime(calendar);
 
 		settings.saveLastSyncDateTime();
 
@@ -377,7 +398,7 @@ public class SettingsTest {
 	}
 
 	private Settings loadSettings(final boolean checkExit) throws IOException, ConfigurationException {
-		final Settings settings = new Settings(settingsFileAccessor, exitStrategy, log, notesHelper);
+		final Settings settings = new Settings(fileAccessor, exitStrategy, log, notesHelper);
 		try {
 			settings.load();
 			if (checkExit) {

@@ -26,7 +26,7 @@ public class CalendarEvent {
 	private Calendar endDateTime;
 	private String location;
 	private Calendar lastUpdated;
-	private EventType eventType;
+	private EventType eventType = EventType.NORMAL_EVENT;
 	private boolean _private;
 
 

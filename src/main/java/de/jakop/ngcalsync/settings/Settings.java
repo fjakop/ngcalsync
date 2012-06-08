@@ -15,7 +15,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpTransport;
@@ -28,7 +27,6 @@ import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.PromptReceiver;
-import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
@@ -51,20 +49,6 @@ public final class Settings {
 
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
-
-	/**
-	 * 
-	 */
-	public Settings() {
-		this(new DefaultFileAccessor(), //
-				new IExitStrategy() {
-
-					@Override
-					public void exit(final int code) {
-						System.exit(code);
-					}
-				}, LogFactory.getLog(Settings.class), new NotesHelper());
-	}
 
 	/**
 	 * 
@@ -261,7 +245,7 @@ public final class Settings {
 	/**
 	 * @param syncLastDateTime last sync start time
 	 */
-	public void setLastSyncDateTime(final Calendar syncLastDateTime) {
+	public void setSyncLastDateTime(final Calendar syncLastDateTime) {
 		this.syncLastDateTime = syncLastDateTime;
 	}
 

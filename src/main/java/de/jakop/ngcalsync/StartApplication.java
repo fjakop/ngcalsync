@@ -12,10 +12,13 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
+import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.obfuscator.DefaultCalendarEventObfuscator;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.service.SyncService;
 import de.jakop.ngcalsync.settings.Settings;
+import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
+import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
  * Starts the application which synchronizes the Lotus Notes calendar events to
@@ -28,6 +31,11 @@ public class StartApplication {
 
 	private static final Log log = LogFactory.getLog(StartApplication.class);
 
+	private final IExitStrategy exitStrategy;
+	private final IFileAccessor fileAccessor;
+
+	private Settings settings;
+
 	/**
 	 * 
 	 * @param args
@@ -36,65 +44,62 @@ public class StartApplication {
 	 */
 	public static void main(final String[] args) throws IOException, ConfigurationException {
 
+
+		final IExitStrategy exitStrategy = new IExitStrategy() {
+
+			@Override
+			public void exit(final int code) {
+				System.exit(code);
+			}
+		};
+
+		new StartApplication(new DefaultFileAccessor(), exitStrategy).synchronize();
+
+	}
+
+	/**
+	 * 
+	 * @param fileAccessor
+	 * @param exitStrategy
+	 */
+	public StartApplication(final IFileAccessor fileAccessor, final IExitStrategy exitStrategy) {
+		this.exitStrategy = exitStrategy;
+		this.fileAccessor = fileAccessor;
+	}
+
+	/**
+	 * 
+	 * @throws ConfigurationException
+	 * @throws IOException 
+	 */
+	public void synchronize() throws ConfigurationException, IOException {
+
 		log.info(Constants.MSG_SYNC_STARTED);
 
-		final Settings settings = new Settings();
-		settings.load();
+		reloadSettings();
 
-		// Execute synchronization
-		final SyncService ss = new SyncService();
 
 		final ICalendarEventFilter typeFilter = new EventTypeFilter(settings.getSyncAppointmentTypes());
 		final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
 
 		final ICalendarEventFilter[] filters = new ICalendarEventFilter[] { typeFilter };
 		final ICalendarEventObfuscator[] obfuscators = new ICalendarEventObfuscator[] { typeObfuscator };
+
+		// Execute synchronization
+		final SyncService ss = new SyncService();
 		ss.executeSync(new NotesCalendarDAO(new NotesClientOpenDatabaseStrategy(), settings.getDominoServer(), settings.getNotesCalendarDbFilePath(), settings.getSyncStartDate(),
 				settings.getSyncEndDate()), new GoogleCalendarDAO(settings), filters, obfuscators, settings);
 
 		// Update Last Sync Execution Date & Time
-		settings.setLastSyncDateTime(Calendar.getInstance());
+		settings.setSyncLastDateTime(Calendar.getInstance());
 		settings.saveLastSyncDateTime();
 
 		log.info(Constants.MSG_SYNC_ENDED);
 
 	}
 
-	//	public final static void setJavaLibraryPath(final String path) throws NoSuchFieldException, IllegalAccessException {
-	//
-	//		final String newPath = path + File.pathSeparator + System.getProperty("java.library.path");
-	//		System.setProperty("java.library.path", newPath);
-	//
-	//		final Field field = java.lang.ClassLoader.class.getDeclaredField("sys_paths");
-	//		field.setAccessible(true);
-	//		if (field != null) {
-	//			field.set(java.lang.System.class.getClassLoader(), null);
-	//		}
-	//	}
-	//
-	//	public static void addDir(final String s) throws IOException {
-	//		try {
-	//			// This enables the java.library.path to be modified at runtime
-	//			// From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
-	//			//
-	//			final Field field = ClassLoader.class.getDeclaredField("sys_paths");
-	//			field.setAccessible(true);
-	//			final String[] paths = (String[]) field.get(null);
-	//			for (final String path : paths) {
-	//				if (s.equals(path)) {
-	//					return;
-	//				}
-	//			}
-	//			final String[] tmp = new String[paths.length + 1];
-	//			System.arraycopy(paths, 0, tmp, 0, paths.length);
-	//			tmp[paths.length] = s;
-	//			field.set(null, tmp);
-	//
-	//			System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + s);
-	//		} catch (final IllegalAccessException e) {
-	//			throw new IOException("Failed to get permissions to set library path");
-	//		} catch (final NoSuchFieldException e) {
-	//			throw new IOException("Failed to get field handle to set library path");
-	//		}
-	//	}
+	private void reloadSettings() throws ConfigurationException, IOException {
+		settings = new Settings(fileAccessor, exitStrategy, LogFactory.getLog(Settings.class), new NotesHelper());
+		settings.load();
+	}
 }

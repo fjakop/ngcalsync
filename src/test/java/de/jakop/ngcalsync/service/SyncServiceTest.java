@@ -1,6 +1,5 @@
 package de.jakop.ngcalsync.service;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -12,21 +11,26 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDAO;
+import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
+import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
  * 
@@ -53,7 +57,7 @@ public class SyncServiceTest {
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		settings = new Settings();
+		settings = new Settings(mock(IFileAccessor.class), mock(IExitStrategy.class), mock(Log.class), mock(NotesHelper.class));
 	}
 
 	/**
@@ -186,7 +190,7 @@ public class SyncServiceTest {
 		final Calendar lastSyncTime = now;
 		lastSyncTime.setTimeInMillis(1000000000);
 		event2.setLastUpdated(lastSyncTime);
-		settings.setLastSyncDateTime(lastSyncTime);
+		settings.setSyncLastDateTime(lastSyncTime);
 
 		final List<CalendarEvent> events = Arrays.asList(event1, event2);
 
@@ -210,9 +214,25 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
 	public void testExecuteSync_AddEventsToGoogle() throws Exception {
-		fail("Not implemented yet");
+
+		final CalendarEvent event1 = mock(CalendarEvent.class);
+		final CalendarEvent event2 = mock(CalendarEvent.class);
+		final List<CalendarEvent> events = Arrays.asList(event1, event2);
+
+		doReturn(events).when(notesDAO).getEntries(null);
+		doReturn(new ArrayList<CalendarEvent>()).when(googleDAO).getEvents(null);
+
+		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] {}, settings);
+
+		verify(notesDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
+
+		verify(googleDAO, times(1)).insert(event1);
+		verify(googleDAO, times(1)).insert(event2);
+
+		verify(googleDAO, times(0)).update(Matchers.anyString(), (CalendarEvent) Matchers.anyObject());
+		verify(googleDAO, times(0)).delete(Matchers.anyString());
 	}
 
 	/**
@@ -220,9 +240,41 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
 	public void testExecuteSync_UpdateEventsToGoogle() throws Exception {
-		fail("Not implemented yet");
+		final Calendar now = Calendar.getInstance();
+		settings.setSyncLastDateTime(now);
+
+		final CalendarEvent event1 = mock(CalendarEvent.class);
+		final CalendarEvent event2 = mock(CalendarEvent.class);
+
+		doReturn(now).when(event1).getStartDateTime();
+		doReturn(now).when(event1).getEndDateTime();
+		doReturn(EventType.MEETING).when(event1).getEventType();
+		// event 1 is to be updated
+		final Calendar after = Calendar.getInstance();
+		after.setTimeInMillis(now.getTimeInMillis() + 1);
+		doReturn(after).when(event1).getLastUpdated();
+
+		doReturn(now).when(event2).getStartDateTime();
+		doReturn(now).when(event2).getEndDateTime();
+		doReturn(EventType.NORMAL_EVENT).when(event2).getEventType();
+		doReturn(now).when(event2).getLastUpdated();
+
+		final List<CalendarEvent> events = Arrays.asList(event1, event2);
+
+		doReturn(events).when(notesDAO).getEntries(null);
+		doReturn(events).when(googleDAO).getEvents(null);
+
+		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] {}, settings);
+
+		verify(notesDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
+
+		verify(googleDAO, times(1)).update(Matchers.anyString(), Matchers.eq(event1));
+
+		verify(googleDAO, times(0)).insert((CalendarEvent) Matchers.anyObject());
+		verify(googleDAO, times(0)).delete(Matchers.anyString());
+
 	}
 
 	/**
@@ -230,9 +282,27 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
 	public void testExecuteSync_DeleteEventsFromGoogle() throws Exception {
-		fail("Not implemented yet");
+		final CalendarEvent event1 = mock(CalendarEvent.class);
+		final CalendarEvent event2 = mock(CalendarEvent.class);
+		doReturn("id1").when(event1).getId();
+		doReturn("id2").when(event2).getId();
+
+		final List<CalendarEvent> events = Arrays.asList(event1, event2);
+
+		doReturn(new ArrayList<CalendarEvent>()).when(notesDAO).getEntries(null);
+		doReturn(events).when(googleDAO).getEvents(null);
+
+		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] {}, settings);
+
+		verify(notesDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
+
+		verify(googleDAO, times(1)).delete(event1.getId());
+		verify(googleDAO, times(1)).delete(event2.getId());
+
+		verify(googleDAO, times(0)).insert((CalendarEvent) Matchers.anyObject());
+		verify(googleDAO, times(0)).update(Matchers.anyString(), (CalendarEvent) Matchers.anyObject());
 	}
 
 	/**
@@ -240,9 +310,35 @@ public class SyncServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
 	public void testExecuteSync_NoChanges() throws Exception {
-		fail("Not implemented yet");
+		final Calendar now = Calendar.getInstance();
+		settings.setSyncLastDateTime(now);
+
+		final CalendarEvent event1 = mock(CalendarEvent.class);
+		final CalendarEvent event2 = mock(CalendarEvent.class);
+
+		doReturn(now).when(event1).getStartDateTime();
+		doReturn(now).when(event1).getEndDateTime();
+		doReturn(EventType.MEETING).when(event1).getEventType();
+		doReturn(now).when(event1).getLastUpdated();
+
+		doReturn(now).when(event2).getStartDateTime();
+		doReturn(now).when(event2).getEndDateTime();
+		doReturn(EventType.NORMAL_EVENT).when(event2).getEventType();
+		doReturn(now).when(event2).getLastUpdated();
+
+		final List<CalendarEvent> events = Arrays.asList(event1, event2);
+
+		doReturn(events).when(notesDAO).getEntries(null);
+		doReturn(events).when(googleDAO).getEvents(null);
+
+		new SyncService().executeSync(notesDAO, googleDAO, null, new ICalendarEventObfuscator[] {}, settings);
+
+		verify(notesDAO, times(1)).getEntries(null);
+		verify(googleDAO, times(1)).getEvents(null);
+
+		verifyNoMoreInteractions(googleDAO);
+
 	}
 
 }
