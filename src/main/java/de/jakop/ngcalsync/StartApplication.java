@@ -1,7 +1,20 @@
 package de.jakop.ngcalsync;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Calendar;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
@@ -53,7 +66,7 @@ public class StartApplication {
 			}
 		};
 
-		new StartApplication(new DefaultFileAccessor(), exitStrategy).synchronize();
+		new StartApplication(new DefaultFileAccessor(), exitStrategy);
 
 	}
 
@@ -65,6 +78,7 @@ public class StartApplication {
 	public StartApplication(final IFileAccessor fileAccessor, final IExitStrategy exitStrategy) {
 		this.exitStrategy = exitStrategy;
 		this.fileAccessor = fileAccessor;
+		moveToTray();
 	}
 
 	/**
@@ -101,5 +115,84 @@ public class StartApplication {
 	private void reloadSettings() throws ConfigurationException, IOException {
 		settings = new Settings(fileAccessor, exitStrategy, LogFactory.getLog(Settings.class), new NotesHelper());
 		settings.load();
+	}
+
+	private void moveToTray() {
+		//Check the SystemTray is supported
+		if (!SystemTray.isSupported()) {
+			// TODO i18n
+			log.info("SystemTray is not supported");
+			return;
+		}
+
+		final SystemTray tray = SystemTray.getSystemTray();
+
+		final Image image = chooseIcon(tray);
+		final TrayIcon trayIcon = new TrayIcon(image, Constants.APPLICATION_NAME);
+		final PopupMenu popup = new PopupMenu();
+		trayIcon.setImageAutoSize(true);
+
+		// Create a pop-up menu components
+		final MenuItem syncItem = new MenuItem("Synchronize");
+		//		final MenuItem aboutItem = new MenuItem("About");
+		final MenuItem exitItem = new MenuItem("Exit");
+
+		//Add components to pop-up menu
+		popup.add(syncItem);
+		popup.addSeparator();
+		//		popup.add(aboutItem);
+		popup.add(exitItem);
+
+		trayIcon.setPopupMenu(popup);
+
+		try {
+			tray.add(trayIcon);
+		} catch (final AWTException e) {
+			log.error("TrayIcon could not be added.", e);
+		}
+
+		final ActionListener syncActionListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				try {
+					synchronize();
+				} catch (final Exception ex) {
+					final String home = System.getenv("user.home");
+					final File logfile = new File(home, "ngcalsync.log");
+					JOptionPane.showMessageDialog(null, String.format("Oops, sync failed. See logfile %s for details.", logfile.getAbsolutePath()));
+				}
+			}
+		};
+
+		syncItem.addActionListener(syncActionListener);
+		trayIcon.addActionListener(syncActionListener);
+
+		exitItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				exitStrategy.exit(0);
+			}
+		});
+	}
+
+	private Image chooseIcon(final SystemTray tray) {
+		// must be descending!
+		final int[] availableSizes = new int[] { 76, 48, 32, 24, 20, 16 };
+		final int size = (int) tray.getTrayIconSize().getWidth();
+		int leastDifference = 100;
+		for (final int availableSize : availableSizes) {
+			final int difference = availableSize - size;
+			if (difference < leastDifference && difference >= 0) {
+				leastDifference = difference;
+			}
+		}
+
+		final String chosenSize = String.valueOf(size + leastDifference);
+
+		final URL imageURL = getClass().getResource(String.format("/images/icon%sx%s.png", chosenSize, chosenSize));
+		final Image image = new ImageIcon(imageURL).getImage();
+		return image;
 	}
 }
