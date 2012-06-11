@@ -50,6 +50,8 @@ public class SyncServiceTest {
 	private GoogleCalendarDAO googleDAO;
 
 	private Settings settings;
+	private final Calendar now = Calendar.getInstance();
+	private final Calendar after = Calendar.getInstance();
 
 	/**
 	 * 
@@ -58,6 +60,7 @@ public class SyncServiceTest {
 	public void before() {
 		MockitoAnnotations.initMocks(this);
 		settings = new Settings(mock(IFileAccessor.class), mock(IExitStrategy.class), mock(Log.class), mock(NotesHelper.class));
+		after.setTimeInMillis(now.getTimeInMillis() + 1);
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_NotesDAOIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(null, null, null, null, null);
 	}
 
@@ -76,7 +79,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_GoogleDAOIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(notesDAO, null, null, null, null);
 	}
 
@@ -86,7 +89,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_SettingsIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(notesDAO, googleDAO, null, null, null);
 	}
 
@@ -142,7 +145,6 @@ public class SyncServiceTest {
 	public void testExecuteSync_DuplicateEventsMatch_NotAllowed() throws Exception {
 
 		final CalendarEvent event1 = new CalendarEvent();
-		final Calendar now = Calendar.getInstance();
 		event1.setStartDateTime(now);
 		event1.setEndDateTime(now);
 
@@ -173,7 +175,6 @@ public class SyncServiceTest {
 		final ICalendarEventObfuscator obfuscator2 = mock(ICalendarEventObfuscator.class);
 
 		final CalendarEvent event1 = new CalendarEvent();
-		final Calendar now = Calendar.getInstance();
 		event1.setStartDateTime(now);
 		event1.setEndDateTime(now);
 
@@ -241,7 +242,6 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_UpdateEventsToGoogle() throws Exception {
-		final Calendar now = Calendar.getInstance();
 		settings.setSyncLastDateTime(now);
 
 		final CalendarEvent event1 = mock(CalendarEvent.class);
@@ -250,13 +250,12 @@ public class SyncServiceTest {
 		doReturn(now).when(event1).getStartDateTime();
 		doReturn(now).when(event1).getEndDateTime();
 		doReturn(EventType.MEETING).when(event1).getEventType();
-		// event 1 is to be updated
-		final Calendar after = Calendar.getInstance();
-		after.setTimeInMillis(now.getTimeInMillis() + 1);
+
+
 		doReturn(after).when(event1).getLastUpdated();
 
-		doReturn(now).when(event2).getStartDateTime();
-		doReturn(now).when(event2).getEndDateTime();
+		doReturn(after).when(event2).getStartDateTime();
+		doReturn(after).when(event2).getEndDateTime();
 		doReturn(EventType.NORMAL_EVENT).when(event2).getEventType();
 		doReturn(now).when(event2).getLastUpdated();
 
@@ -311,7 +310,6 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_NoChanges() throws Exception {
-		final Calendar now = Calendar.getInstance();
 		settings.setSyncLastDateTime(now);
 
 		final CalendarEvent event1 = mock(CalendarEvent.class);
@@ -322,8 +320,8 @@ public class SyncServiceTest {
 		doReturn(EventType.MEETING).when(event1).getEventType();
 		doReturn(now).when(event1).getLastUpdated();
 
-		doReturn(now).when(event2).getStartDateTime();
-		doReturn(now).when(event2).getEndDateTime();
+		doReturn(after).when(event2).getStartDateTime();
+		doReturn(after).when(event2).getEndDateTime();
 		doReturn(EventType.NORMAL_EVENT).when(event2).getEventType();
 		doReturn(now).when(event2).getLastUpdated();
 

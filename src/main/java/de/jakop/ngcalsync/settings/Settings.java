@@ -11,9 +11,9 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -34,7 +34,7 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  * @author fjakop
  * 
  */
-public final class Settings {
+public class Settings {
 
 	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
@@ -144,7 +144,6 @@ public final class Settings {
 	}
 
 	/**
-	 * TODO make this crap nice and tested
 	 * 
 	 * Creates the file with the necessary native environment information, e.g. path to Lotus Notes
 	 * if necessary.
@@ -154,23 +153,24 @@ public final class Settings {
 	 */
 	private boolean createEnvironmentInformationIfNecessary(final File environmentInformationFile) {
 
-		if (!notesHelper.isNotesInSystemPath()) {
-
-			final String lotusNotesHome = notesHelper.getLotusNotesPath();
-
-			PropertiesConfiguration envProperties;
-			try {
-				envProperties = new PropertiesConfiguration(environmentInformationFile);
-				envProperties.getLayout().setGlobalSeparator("=");
-				envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
-				envProperties.save();
-				log.info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
-				return true;
-			} catch (final ConfigurationException e) {
-				throw new RuntimeException(e);
-			}
+		// Notes classes can be loaded, no changes necessary
+		if (notesHelper.isNotesInSystemPath() && notesHelper.isNotesInClassPath()) {
+			return false;
 		}
-		return false;
+
+		final String lotusNotesHome = notesHelper.getLotusNotesPath();
+
+		PropertiesConfiguration envProperties;
+		try {
+			envProperties = new PropertiesConfiguration(environmentInformationFile);
+			envProperties.getLayout().setGlobalSeparator("=");
+			envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
+			envProperties.save();
+			log.info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
+			return true;
+		} catch (final ConfigurationException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

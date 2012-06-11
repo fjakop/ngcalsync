@@ -1,6 +1,6 @@
 package de.jakop.ngcalsync.obfuscator;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.settings.PrivacySettings;

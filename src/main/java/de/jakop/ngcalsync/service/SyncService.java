@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.Predicate;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -126,6 +126,8 @@ public class SyncService {
 		@Override
 		public boolean evaluate(final CalendarEvent object) {
 
+			// The event type cannot be evaluated, since Google has no real event types
+
 			if (object.isAllDay() && event.isAllDay()) {
 				return object.getStartDateTime().get(Calendar.YEAR) == event.getStartDateTime().get(Calendar.YEAR) && //
 						object.getStartDateTime().get(Calendar.MONTH) == event.getStartDateTime().get(Calendar.MONTH) && //
@@ -185,7 +187,7 @@ public class SyncService {
 		} catch (final SynchronisationException e) {
 			log.error("Error inserting entry");
 			log.error(entry);
-			e.printStackTrace();
+			log.error(e.getStackTrace());
 		}
 	}
 

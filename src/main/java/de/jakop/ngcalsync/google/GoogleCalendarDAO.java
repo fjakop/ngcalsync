@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -119,6 +120,7 @@ public class GoogleCalendarDAO {
 	 * 
 	 * @param filters
 	 * @return alle Kalendereinträge
+	 * FIXME filters auswerten
 	 */
 	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
@@ -133,13 +135,11 @@ public class GoogleCalendarDAO {
 			final String startDateTime = new DateTime(sdt.getTime(), sdt.getTimeZone()).toStringRfc3339();
 			final String endDateTime = new DateTime(edt.getTime(), edt.getTimeZone()).toStringRfc3339();
 
-			//			myQuery.setStringCustomParameter("sortorder", "ascending");
-
 			final Events googleEvents = service.events().list(getCalendar().getId())//
 					.setTimeMin(startDateTime).setTimeMax(endDateTime)//
 					.setMaxResults(new Integer(65535))//
 					.setOrderBy("starttime")//
-					// handling recurence is not necessary, since Lotus Notes recurrence is a pain in the a..
+					// handling recurrence is not necessary, since Lotus Notes recurrence is a pain in the a..
 					.setSingleEvents(Boolean.TRUE)//
 					.execute();
 
@@ -150,7 +150,11 @@ public class GoogleCalendarDAO {
 			for (final Event googleEvent : googleEvents.getItems()) {
 				events.add(convGoogleEvent(googleEvent));
 			}
-		} catch (final Exception e) {
+		} catch (final IOException e) {
+			throw new SynchronisationException(e);
+		} catch (final ConfigurationException e) {
+			throw new SynchronisationException(e);
+		} catch (final ParseException e) {
 			throw new SynchronisationException(e);
 		}
 
@@ -176,7 +180,7 @@ public class GoogleCalendarDAO {
 					}
 				}
 			} catch (final IOException e) {
-				throw new RuntimeException(e);
+				throw new SynchronisationException(e);
 			}
 
 			if (calendar == null) {

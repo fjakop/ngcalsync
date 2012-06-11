@@ -4,7 +4,6 @@
 
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<includeSiteDirectory>false</includeSiteDirectory>
-
 	<formats>
 		<format>dir</format>
 		<format>zip</format>

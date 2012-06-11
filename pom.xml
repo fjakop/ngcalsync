@@ -33,7 +33,16 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -74,37 +83,6 @@
 								<descriptor>src/main/assembly/distribution.xml</descriptor>
 							</descriptors>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<check>
-<!-- 						<branchRate>85</branchRate> -->
-<!-- 						<lineRate>85</lineRate> -->
-						<haltOnFailure>true</haltOnFailure>
-						<totalBranchRate>49</totalBranchRate>
-						<totalLineRate>49</totalLineRate>
-<!-- 						<packageLineRate>85</packageLineRate> -->
-<!-- 						<packageBranchRate>85</packageBranchRate> -->
-						<regexes>
-							<regex>
-								<pattern>de.jakop.ngcalsync.util.os.*</pattern>
-								<branchRate>0</branchRate>
-								<lineRate>0</lineRate>
-							</regex>
-						</regexes>
-					</check>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>clean</goal>
-							<goal>check</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -163,9 +141,9 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -213,4 +191,89 @@
 			<url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
 		</repository>
 	</repositories>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cobertura-maven-plugin</artifactId>
+						<version>2.5.1</version>
+						<configuration>
+							<check>
+<!-- 						<branchRate>85</branchRate> -->
+<!-- 						<lineRate>85</lineRate> -->
+								<haltOnFailure>true</haltOnFailure>
+								<totalBranchRate>58</totalBranchRate>
+								<totalLineRate>65</totalLineRate>
+<!-- 						<packageLineRate>85</packageLineRate> -->
+<!-- 						<packageBranchRate>85</packageBranchRate> -->
+								<regexes>
+									<regex>
+										<pattern>de.jakop.ngcalsync.util.os.*</pattern>
+										<branchRate>0</branchRate>
+										<lineRate>0</lineRate>
+									</regex>
+								</regexes>
+							</check>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>clean</goal>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>upload-sf.net</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0-beta-4</version>
+						<executions>
+							<!-- <execution>
+								<id>upload-dist-sf.net</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<serverId>frs.sf.net</serverId>
+									<url>scp://fjakop@frs.sourceforge.net:/home/frs/project/ngcalsync</url>
+									<fromDir>${project.build.directory}</fromDir>
+									<includes>*.zip, *.tar.gz</includes>
+									<toDir>test_release</toDir>
+								</configuration>
+							</execution> -->
+
+							<execution>
+								<id>upload-releasenotes-sf.net</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>upload-single</goal>
+								</goals>
+								<configuration>
+									<serverId>frs.sf.net</serverId>
+									<url>scp://frs.sourceforge.net</url>
+									<fromFile>${project.build.directory}/${project.build.finalName}-distribution/RELEASENOTES.textile</fromFile>
+									<toFile>/home/frs/project/ngcalsync/README.textile</toFile>
+								</configuration>
+							</execution>
+
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
