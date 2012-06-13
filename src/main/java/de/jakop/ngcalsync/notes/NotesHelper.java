@@ -3,6 +3,7 @@ package de.jakop.ngcalsync.notes;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,9 +23,11 @@ public class NotesHelper {
 	 * @return <code>true</code>, if Lotus Notes native library could be loaded from os path
 	 */
 	public boolean isNotesInSystemPath() {
+		log.debug("Checking for Lotus Notes in system path...");
 		try {
 			// check for Lotus Notes
 			System.loadLibrary("nlsxbe");
+			log.debug("Loades nlsxbe successful.");
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
 			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
@@ -42,7 +45,10 @@ public class NotesHelper {
 	public String getLotusNotesPath() {
 		// check os and try to determine path to Lotus Notes
 		String lotusNotesHome = "";
-		if (System.getenv("os").contains("Windows")) {
+		log.debug("Trying to obtain Lotus Notes path");
+		log.debug(String.format("OS info: %s-%s-%s", SystemUtils.OS_NAME, SystemUtils.OS_VERSION, SystemUtils.OS_ARCH));
+		if (SystemUtils.IS_OS_WINDOWS) {
+			log.debug("OS is Windows");
 			lotusNotesHome = WindowsRegistry.readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
 			while (lotusNotesHome.endsWith("\n")) {
 				lotusNotesHome = StringUtils.chomp(lotusNotesHome);
