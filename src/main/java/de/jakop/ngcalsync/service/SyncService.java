@@ -126,9 +126,7 @@ public class SyncService {
 		@Override
 		public boolean evaluate(final CalendarEvent object) {
 
-			if (!object.getEventType().equals(event.getEventType())) {
-				return false;
-			}
+			// The event type cannot be evaluated, since Google has no real event types
 
 			if (object.isAllDay() && event.isAllDay()) {
 				return object.getStartDateTime().get(Calendar.YEAR) == event.getStartDateTime().get(Calendar.YEAR) && //
