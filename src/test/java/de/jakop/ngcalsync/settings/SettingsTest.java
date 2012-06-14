@@ -42,7 +42,7 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  *
  */
 public class SettingsTest {
- 
+
 	/** expected exception */
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -61,6 +61,7 @@ public class SettingsTest {
 	private NotesHelper notesHelper;
 
 	private File settingsFile;
+	private File environmentFile;
 	private File lastSyncDateFile;
 
 
@@ -72,12 +73,15 @@ public class SettingsTest {
 		// get a temp settings file
 		lastSyncDateFile = File.createTempFile(getClass().getName() + ".lastsync.", null);
 		settingsFile = File.createTempFile(getClass().getName() + ".settings.", null);
+		environmentFile = File.createTempFile(getClass().getName() + ".environment.", null);
 		FileUtils.writeStringToFile(lastSyncDateFile, "123456");
 
 		doReturn(settingsFile).when(fileAccessor).getFile(Matchers.eq(Constants.FILENAME_SYNC_PROPERTIES));
+		doReturn(environmentFile).when(fileAccessor).getFile(Matchers.eq(Constants.FILENAME_ENV_PROPERTIES));
 		doReturn(lastSyncDateFile).when(fileAccessor).getFile(Matchers.eq(Constants.FILENAME_LAST_SYNC_TIME));
 
 		doReturn(Boolean.TRUE).when(notesHelper).isNotesInSystemPath();
+		doReturn(Boolean.TRUE).when(notesHelper).isNotesInClassPath();
 
 		// do not actually exit the program, but do not run further either
 		doThrow(new RuntimeException("#1")).when(exitStrategy).exit(0);
@@ -88,6 +92,44 @@ public class SettingsTest {
 	public void after() {
 		FileUtils.deleteQuietly(lastSyncDateFile);
 		FileUtils.deleteQuietly(settingsFile);
+		FileUtils.deleteQuietly(environmentFile);
+	}
+
+	/**
+	 * Verifies that environment file is created if missing.
+	 * @throws Exception 
+	 */
+	@Test
+	public void testFirstStart_EnvironmentFileMissing_IsCreated_ProgramExits() throws Exception {
+
+
+		// create settings file
+		loadSettings(false);
+
+		// delete the environment file to simulate a first start
+		environmentFile.delete();
+
+		doReturn(Boolean.FALSE).when(notesHelper).isNotesInSystemPath();
+		doReturn(Boolean.TRUE).when(notesHelper).isNotesInClassPath();
+
+		// load again, exit and environment message happen
+		log = mock(Log.class);
+
+		exitStrategy = mock(IExitStrategy.class);
+		// do not actually exit the program, but do not run further either
+		doThrow(new RuntimeException("#1")).when(exitStrategy).exit(0);
+
+		loadSettings(false);
+
+		// verify message
+		verify(log, times(1)).info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
+
+		// verify exit
+		verify(exitStrategy, times(1)).exit(0);
+		verifyNoMoreInteractions(exitStrategy);
+
+		// verify that all parameters are set with their defaults
+		verifyAllParametersAreSetWithDefaults();
 	}
 
 	/**
@@ -95,7 +137,7 @@ public class SettingsTest {
 	 * @throws Exception 
 	 */
 	@Test
-	public void testFirstStart_FileIsCreated_ProgramExits() throws Exception {
+	public void testFirstStart_SettingsFileMissing_IsCreated_ProgramExits() throws Exception {
 
 		// delete the settings file to simulate a first start
 		settingsFile.delete();
@@ -406,7 +448,7 @@ public class SettingsTest {
 			}
 		} catch (final RuntimeException e) {
 			// did we exit with "our" exception?
-			if (!e.getMessage().equals("#1")) {
+			if (e.getMessage() == null || !e.getMessage().equals("#1")) {
 				throw e;
 			}
 		}

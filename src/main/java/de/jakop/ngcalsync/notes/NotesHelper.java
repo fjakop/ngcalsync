@@ -27,11 +27,29 @@ public class NotesHelper {
 		try {
 			// check for Lotus Notes
 			System.loadLibrary("nlsxbe");
-			log.debug("Loades nlsxbe successful.");
+			log.debug("nlsxbe successfully loaded");
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
 			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
 			log.warn(String.format("Lotus Notes is not in the library path."));
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @return <code>true</code>, if Lotus Notes java classes could be loaded from the classpath
+	 */
+	public boolean isNotesInClassPath() {
+		log.debug("Checking for Lotus Notes jar in classpath...");
+		try {
+			// check for Lotus Notes java classes
+			Class.forName("lotus.notes.NotesException");
+			log.debug("lotus.notes.NotesException successfully loaded");
+			return true;
+		} catch (final ClassNotFoundException e) {
+			// Lotus Notes jar is not in the classpath, NOTES_HOME not or incorrectly set
+			log.warn(String.format("Lotus Notes jar is not in the classpath."));
 			return false;
 		}
 	}
@@ -62,4 +80,6 @@ public class NotesHelper {
 		}
 		return lotusNotesHome;
 	}
+
+
 }
