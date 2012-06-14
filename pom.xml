@@ -42,7 +42,7 @@
 				<version>1.0-beta-7</version>
 			</extension>
 		</extensions>
-
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -206,8 +206,8 @@
 <!-- 						<branchRate>85</branchRate> -->
 <!-- 						<lineRate>85</lineRate> -->
 								<haltOnFailure>true</haltOnFailure>
-								<totalBranchRate>49</totalBranchRate>
-								<totalLineRate>49</totalLineRate>
+								<totalBranchRate>55</totalBranchRate>
+								<totalLineRate>60</totalLineRate>
 <!-- 						<packageLineRate>85</packageLineRate> -->
 <!-- 						<packageBranchRate>85</packageBranchRate> -->
 								<regexes>
