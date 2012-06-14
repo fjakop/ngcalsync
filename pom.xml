@@ -27,7 +27,7 @@
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
-	<version>0.4.0</version>
+	<version>0.5.0-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +35,14 @@
 
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -63,6 +71,20 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>generate-binary-distribution</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/distribution.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -170,7 +192,6 @@
 		</repository>
 	</repositories>
 
-
 	<profiles>
 		<profile>
 			<id>coverage</id>
@@ -212,56 +233,43 @@
 			</build>
 		</profile>
 		<profile>
-			<id>distribution</id>
+			<id>upload-sf.net</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.2.1</version>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0-beta-4</version>
 						<executions>
-							<execution>
-								<id>generate-binary-distribution</id>
-								<phase>package</phase>
+							<!-- <execution>
+								<id>upload-dist-sf.net</id>
+								<phase>initialize</phase>
 								<goals>
-									<goal>single</goal>
+									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<descriptors>
-										<descriptor>src/main/assembly/distribution.xml</descriptor>
-									</descriptors>
+									<serverId>frs.sf.net</serverId>
+									<url>scp://fjakop@frs.sourceforge.net:/home/frs/project/ngcalsync</url>
+									<fromDir>${project.build.directory}</fromDir>
+									<includes>*.zip, *.tar.gz</includes>
+									<toDir>test_release</toDir>
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>distribution-sf.net</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.6</version>
-						<executions>
+							</execution> -->
+							
 							<execution>
-								<id>copy-artifacts-for-sf.net</id>
-								<phase>package</phase>
+								<id>upload-releasenotes-sf.net</id>
+								<phase>initialize</phase>
 								<goals>
-									<goal>run</goal>
+									<goal>upload-single</goal>
 								</goals>
 								<configuration>
-									<target>
-										<property name="dist.name" value="${project.build.directory}/${project.build.finalName}-distribution" />
-										<property name="hoster.suffix" value="sf.net" />
-										<copy file="${dist.name}/RELEASENOTES.textile" tofile="${dist.name}-${hoster.suffix}/README" />
-										<copy file="${dist.name}.zip" todir="${dist.name}-${hoster.suffix}" />
-										<copy file="${dist.name}.tar.gz" todir="${dist.name}-${hoster.suffix}" />
-									</target>
+									<serverId>frs.sf.net</serverId>
+									<url>scp://frs.sourceforge.net</url>
+									<fromFile>${project.build.directory}/${project.build.finalName}-distribution/RELEASENOTES.textile</fromFile>
+									<toFile>/home/frs/project/ngcalsync/README.textile</toFile>
 								</configuration>
 							</execution>
+							 
 						</executions>
 					</plugin>
 				</plugins>
