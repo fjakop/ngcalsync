@@ -46,7 +46,7 @@ public class EventTypeFilterTest {
 	public void testAccept_NullEvent_NotAllowed() throws Exception {
 		filter = new EventTypeFilter();
 
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		filter.accept(null);
 	}
 

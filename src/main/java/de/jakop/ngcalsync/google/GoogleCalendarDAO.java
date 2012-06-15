@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -149,7 +150,11 @@ public class GoogleCalendarDAO {
 			for (final Event googleEvent : googleEvents.getItems()) {
 				events.add(convGoogleEvent(googleEvent));
 			}
-		} catch (final Exception e) {
+		} catch (final IOException e) {
+			throw new SynchronisationException(e);
+		} catch (final ConfigurationException e) {
+			throw new SynchronisationException(e);
+		} catch (final ParseException e) {
 			throw new SynchronisationException(e);
 		}
 

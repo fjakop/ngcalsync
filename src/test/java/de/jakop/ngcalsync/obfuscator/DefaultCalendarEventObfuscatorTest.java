@@ -30,7 +30,7 @@ public class DefaultCalendarEventObfuscatorTest {
 	 */
 	@Test
 	public void testConstructor_NullPrivacySettings_ThrowsException() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new DefaultCalendarEventObfuscator(null);
 	}
 

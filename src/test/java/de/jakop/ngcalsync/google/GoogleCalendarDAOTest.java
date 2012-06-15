@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -24,9 +25,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.Calendar.Events.Insert;
 
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.calendar.EventType;
+import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.GetEventsTest;
 import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.InsertTest;
 import de.jakop.ngcalsync.settings.Settings;
 
@@ -39,7 +43,7 @@ import de.jakop.ngcalsync.settings.Settings;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ InsertTest.class })
+@SuiteClasses({ InsertTest.class, GetEventsTest.class })
 public class GoogleCalendarDAOTest {
 
 	private static void mockCalendarList(final com.google.api.services.calendar.Calendar.CalendarList calendarList) throws IOException {
@@ -156,28 +160,75 @@ public class GoogleCalendarDAOTest {
 			final com.google.api.services.calendar.model.Event event1 = new com.google.api.services.calendar.model.Event();
 			items.add(event1);
 
-			// create an event to be converted
-			final CalendarEvent myEvent = mock(CalendarEvent.class);
-			doReturn(now).when(myEvent).getStartDateTime();
-			doReturn(after).when(myEvent).getEndDateTime();
-			doReturn(after).when(myEvent).getLastUpdated();
-			doReturn("myTitle").when(myEvent).getTitle();
-			doReturn("myContent").when(myEvent).getContent();
-			doReturn("myLocation").when(myEvent).getLocation();
+			final com.google.api.services.calendar.model.EventDateTime start = new com.google.api.services.calendar.model.EventDateTime();
+			final com.google.api.services.calendar.model.EventDateTime end = new com.google.api.services.calendar.model.EventDateTime();
+
+			start.setDateTime(new DateTime(now.getTime()));
+			end.setDateTime(new DateTime(after.getTime()));
+
+			event1.setStart(start);
+			event1.setEnd(end);
+			event1.setSummary("myTitle");
+			event1.setDescription("myContent");
+			event1.setLocation("myLocation");
+			event1.setId("myId");
+			event1.setUpdated(new DateTime(after.getTime()));
+
+			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+
+			final List<CalendarEvent> events = dao.getEvents(null);
+
+			assertEquals(1, events.size());
+			final CalendarEvent result = events.get(0);
+
+			assertEquals(EventType.NORMAL_EVENT, result.getEventType());
+			assertEquals("myTitle", result.getTitle());
+			assertEquals("myContent", result.getContent());
+			assertEquals("myLocation", result.getLocation());
+			assertEquals("myId", result.getId());
+			assertEquals(now, result.getStartDateTime());
+			assertEquals(after, result.getEndDateTime());
+			assertEquals(after, result.getLastUpdated());
+			assertEquals(Boolean.FALSE, Boolean.valueOf(result.isAllDay()));
+			assertEquals(Boolean.FALSE, Boolean.valueOf(result.isPrivate()));
+
+		}
+
+		/**
+		 * 
+		 * @throws Exception
+		 */
+		@Test
+		public void testGetEvents_HasMatches_AllDayEvent_Success() throws Exception {
+
+			mockCalendarList(calendar.calendarList());
+			mockCalendars(calendar.calendars());
+			final com.google.api.services.calendar.model.Events modelEvents = mockEvents(calendar.events(), now, after);
+
+			final ArrayList<com.google.api.services.calendar.model.Event> items = new ArrayList<com.google.api.services.calendar.model.Event>();
+			modelEvents.setItems(items);
+
+			final com.google.api.services.calendar.model.Event event1 = new com.google.api.services.calendar.model.Event();
+			items.add(event1);
 
 			final com.google.api.services.calendar.model.EventDateTime start = new com.google.api.services.calendar.model.EventDateTime();
 			final com.google.api.services.calendar.model.EventDateTime end = new com.google.api.services.calendar.model.EventDateTime();
 
-			start.setDateTime(new DateTime(myEvent.getStartDateTime().getTime()));
-			end.setDateTime(new DateTime(myEvent.getEndDateTime().getTime()));
+			start.setDateTime(new DateTime(now.getTime()));
+			end.setDateTime(new DateTime(after.getTime()));
 
 			event1.setStart(start);
 			event1.setEnd(end);
-			event1.setSummary(myEvent.getTitle());
-			event1.setDescription(myEvent.getContent());
-			event1.setLocation(myEvent.getLocation());
-			event1.setId(myEvent.getId());
-			event1.setUpdated(new DateTime(myEvent.getLastUpdated().getTime()));
+			event1.setSummary("myTitle");
+			event1.setDescription("myContent");
+			event1.setLocation("myLocation");
+			event1.setId("myId");
+			event1.setUpdated(new DateTime(after.getTime()));
+
+			final SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+			event1.getStart().setDateTime(null);
+			event1.getStart().setDate(dateFormatDateOnly.format(now.getTime()));
+			event1.getEnd().setDate(dateFormatDateOnly.format(after.getTime()));
 
 			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
@@ -185,11 +236,66 @@ public class GoogleCalendarDAOTest {
 
 			assertEquals(1, events.size());
 
-			assertEquals(myEvent.getTitle(), event1.getSummary());
-			assertEquals(myEvent.getContent(), event1.getDescription());
-			assertEquals(myEvent.getLocation(), event1.getLocation());
-			assertEquals(myEvent.getId(), event1.getId());
-			assertEquals(new DateTime(myEvent.getLastUpdated().getTime()), event1.getUpdated());
+			final CalendarEvent result = events.get(0);
+			assertEquals(EventType.ALL_DAY_EVENT, result.getEventType());
+			assertEquals("myTitle", result.getTitle());
+			assertEquals("myContent", result.getContent());
+			assertEquals("myLocation", result.getLocation());
+			assertEquals("myId", result.getId());
+			assertEquals(dateFormatDateOnly.format(now.getTime()), dateFormatDateOnly.format(result.getStartDateTime().getTime()));
+			assertEquals(dateFormatDateOnly.format(after.getTime()), dateFormatDateOnly.format(result.getEndDateTime().getTime()));
+			assertEquals(after, result.getLastUpdated());
+			assertEquals(Boolean.TRUE, Boolean.valueOf(result.isAllDay()));
+			assertEquals(Boolean.FALSE, Boolean.valueOf(result.isPrivate()));
+
+		}
+
+		/**
+		 * 
+		 * @throws Exception
+		 */
+		@Test
+		public void testGetEvents_HasMatches_Reminder_Success() throws Exception {
+
+			mockCalendarList(calendar.calendarList());
+			mockCalendars(calendar.calendars());
+			final com.google.api.services.calendar.model.Events modelEvents = mockEvents(calendar.events(), now, after);
+
+			final ArrayList<com.google.api.services.calendar.model.Event> items = new ArrayList<com.google.api.services.calendar.model.Event>();
+			modelEvents.setItems(items);
+
+			final com.google.api.services.calendar.model.Event event1 = new com.google.api.services.calendar.model.Event();
+			items.add(event1);
+
+			final com.google.api.services.calendar.model.EventDateTime start = new com.google.api.services.calendar.model.EventDateTime();
+
+			start.setDateTime(new DateTime(now.getTime()));
+
+			event1.setStart(start);
+			event1.setEnd(start);
+			event1.setSummary("myTitle");
+			event1.setDescription("myContent");
+			event1.setLocation("myLocation");
+			event1.setId("myId");
+			event1.setUpdated(new DateTime(after.getTime()));
+
+			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+
+			final List<CalendarEvent> events = dao.getEvents(null);
+
+			assertEquals(1, events.size());
+
+			final CalendarEvent result = events.get(0);
+			assertEquals(EventType.REMINDER, result.getEventType());
+			assertEquals("myTitle", result.getTitle());
+			assertEquals("myContent", result.getContent());
+			assertEquals("myLocation", result.getLocation());
+			assertEquals("myId", result.getId());
+			assertEquals(now, result.getStartDateTime());
+			assertEquals(now, result.getEndDateTime());
+			assertEquals(after, result.getLastUpdated());
+			assertEquals(Boolean.FALSE, Boolean.valueOf(result.isAllDay()));
+			assertEquals(Boolean.FALSE, Boolean.valueOf(result.isPrivate()));
 
 		}
 
@@ -247,11 +353,6 @@ public class GoogleCalendarDAOTest {
 			settings = mock(Settings.class);
 			calendar = mock(com.google.api.services.calendar.Calendar.class);
 			myEvent = mock(CalendarEvent.class);
-			initMocks(now, after, myEvent, settings, calendar);
-		}
-
-		private static void initMocks(final Calendar now, final Calendar after, final CalendarEvent myEvent, final Settings settings,
-				final com.google.api.services.calendar.Calendar calendar) {
 			after.setTimeInMillis(now.getTimeInMillis() + 1);
 
 			// create an event to be inserted
@@ -260,6 +361,7 @@ public class GoogleCalendarDAOTest {
 			doReturn("myTitle").when(myEvent).getTitle();
 			doReturn("myContent").when(myEvent).getContent();
 			doReturn("myLocation").when(myEvent).getLocation();
+			doReturn("myId").when(myEvent).getId();
 
 			doReturn(new Integer(15)).when(settings).getReminderMinutes();
 			doReturn("mycal").when(settings).getGoogleCalendarName();
@@ -279,7 +381,6 @@ public class GoogleCalendarDAOTest {
 
 			final com.google.api.services.calendar.Calendar.Events events = mock(com.google.api.services.calendar.Calendar.Events.class);
 			doReturn(events).when(calendar).events();
-
 		}
 
 		/**
@@ -291,7 +392,7 @@ public class GoogleCalendarDAOTest {
 
 			mockCalendarList(calendar.calendarList());
 			mockCalendars(calendar.calendars());
-			mockEvents(calendar.events());
+			mockEvents_checkConversion(calendar.events(), myEvent);
 
 			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
@@ -361,7 +462,7 @@ public class GoogleCalendarDAOTest {
 
 			mockCalendarList_listThrowsIOException(calendar.calendarList());
 			mockCalendars(calendar.calendars());
-			mockEvents(calendar.events());
+			//			mockEvents_checkConversion(calendar.events());
 
 			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
@@ -380,7 +481,7 @@ public class GoogleCalendarDAOTest {
 
 			mockCalendarList(calendar.calendarList());
 			mockCalendars_GetExecuteReturnsNull(calendar.calendars());
-			mockEvents(calendar.events());
+			//			mockEvents_checkConversion(calendar.events());
 
 			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
@@ -390,9 +491,25 @@ public class GoogleCalendarDAOTest {
 
 		}
 
-		private static void mockEvents(final com.google.api.services.calendar.Calendar.Events events) throws IOException {
+		private static void mockEvents_checkConversion(final com.google.api.services.calendar.Calendar.Events events, final CalendarEvent sourceEvent) throws IOException {
 			final com.google.api.services.calendar.Calendar.Events.Insert insert = mock(com.google.api.services.calendar.Calendar.Events.Insert.class);
-			doReturn(insert).when(events).insert(Matchers.eq("myModelCal-id"), Matchers.any(com.google.api.services.calendar.model.Event.class));
+			doAnswer(new Answer<com.google.api.services.calendar.Calendar.Events.Insert>() {
+				@Override
+				public Insert answer(final InvocationOnMock invocation) throws Throwable {
+					assertEquals(2, invocation.getArguments().length);
+					final com.google.api.services.calendar.model.Event event = (com.google.api.services.calendar.model.Event) invocation.getArguments()[1];
+					assertEquals(sourceEvent.getContent(), event.getDescription());
+					// FIXME check conversions
+					//					assertEquals(sourceEvent.getEndDateTime(), event);
+					//					assertEquals(sourceEvent.getEventType(), event.);
+					//					assertEquals(sourceEvent.getId(), event.getId());
+					//					assertEquals(sourceEvent.getLastUpdated().getTimeInMillis(), event.getUpdated().getValue());
+					assertEquals(sourceEvent.getLocation(), event.getLocation());
+					assertEquals(sourceEvent.getStartDateTime().getTimeInMillis(), event.getStart().getDateTime().getValue());
+					assertEquals(sourceEvent.getTitle(), event.getSummary());
+					return insert;
+				}
+			}).when(events).insert(Matchers.eq("myModelCal-id"), Matchers.any(com.google.api.services.calendar.model.Event.class));
 
 			final com.google.api.services.calendar.model.Event modelEvent = new com.google.api.services.calendar.model.Event();
 			doReturn(modelEvent).when(insert).execute();
@@ -426,13 +543,4 @@ public class GoogleCalendarDAOTest {
 
 	}
 
-
-	private static void assertEventDataIsUpdated(final CalendarEvent myEvent, final com.google.api.services.calendar.model.Event googleEvent) {
-		assertEquals(myEvent.getContent(), googleEvent.getDescription());
-		assertEquals(myEvent.getId(), googleEvent.getId());
-		assertEquals(myEvent.getLocation(), googleEvent.getLocation());
-		assertEquals(myEvent.getStartDateTime().getTimeInMillis(), googleEvent.getStart().getDateTime().getValue());
-		assertEquals(myEvent.getEndDateTime().getTimeInMillis(), googleEvent.getEnd().getDateTime().getValue());
-		assertEquals(myEvent.getTitle(), googleEvent.getSummary());
-	}
 }

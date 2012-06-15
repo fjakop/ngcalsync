@@ -69,7 +69,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_NotesDAOIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(null, null, null, null, null);
 	}
 
@@ -79,7 +79,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_GoogleDAOIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(notesDAO, null, null, null, null);
 	}
 
@@ -89,7 +89,7 @@ public class SyncServiceTest {
 	 */
 	@Test
 	public void testExecuteSync_SettingsIsNull_NotAllowed() throws Exception {
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(NullPointerException.class);
 		new SyncService().executeSync(notesDAO, googleDAO, null, null, null);
 	}
 
