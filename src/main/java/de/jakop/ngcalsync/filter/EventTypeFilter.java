@@ -1,15 +1,14 @@
 package de.jakop.ngcalsync.filter;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.calendar.EventType;
 
 /**
- * Filters {@link CalendarEvent}s by {@link EventType}.
+ * Filters {@link CalendarEvent}s by {@link de.jakop.ngcalsync.calendar.EventType}.
  * 
  * @author fjakop
  */

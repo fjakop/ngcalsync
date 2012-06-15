@@ -145,12 +145,11 @@ public class SettingsTest {
 		loadSettings();
 
 		// verify message
-		verify(log, times(1))
-				.info(
-						String.format(
-								Constants.MSG_CONFIGURATION_UPGRADED,
-								settingsFile.getAbsolutePath(),
-								"{sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location,notes.mail.db.file,notes.domino.server,google.calendar.reminderminutes,google.calendar.name,google.account.email,proxy.host,proxy.port,proxy.user,proxy.password}"));
+		verify(log, times(1)).info(
+				String.format(Constants.MSG_CONFIGURATION_UPGRADED, settingsFile.getAbsolutePath(),
+						"{sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
+								+ "notes.mail.db.file,notes.domino.server," + "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
+								+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
 
 		// verify exit
 		verify(exitStrategy, times(1)).exit(0);

@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.Predicate;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -185,9 +185,8 @@ public class SyncService {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
-			log.error("Error inserting entry");
+			log.error("Error inserting entry", e);
 			log.error(entry);
-			e.printStackTrace();
 		}
 	}
 

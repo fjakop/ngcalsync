@@ -22,8 +22,6 @@ import de.bea.domingo.DViewEntry;
 import de.bea.domingo.util.GregorianDateTime;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
-import de.jakop.ngcalsync.notes.IOpenDatabaseStrategy;
-import de.jakop.ngcalsync.notes.NotesCalendarDAO;
 
 /**
  * 

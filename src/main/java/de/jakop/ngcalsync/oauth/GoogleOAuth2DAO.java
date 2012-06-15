@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -85,7 +85,7 @@ public class GoogleOAuth2DAO {
 	 * @param receiver verification code receiver
 	 * @param userSecretsFile file to store user secrets into
 	 */
-	public GoogleOAuth2DAO(HttpTransport transport, JsonFactory jsonFactory, VerificationCodeReceiver receiver, File userSecretsFile) {
+	public GoogleOAuth2DAO(final HttpTransport transport, final JsonFactory jsonFactory, final VerificationCodeReceiver receiver, final File userSecretsFile) {
 		this.transport = transport;
 		this.jsonFactory = jsonFactory;
 		this.receiver = receiver;
@@ -99,18 +99,18 @@ public class GoogleOAuth2DAO {
 	 * @param scopes OAuth 2.0 scopes
 	 * @throws IOException 
 	 */
-	private Credential authorizeViaWeb(Iterable<String> scopes, String user) throws IOException {
+	private Credential authorizeViaWeb(final Iterable<String> scopes, final String user) throws IOException {
 		try {
 			// get client secrets
-			GoogleClientSecrets secrets = getClientSecrets(RESOURCE_LOCATION);
+			final GoogleClientSecrets secrets = getClientSecrets(RESOURCE_LOCATION);
 
 			// redirect to an authorization page
-			String redirectUri = receiver.getRedirectUri();
-			GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, secrets, scopes).build();
+			final String redirectUri = receiver.getRedirectUri();
+			final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, secrets, scopes).build();
 			browse(flow.newAuthorizationUrl().setRedirectUri(redirectUri).build());
 			// receive authorization code and exchange it for an access token
-			String code = receiver.waitForCode();
-			GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
+			final String code = receiver.waitForCode();
+			final GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
 			// store credential and return it
 			return flow.createAndStoreCredential(response, user);
 		} finally {
@@ -119,17 +119,17 @@ public class GoogleOAuth2DAO {
 	}
 
 	/** Open a browser at the given URL. */
-	private void browse(String url) {
+	private void browse(final String url) {
 		log.info(String.format(Constants.MSG_TRY_TO_OPEN_BROWSER_FOR_URL, url));
 
 		// first try the Java Desktop
 		if (Desktop.isDesktopSupported()) {
-			Desktop desktop = Desktop.getDesktop();
+			final Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Action.BROWSE)) {
 				try {
 					desktop.browse(URI.create(url));
 					return;
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					// handled below
 				}
 			}
@@ -138,7 +138,7 @@ public class GoogleOAuth2DAO {
 		try {
 			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
 			return;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// handled below
 		}
 		// Next try the requested browser (e.g. "google-chrome")
@@ -146,7 +146,7 @@ public class GoogleOAuth2DAO {
 			try {
 				Runtime.getRuntime().exec(new String[] { BROWSER, url });
 				return;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// handled below
 			}
 		}
@@ -162,8 +162,8 @@ public class GoogleOAuth2DAO {
 	 * @return the user's credential containing the access token, if successfully authorized 
 	 * @throws IOException
 	 */
-	public Credential authorize(Iterable<String> scopes, String user) throws IOException {
-		FileCredentialStore credentialStore = new FileCredentialStore(userSecretsFile);
+	public Credential authorize(final Iterable<String> scopes, final String user) throws IOException {
+		final FileCredentialStore credentialStore = new FileCredentialStore(userSecretsFile);
 		Credential credential = new GoogleCredential.Builder() //
 				.setJsonFactory(jsonFactory) //
 				.setTransport(transport) //
@@ -171,7 +171,7 @@ public class GoogleOAuth2DAO {
 				.addRefreshListener(new CredentialStoreRefreshListener(user, credentialStore)) //
 				.build();
 
-		boolean loaded = credentialStore.load(user, credential);
+		final boolean loaded = credentialStore.load(user, credential);
 		if (!loaded) {
 			credential = authorizeViaWeb(scopes, user);
 			credentialStore.store(user, credential);
@@ -185,29 +185,29 @@ public class GoogleOAuth2DAO {
 		private final File secretsFile;
 		private Properties properties;
 
-		public FileCredentialStore(File secretsFile) {
+		public FileCredentialStore(final File secretsFile) {
 			this.secretsFile = secretsFile;
 		}
 
 		@Override
-		public void delete(String userId, Credential credential) {
+		public void delete(final String userId, final Credential credential) {
 			getProperties().remove(userId);
 			save();
 		}
 
 		@Override
-		public boolean load(String userId, Credential credential) {
-			String keyAccessToken = String.format("%s.accessToken", userId);
-			String keyRefreshToken = String.format("%s.refreshToken", userId);
+		public boolean load(final String userId, final Credential credential) {
+			final String keyAccessToken = String.format("%s.accessToken", userId);
+			final String keyRefreshToken = String.format("%s.refreshToken", userId);
 			credential.setAccessToken((String) getProperties().get(keyAccessToken));
 			credential.setRefreshToken((String) getProperties().get(keyRefreshToken));
 			return StringUtils.isNotBlank(credential.getAccessToken()) && StringUtils.isNotBlank(credential.getRefreshToken());
 		}
 
 		@Override
-		public void store(String userId, Credential credential) {
-			String keyAccessToken = String.format("%s.accessToken", userId);
-			String keyRefreshToken = String.format("%s.refreshToken", userId);
+		public void store(final String userId, final Credential credential) {
+			final String keyAccessToken = String.format("%s.accessToken", userId);
+			final String keyRefreshToken = String.format("%s.refreshToken", userId);
 			getProperties().put(keyAccessToken, credential.getAccessToken());
 			getProperties().put(keyRefreshToken, credential.getRefreshToken());
 			save();
@@ -215,10 +215,10 @@ public class GoogleOAuth2DAO {
 
 		private void save() {
 			try {
-				FileWriter writer = new FileWriter(secretsFile);
+				final FileWriter writer = new FileWriter(secretsFile);
 				getProperties().store(writer, null);
 				writer.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -228,9 +228,9 @@ public class GoogleOAuth2DAO {
 				properties = new Properties();
 				try {
 					properties.load(new FileReader(secretsFile));
-				} catch (FileNotFoundException e) {
+				} catch (final FileNotFoundException e) {
 					// empty properties
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -242,9 +242,9 @@ public class GoogleOAuth2DAO {
 	/**
 	 * Loads the Google client secrets (if not already loaded).
 	 */
-	private GoogleClientSecrets getClientSecrets(String location) throws IOException {
+	private GoogleClientSecrets getClientSecrets(final String location) throws IOException {
 		if (clientSecrets == null) {
-			InputStream inputStream = getClass().getResourceAsStream(location);
+			final InputStream inputStream = getClass().getResourceAsStream(location);
 			Preconditions.checkNotNull(inputStream, "missing resource %s", location);
 			clientSecrets = GoogleClientSecrets.load(jsonFactory, inputStream);
 			Preconditions.checkArgument(!clientSecrets.getDetails().getClientId().startsWith("[[") && !clientSecrets.getDetails().getClientSecret().startsWith("[["),

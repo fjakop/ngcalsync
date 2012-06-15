@@ -42,7 +42,7 @@
 				<version>1.0-beta-7</version>
 			</extension>
 		</extensions>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -141,9 +141,9 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -255,7 +255,7 @@
 									<toDir>test_release</toDir>
 								</configuration>
 							</execution> -->
-							
+
 							<execution>
 								<id>upload-releasenotes-sf.net</id>
 								<phase>initialize</phase>
@@ -269,7 +269,7 @@
 									<toFile>/home/frs/project/ngcalsync/README.textile</toFile>
 								</configuration>
 							</execution>
-							 
+
 						</executions>
 					</plugin>
 				</plugins>
