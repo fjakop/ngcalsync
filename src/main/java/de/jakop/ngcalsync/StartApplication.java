@@ -14,11 +14,16 @@ import java.net.URL;
 import java.util.Calendar;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import de.jakop.ngcalsync.filter.EventTypeFilter;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
@@ -32,6 +37,7 @@ import de.jakop.ngcalsync.service.SyncService;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
+import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
 
 /**
  * Starts the application which synchronizes the Lotus Notes calendar events to
@@ -48,6 +54,8 @@ public class StartApplication {
 	private final IFileAccessor fileAccessor;
 
 	private Settings settings;
+
+	private final JFrame frame;
 
 	/**
 	 * 
@@ -78,6 +86,19 @@ public class StartApplication {
 	public StartApplication(final IFileAccessor fileAccessor, final IExitStrategy exitStrategy) {
 		this.exitStrategy = exitStrategy;
 		this.fileAccessor = fileAccessor;
+
+		final Log4JSwingAppender appender = new Log4JSwingAppender();
+		appender.setLayout(new PatternLayout("%5p - %m%n"));
+		final Logger rootLogger = Logger.getRootLogger();
+		rootLogger.addAppender(appender);
+		rootLogger.setLevel(Level.INFO);
+
+		frame = new JFrame("ngcalsync log");
+		frame.getContentPane().add(appender.getLogPanel());
+		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		frame.pack();
+		frame.setSize(500, 400);
+
 		moveToTray();
 	}
 
@@ -134,11 +155,13 @@ public class StartApplication {
 
 		// Create a pop-up menu components
 		final MenuItem syncItem = new MenuItem("Synchronize");
+		final MenuItem logItem = new MenuItem("Show log");
 		//		final MenuItem aboutItem = new MenuItem("About");
 		final MenuItem exitItem = new MenuItem("Exit");
 
 		//Add components to pop-up menu
 		popup.add(syncItem);
+		popup.add(logItem);
 		popup.addSeparator();
 		//		popup.add(aboutItem);
 		popup.add(exitItem);
@@ -168,10 +191,19 @@ public class StartApplication {
 		syncItem.addActionListener(syncActionListener);
 		trayIcon.addActionListener(syncActionListener);
 
+		logItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				frame.setVisible(true);
+			}
+		});
+
 		exitItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				frame.dispose();
 				exitStrategy.exit(0);
 			}
 		});
