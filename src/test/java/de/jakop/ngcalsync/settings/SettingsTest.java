@@ -193,7 +193,10 @@ public class SettingsTest {
 	public void testGetValuesWithDefaults() throws Exception {
 
 		// create file with defaults
-		final Settings settings = loadSettings(true);
+		loadSettings(true);
+
+		// load file with defaults
+		final Settings settings = loadSettings(false);
 
 		assertEquals("", settings.getGoogleAccountName());
 		assertEquals("", settings.getGoogleCalendarName());
@@ -250,13 +253,11 @@ public class SettingsTest {
 		propertiesConfiguration.setProperty("sync.start", "foo-d");
 		propertiesConfiguration.save();
 
-		// #2 for testing (no restart)
-		final Settings settings = loadSettings(false);
-
 		thrown.expect(ConfigurationException.class);
 		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
-		settings.getSyncStartDate();
 
+		// #2 for testing (no restart)
+		loadSettings(false);
 	}
 
 	/**
@@ -273,12 +274,11 @@ public class SettingsTest {
 		propertiesConfiguration.setProperty("sync.end", "foo-d");
 		propertiesConfiguration.save();
 
-		// #2 for testing (no restart)
-		final Settings settings = loadSettings(false);
-
 		thrown.expect(ConfigurationException.class);
 		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
-		settings.getSyncEndDate();
+
+		// #2 for testing (no restart)
+		loadSettings(false);
 
 	}
 
@@ -296,12 +296,11 @@ public class SettingsTest {
 		propertiesConfiguration.setProperty("sync.start", "12x");
 		propertiesConfiguration.save();
 
-		// #2 for testing (no restart)
-		final Settings settings = loadSettings(false);
-
 		thrown.expect(ConfigurationException.class);
 		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
-		settings.getSyncStartDate();
+
+		// #2 for testing (no restart)
+		loadSettings(false);
 
 	}
 
@@ -319,12 +318,11 @@ public class SettingsTest {
 		propertiesConfiguration.setProperty("sync.end", "12x");
 		propertiesConfiguration.save();
 
-		// #2 for testing (no restart)
-		final Settings settings = loadSettings(false);
-
 		thrown.expect(ConfigurationException.class);
 		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
-		settings.getSyncEndDate();
+
+		// #2 for testing (no restart)
+		loadSettings(false);
 
 	}
 

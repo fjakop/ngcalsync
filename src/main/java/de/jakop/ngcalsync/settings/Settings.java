@@ -178,34 +178,25 @@ public class Settings {
 
 	}
 
-	private String getString(final ConfigurationParameter parameter) {
-		return configuration.getString(parameter.getKey(), parameter.getDefaultValue());
-	}
-
-	private boolean getBoolean(final ConfigurationParameter parameter) {
-		return configuration.getBoolean(parameter.getKey(), Boolean.valueOf(parameter.getDefaultValue()).booleanValue());
-	}
-
-
 	/**
 	 * @return Login-Name des Google-Accounts
 	 */
 	public String getGoogleAccountName() {
-		return getString(ConfigurationParameter.GOOGLE_ACCOUNT_EMAIL);
+		return configuration.getString(ConfigurationParameter.GOOGLE_ACCOUNT_EMAIL.getKey());
 	}
 
 	/**
 	 * @return Name des Domino-Servers
 	 */
 	public String getDominoServer() {
-		return getString(ConfigurationParameter.NOTES_DOMINO_SERVER);
+		return configuration.getString(ConfigurationParameter.NOTES_DOMINO_SERVER.getKey());
 	}
 
 	/**
 	 * @return Pfad zur Kalender-Datenbank
 	 */
 	public String getNotesCalendarDbFilePath() {
-		return getString(ConfigurationParameter.NOTES_MAIL_DB_FILE);
+		return configuration.getString(ConfigurationParameter.NOTES_MAIL_DB_FILE.getKey());
 	}
 
 	/**
@@ -216,7 +207,7 @@ public class Settings {
 	}
 
 	private Calendar readSyncStartDate() throws ConfigurationException {
-		final String start = getString(ConfigurationParameter.SYNC_START);
+		final String start = configuration.getString(ConfigurationParameter.SYNC_START.getKey());
 		final DateShift dateShift = parseDateShift(start);
 
 		final Calendar sdt = cloneStartTime();
@@ -234,7 +225,7 @@ public class Settings {
 
 	private Calendar readSyncEndDate() throws ConfigurationException {
 
-		final String end = getString(ConfigurationParameter.SYNC_END);
+		final String end = configuration.getString(ConfigurationParameter.SYNC_END.getKey());
 		final DateShift dateShift = parseDateShift(end);
 
 		final Calendar edt = cloneStartTime();
@@ -273,42 +264,42 @@ public class Settings {
 	 * @return hostname of the proxy, empty if none present
 	 */
 	public String getProxyHost() {
-		return getString(ConfigurationParameter.PROXY_HOST);
+		return configuration.getString(ConfigurationParameter.PROXY_HOST.getKey());
 	}
 
 	/**
 	 * @return port number of the proxy, empty if none present
 	 */
 	public String getProxyPort() {
-		return getString(ConfigurationParameter.PROXY_PORT);
+		return configuration.getString(ConfigurationParameter.PROXY_PORT.getKey());
 	}
 
 	/**
 	 * @return user name of the proxy user, empty if no authentification required
 	 */
 	public String getProxyUserName() {
-		return getString(ConfigurationParameter.PROXY_USER);
+		return configuration.getString(ConfigurationParameter.PROXY_USER.getKey());
 	}
 
 	/**
 	 * @return password of the proxy user, empty if no authentification required
 	 */
 	public String getProxyPassword() {
-		return getString(ConfigurationParameter.PROXY_PASSWORD);
+		return configuration.getString(ConfigurationParameter.PROXY_PASSWORD.getKey());
 	}
 
 	/**
 	 * @return name of the google calendar to sync into
 	 */
 	public String getGoogleCalendarName() {
-		return getString(ConfigurationParameter.GOOGLE_CALENDAR_NAME);
+		return configuration.getString(ConfigurationParameter.GOOGLE_CALENDAR_NAME.getKey());
 	}
 
 	/**
 	 * @return default reminder time in minutes
 	 */
 	public int getReminderMinutes() {
-		return Integer.parseInt(getString(ConfigurationParameter.GOOGLE_CALENDAR_REMINDERMINUTES));
+		return Integer.parseInt(configuration.getString(ConfigurationParameter.GOOGLE_CALENDAR_REMINDERMINUTES.getKey()));
 	}
 
 	/**
@@ -336,9 +327,9 @@ public class Settings {
 	public PrivacySettings getPrivacySettings() {
 		if (privacySettings == null) {
 			privacySettings = new PrivacySettings(//
-					getBoolean(ConfigurationParameter.SYNC_TRANSFER_TITLE), //
-					getBoolean(ConfigurationParameter.SYNC_TRANSFER_DESCRIPTION), //
-					getBoolean(ConfigurationParameter.SYNC_TRANSFER_LOCATION));
+					configuration.getBoolean(ConfigurationParameter.SYNC_TRANSFER_TITLE.getKey()), //
+					configuration.getBoolean(ConfigurationParameter.SYNC_TRANSFER_DESCRIPTION.getKey()), //
+					configuration.getBoolean(ConfigurationParameter.SYNC_TRANSFER_LOCATION.getKey()));
 		}
 
 		return privacySettings;
