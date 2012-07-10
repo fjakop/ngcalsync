@@ -52,28 +52,28 @@ public class NotesCalendarDAOTest {
 	 */
 	@Test
 	public void testRecurringEntriesDates() {
-		Calendar start = Calendar.getInstance();
-		Calendar end = Calendar.getInstance();
+		final Calendar start = Calendar.getInstance();
+		final Calendar end = Calendar.getInstance();
 
 		start.set(2012, 4, 1);
 		end.set(2012, 4, 30);
 
-		List<DViewEntry> viewEntries = new ArrayList<DViewEntry>();
-		List<GregorianDateTime> starts = new ArrayList<GregorianDateTime>();
+		final List<DViewEntry> viewEntries = new ArrayList<DViewEntry>();
+		final List<GregorianDateTime> starts = new ArrayList<GregorianDateTime>();
 		for (int i = 1; i <= 3; i++) {
-			GregorianDateTime startDateTime = new GregorianDateTime(Calendar.getInstance());
-			GregorianDateTime endDateTime = new GregorianDateTime(Calendar.getInstance());
+			final GregorianDateTime startDateTime = new GregorianDateTime(Calendar.getInstance());
+			final GregorianDateTime endDateTime = new GregorianDateTime(Calendar.getInstance());
 			startDateTime.set(2012, 4, i, 2, 22);
 			endDateTime.set(2012, 4, i, 3, 0);
 
 			starts.add(startDateTime);
 
-			List<Calendar> listStart = new ArrayList<Calendar>();
+			final List<Calendar> listStart = new ArrayList<Calendar>();
 			listStart.add(startDateTime);
-			List<Calendar> listEnd = new ArrayList<Calendar>();
+			final List<Calendar> listEnd = new ArrayList<Calendar>();
 			listEnd.add(endDateTime);
 
-			DDocument document = mock(DDocument.class);
+			final DDocument document = mock(DDocument.class);
 			when(document.getItemValueString("Form")).thenReturn("Appointment");
 			when(document.getItemValueString("AppointmentType")).thenReturn("3");
 			when(document.getItemValue("Room")).thenReturn(Arrays.asList(""));
@@ -87,15 +87,15 @@ public class NotesCalendarDAOTest {
 			when(document.getItemValue("Repeats")).thenReturn(Arrays.asList("1"));
 			when(document.getItemValue("OrgConfidential")).thenReturn(Arrays.asList(""));
 
-			DViewEntry viewEntry = mock(DViewEntry.class);
+			final DViewEntry viewEntry = mock(DViewEntry.class);
 			when(viewEntry.getDocument()).thenReturn(document);
 			viewEntries.add(viewEntry);
 		}
 
 		when(view.getAllEntriesByKey(start, end, false)).thenReturn(viewEntries.iterator());
 
-		NotesCalendarDAO dao = new NotesCalendarDAO(openDatabaseStrategy, "", "", start, end);
-		List<CalendarEvent> entries = dao.getEntries(new ICalendarEventFilter[] {});
+		final INotesCalendarDAO dao = new NotesCalendarDAO(openDatabaseStrategy, "", "", start, end);
+		final List<CalendarEvent> entries = dao.getEntries(new ICalendarEventFilter[] {});
 
 		// Event #1 is missing, because of Notes' date filter
 		assertEquals(2, entries.size());

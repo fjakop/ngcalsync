@@ -20,13 +20,12 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
-import de.jakop.ngcalsync.google.GoogleCalendarDAO;
-import de.jakop.ngcalsync.notes.NotesCalendarDAO;
+import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
+import de.jakop.ngcalsync.notes.INotesCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
@@ -44,10 +43,10 @@ public class SyncServiceTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Mock
-	private NotesCalendarDAO notesDAO;
+	private INotesCalendarDAO notesDAO;
 
 	@Mock
-	private GoogleCalendarDAO googleDAO;
+	private IGoogleCalendarDAO googleDAO;
 
 	private Settings settings;
 	private final Calendar now = Calendar.getInstance();
@@ -59,7 +58,7 @@ public class SyncServiceTest {
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		settings = new Settings(mock(IFileAccessor.class), mock(IExitStrategy.class), mock(Log.class), mock(NotesHelper.class));
+		settings = new Settings(mock(IFileAccessor.class), mock(Log.class), mock(NotesHelper.class));
 		after.setTimeInMillis(now.getTimeInMillis() + 1);
 	}
 

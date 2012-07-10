@@ -119,7 +119,7 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 
 	/**
 	 * 
-	 * @return
+	 * @return the panel which shows the log entries
 	 */
 	public JComponent getLogPanel() {
 		return panel;

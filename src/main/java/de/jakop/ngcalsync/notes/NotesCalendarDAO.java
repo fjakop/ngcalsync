@@ -33,7 +33,7 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
  *
  * @author fjakop
  */
-public class NotesCalendarDAO {
+class NotesCalendarDAO implements INotesCalendarDAO {
 
 	private static final String VIEWNAME_CALENDAR = "Calendar";
 
@@ -67,19 +67,16 @@ public class NotesCalendarDAO {
 	 * @param endDateTime 
 	 * @param openDatabaseStrategy
 	 */
-	public NotesCalendarDAO(final IOpenDatabaseStrategy openDatabaseStrategy, final String dominoServer, final String mailDatabase, final Calendar startDateTime,
-			final Calendar endDateTime) {
+	NotesCalendarDAO(final IOpenDatabaseStrategy openDatabaseStrategy, final String dominoServer, final String mailDatabase, final Calendar startDateTime, final Calendar endDateTime) {
 		mailDb = openDatabaseStrategy.openDatabase(dominoServer, mailDatabase);
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 	}
 
-	/**
-	 * Gibt alle Kalendereinträge zurück
-	 * 
-	 * @param filters
-	 * @return alle Kalendereinträge
+	/* (non-Javadoc)
+	 * @see de.jakop.ngcalsync.notes.INotesCalendarDAO#getEntries(de.jakop.ngcalsync.filter.ICalendarEventFilter[])
 	 */
+	@Override
 	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_LOTUS_NOTES_EVENTS, mailDb.getFilePath()));
 

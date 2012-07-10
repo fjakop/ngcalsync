@@ -23,7 +23,6 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.PromptReceiver;
@@ -40,7 +39,6 @@ public class Settings {
 
 	private final Log log;
 	private final IFileAccessor fileAccessor;
-	private final IExitStrategy exitStrategy;
 	private final NotesHelper notesHelper;
 
 	private PropertiesConfiguration configuration;
@@ -50,28 +48,29 @@ public class Settings {
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
 
+	private Calendar syncEndDate;
+	private Calendar syncStartDate;
+
 	/**
 	 * 
 	 * @param fileAccessor
 	 * @param notesHelper 
 	 */
-	public Settings(final IFileAccessor fileAccessor, final IExitStrategy exitStrategy, final Log log, final NotesHelper notesHelper) {
+	public Settings(final IFileAccessor fileAccessor, final Log log, final NotesHelper notesHelper) {
 		Validate.notNull(fileAccessor);
-		Validate.notNull(exitStrategy);
 		Validate.notNull(log);
 		Validate.notNull(notesHelper);
 		this.fileAccessor = fileAccessor;
-		this.exitStrategy = exitStrategy;
 		this.log = log;
 		this.notesHelper = notesHelper;
 	}
 
 	/**
-	 * 
+	 * @return <code>true</code>, if a restart is supposed
 	 * @throws IOException
 	 * @throws ConfigurationException 
 	 */
-	public void load() throws IOException, ConfigurationException {
+	public boolean load() throws IOException, ConfigurationException {
 
 		final File settingsFile = fileAccessor.getFile(Constants.FILENAME_SYNC_PROPERTIES);
 		final File environmentFile = fileAccessor.getFile(Constants.FILENAME_ENV_PROPERTIES);
@@ -85,7 +84,7 @@ public class Settings {
 
 		// on configuration/environment changes a restart is necessary
 		if (restart) {
-			exitStrategy.exit(0);
+			return restart;
 		}
 
 
@@ -95,16 +94,21 @@ public class Settings {
 		syncLastDateTime.setTimeInMillis(0);
 
 		if (!file.exists()) {
-			return;
+			return false;
 		}
 
 		final String line = FileUtils.readFileToString(file);
 
 		if (StringUtils.isBlank(line)) {
-			return;
+			return false;
 		}
 
 		syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
+
+		syncStartDate = readSyncStartDate();
+		syncEndDate = readSyncEndDate();
+
+		return false;
 	}
 
 	/**
@@ -182,6 +186,7 @@ public class Settings {
 		return configuration.getBoolean(parameter.getKey(), Boolean.valueOf(parameter.getDefaultValue()).booleanValue());
 	}
 
+
 	/**
 	 * @return Login-Name des Google-Accounts
 	 */
@@ -205,11 +210,12 @@ public class Settings {
 
 	/**
 	 * @return sync only events starting after this date
-	 *  
-	 * @throws ConfigurationException 
 	 */
-	public Calendar getSyncStartDate() throws ConfigurationException {
+	public Calendar getSyncStartDate() {
+		return syncStartDate;
+	}
 
+	private Calendar readSyncStartDate() throws ConfigurationException {
 		final String start = getString(ConfigurationParameter.SYNC_START);
 		final DateShift dateShift = parseDateShift(start);
 
@@ -221,10 +227,12 @@ public class Settings {
 
 	/**
 	 * @return sync only events starting before this date
-	 * 
-	 * @throws ConfigurationException 
 	 */
-	public Calendar getSyncEndDate() throws ConfigurationException {
+	public Calendar getSyncEndDate() {
+		return syncEndDate;
+	}
+
+	private Calendar readSyncEndDate() throws ConfigurationException {
 
 		final String end = getString(ConfigurationParameter.SYNC_END);
 		final DateShift dateShift = parseDateShift(end);

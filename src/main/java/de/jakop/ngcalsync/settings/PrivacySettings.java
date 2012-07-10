@@ -6,7 +6,7 @@ package de.jakop.ngcalsync.settings;
  * @author fjakop
  *
  */
-public final class PrivacySettings {
+public class PrivacySettings {
 
 	private final boolean transferTitle;
 	private final boolean transferDescription;

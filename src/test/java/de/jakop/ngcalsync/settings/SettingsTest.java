@@ -4,9 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.IExitStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.rule.TestdataRule;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
@@ -53,8 +50,6 @@ public class SettingsTest {
 
 	@Mock
 	private IFileAccessor fileAccessor;
-	@Mock
-	private IExitStrategy exitStrategy;
 	@Mock
 	private Log log;
 	@Mock
@@ -83,8 +78,6 @@ public class SettingsTest {
 		doReturn(Boolean.TRUE).when(notesHelper).isNotesInSystemPath();
 		doReturn(Boolean.TRUE).when(notesHelper).isNotesInClassPath();
 
-		// do not actually exit the program, but do not run further either
-		doThrow(new RuntimeException("#1")).when(exitStrategy).exit(0);
 	}
 
 	/** */
@@ -104,7 +97,7 @@ public class SettingsTest {
 
 
 		// create settings file
-		loadSettings(false);
+		loadSettings(true);
 
 		// delete the environment file to simulate a first start
 		environmentFile.delete();
@@ -115,18 +108,10 @@ public class SettingsTest {
 		// load again, exit and environment message happen
 		log = mock(Log.class);
 
-		exitStrategy = mock(IExitStrategy.class);
-		// do not actually exit the program, but do not run further either
-		doThrow(new RuntimeException("#1")).when(exitStrategy).exit(0);
-
-		loadSettings(false);
+		loadSettings(true);
 
 		// verify message
 		verify(log, times(1)).info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
-
-		// verify exit
-		verify(exitStrategy, times(1)).exit(0);
-		verifyNoMoreInteractions(exitStrategy);
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -142,7 +127,7 @@ public class SettingsTest {
 		// delete the settings file to simulate a first start
 		settingsFile.delete();
 
-		loadSettings();
+		loadSettings(true);
 
 		// verify message
 		verify(log, times(1)).info(
@@ -151,9 +136,6 @@ public class SettingsTest {
 								+ "notes.mail.db.file,notes.domino.server," + "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
 								+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
 
-		// verify exit
-		verify(exitStrategy, times(1)).exit(0);
-		verifyNoMoreInteractions(exitStrategy);
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -166,7 +148,7 @@ public class SettingsTest {
 	@Test
 	public void testParameterAdded_FileIsUpgraded_ProgramExits() throws Exception {
 
-		loadSettings();
+		loadSettings(true);
 
 		// verify message (build parameter keys array from enum, so it has not to be changed each time we add a parameter)
 		final StringBuilder builder = new StringBuilder();
@@ -178,10 +160,6 @@ public class SettingsTest {
 		builder.append("}");
 
 		verify(log, times(1)).info(String.format(Constants.MSG_CONFIGURATION_UPGRADED, settingsFile.getAbsolutePath(), builder.toString()));
-
-		// verify exit
-		verify(exitStrategy, times(1)).exit(0);
-		verifyNoMoreInteractions(exitStrategy);
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -195,15 +173,13 @@ public class SettingsTest {
 	public void testConfigurationIsUpToDate_NoMessageLogged() throws Exception {
 
 		// create file with defaults
-		loadSettings();
+		loadSettings(true);
 
 		// load again, no exit and no message happens
 		log = mock(Log.class);
-		exitStrategy = mock(IExitStrategy.class);
-		new Settings(fileAccessor, exitStrategy, log, notesHelper).load();
+		loadSettings(false);
 
 		verifyNoMoreInteractions(log);
-		verifyNoMoreInteractions(exitStrategy);
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -216,7 +192,8 @@ public class SettingsTest {
 	@Test
 	public void testGetValuesWithDefaults() throws Exception {
 
-		final Settings settings = loadSettings();
+		// create file with defaults
+		final Settings settings = loadSettings(true);
 
 		assertEquals("", settings.getGoogleAccountName());
 		assertEquals("", settings.getGoogleCalendarName());
@@ -267,13 +244,13 @@ public class SettingsTest {
 	public void testLoad_UnparseableStartPeriodLength_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
-		loadSettings();
+		loadSettings(true);
 
 		final PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration(settingsFile);
 		propertiesConfiguration.setProperty("sync.start", "foo-d");
 		propertiesConfiguration.save();
 
-		// #2 for testing (without exit check)
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		thrown.expect(ConfigurationException.class);
@@ -290,13 +267,13 @@ public class SettingsTest {
 	public void testLoad_UnparseableEndPeriodLength_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
-		loadSettings();
+		loadSettings(true);
 
 		final PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration(settingsFile);
 		propertiesConfiguration.setProperty("sync.end", "foo-d");
 		propertiesConfiguration.save();
 
-		// #2 for testing (without exit check)
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		thrown.expect(ConfigurationException.class);
@@ -313,13 +290,13 @@ public class SettingsTest {
 	public void testLoad_UnparseableStartPeriodType_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
-		loadSettings();
+		loadSettings(true);
 
 		final PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration(settingsFile);
 		propertiesConfiguration.setProperty("sync.start", "12x");
 		propertiesConfiguration.save();
 
-		// #2 for testing (without exit check)
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		thrown.expect(ConfigurationException.class);
@@ -336,13 +313,13 @@ public class SettingsTest {
 	public void testLoad_UnparseableEndPeriodType_ThrowsException() throws Exception {
 
 		// #1 for creating the default config file
-		loadSettings();
+		loadSettings(true);
 
 		final PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration(settingsFile);
 		propertiesConfiguration.setProperty("sync.end", "12x");
 		propertiesConfiguration.save();
 
-		// #2 for testing (without exit check)
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		thrown.expect(ConfigurationException.class);
@@ -358,7 +335,7 @@ public class SettingsTest {
 	@Test
 	public void testSaveSyncLastDateTime() throws Exception {
 
-		final Settings settings = loadSettings();
+		final Settings settings = loadSettings(true);
 		final Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(1234567890);
 
@@ -380,8 +357,8 @@ public class SettingsTest {
 		lastSyncDateFile.delete();
 
 		// #1 for creating the default config file
-		loadSettings();
-		// #2 for testing (without exit check)
+		loadSettings(true);
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		assertEquals(0, settings.getSyncLastDateTime().getTimeInMillis());
@@ -397,8 +374,8 @@ public class SettingsTest {
 		FileUtils.writeStringToFile(lastSyncDateFile, " ");
 
 		// #1 for creating the default config file
-		loadSettings();
-		// #2 for testing (without exit check)
+		loadSettings(true);
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		assertEquals(0, settings.getSyncLastDateTime().getTimeInMillis());
@@ -415,8 +392,8 @@ public class SettingsTest {
 		FileUtils.writeStringToFile(lastSyncDateFile, "1287");
 
 		// #1 for creating the default config file
-		loadSettings();
-		// #2 for testing (without exit check)
+		loadSettings(true);
+		// #2 for testing (no restart)
 		final Settings settings = loadSettings(false);
 
 		assertEquals(1287, settings.getSyncLastDateTime().getTimeInMillis());
@@ -434,23 +411,10 @@ public class SettingsTest {
 		}
 	}
 
-	private Settings loadSettings() throws IOException, ConfigurationException {
-		return loadSettings(true);
-	}
-
-	private Settings loadSettings(final boolean checkExit) throws IOException, ConfigurationException {
-		final Settings settings = new Settings(fileAccessor, exitStrategy, log, notesHelper);
-		try {
-			settings.load();
-			if (checkExit) {
-				fail("The exit strategy was supposed to throw an exception, but did not.");
-			}
-		} catch (final RuntimeException e) {
-			// did we exit with "our" exception?
-			if (e.getMessage() == null || !e.getMessage().equals("#1")) {
-				throw e;
-			}
-		}
+	private Settings loadSettings(final boolean shouldExit) throws IOException, ConfigurationException {
+		final Settings settings = new Settings(fileAccessor, log, notesHelper);
+		final boolean restart = settings.load();
+		assertEquals("The program's exit behaviour was incorect.", Boolean.valueOf(shouldExit), Boolean.valueOf(restart));
 		return settings;
 	}
 }

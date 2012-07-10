@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,7 +34,7 @@ import de.jakop.ngcalsync.settings.Settings;
  * @author fjakop
  *
  */
-public class GoogleCalendarDAO {
+class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	private final Log log = LogFactory.getLog(getClass());
 
@@ -52,18 +51,16 @@ public class GoogleCalendarDAO {
 	 * 
 	 * @param settings
 	 */
-	public GoogleCalendarDAO(final Settings settings) {
+	GoogleCalendarDAO(final Settings settings) {
 		this.settings = settings;
 		service = settings.getGoogleCalendarService();
 	}
 
 
-	/**
-	 * Fügt einen Kalendereintrag ein.
-	 * 
-	 * @param event
-	 * @return die Id des eingefügten Kalendereintrags
+	/* (non-Javadoc)
+	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#insert(de.jakop.ngcalsync.calendar.CalendarEvent)
 	 */
+	@Override
 	public String insert(final CalendarEvent event) {
 		log.debug(String.format("executing insert: %s", event.getTitle()));
 
@@ -82,11 +79,10 @@ public class GoogleCalendarDAO {
 		}
 	}
 
-	/**
-	 * Ändert einen Kalendereintrag.
-	 * @param id 
-	 * @param event
+	/* (non-Javadoc)
+	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#update(java.lang.String, de.jakop.ngcalsync.calendar.CalendarEvent)
 	 */
+	@Override
 	public void update(final String id, final CalendarEvent event) {
 		log.debug(String.format("executing update: %s", event.getTitle()));
 
@@ -99,11 +95,10 @@ public class GoogleCalendarDAO {
 		}
 	}
 
-	/**
-	 * Löscht den Kalendereintrag zur Id.
-	 * 
-	 * @param id
+	/* (non-Javadoc)
+	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#delete(java.lang.String)
 	 */
+	@Override
 	public void delete(final String id) {
 		log.debug(String.format("executing delete: %s", id));
 
@@ -115,13 +110,10 @@ public class GoogleCalendarDAO {
 
 	}
 
-	/**
-	 * Gibt alle Kalendereinträge zurück
-	 * 
-	 * @param filters
-	 * @return alle Kalendereinträge
-	 * FIXME filters auswerten
+	/* (non-Javadoc)
+	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#getEvents(de.jakop.ngcalsync.filter.ICalendarEventFilter[])
 	 */
+	@Override
 	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
 
@@ -151,8 +143,6 @@ public class GoogleCalendarDAO {
 				events.add(convGoogleEvent(googleEvent));
 			}
 		} catch (final IOException e) {
-			throw new SynchronisationException(e);
-		} catch (final ConfigurationException e) {
 			throw new SynchronisationException(e);
 		} catch (final ParseException e) {
 			throw new SynchronisationException(e);

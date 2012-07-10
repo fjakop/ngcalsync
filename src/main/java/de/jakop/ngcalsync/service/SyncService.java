@@ -18,13 +18,13 @@ import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
-import de.jakop.ngcalsync.google.GoogleCalendarDAO;
-import de.jakop.ngcalsync.notes.NotesCalendarDAO;
+import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
+import de.jakop.ngcalsync.notes.INotesCalendarDAO;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * Synchronisiert vom {@link NotesCalendarDAO} in das {@link GoogleCalendarDAO}
+ * Synchronisiert vom {@link INotesCalendarDAO} in das {@link IGoogleCalendarDAO}
  * 
  * @author fjakop
  *
@@ -39,7 +39,7 @@ public class SyncService {
 	 * @param googleDao
 	 * @param settings 
 	 */
-	public void executeSync(final NotesCalendarDAO notesDao, final GoogleCalendarDAO googleDao, final ICalendarEventFilter[] filters, final ICalendarEventObfuscator[] obfuscators,
+	public void executeSync(final INotesCalendarDAO notesDao, final IGoogleCalendarDAO googleDao, final ICalendarEventFilter[] filters, final ICalendarEventObfuscator[] obfuscators,
 			final Settings settings) {
 
 		Validate.notNull(notesDao);
@@ -181,7 +181,7 @@ public class SyncService {
 		}
 	}
 
-	private void insert(final GoogleCalendarDAO dao, final CalendarEvent entry) {
+	private void insert(final IGoogleCalendarDAO dao, final CalendarEvent entry) {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
@@ -191,11 +191,11 @@ public class SyncService {
 		}
 	}
 
-	private void delete(final GoogleCalendarDAO dao, final String id) {
+	private void delete(final IGoogleCalendarDAO dao, final String id) {
 		dao.delete(id);
 	}
 
-	private void update(final GoogleCalendarDAO dao, final String id, final CalendarEvent entry) {
+	private void update(final IGoogleCalendarDAO dao, final String id, final CalendarEvent entry) {
 		dao.update(id, entry);
 	}
 }

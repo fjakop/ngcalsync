@@ -135,7 +135,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars(calendar.calendars());
 			mockEvents(calendar.events(), now, after);
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			final List<CalendarEvent> events = dao.getEvents(null);
 
@@ -174,7 +174,7 @@ public class GoogleCalendarDAOTest {
 			event1.setId("myId");
 			event1.setUpdated(new DateTime(after.getTime()));
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			final List<CalendarEvent> events = dao.getEvents(null);
 
@@ -230,7 +230,7 @@ public class GoogleCalendarDAOTest {
 			event1.getStart().setDate(dateFormatDateOnly.format(now.getTime()));
 			event1.getEnd().setDate(dateFormatDateOnly.format(after.getTime()));
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			final List<CalendarEvent> events = dao.getEvents(null);
 
@@ -279,7 +279,7 @@ public class GoogleCalendarDAOTest {
 			event1.setId("myId");
 			event1.setUpdated(new DateTime(after.getTime()));
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			final List<CalendarEvent> events = dao.getEvents(null);
 
@@ -394,7 +394,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars(calendar.calendars());
 			mockEvents_checkConversion(calendar.events(), myEvent);
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			final String id = dao.insert(myEvent);
 
@@ -426,7 +426,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars(calendar.calendars());
 			mockEvents_InsertThrowsIOException(calendar.events());
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			expected.expect(SynchronisationException.class);
 			expected.expectMessage("IOException from insert()");
@@ -445,7 +445,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars(calendar.calendars());
 			mockEvents_InsertExecuteThrowsIOException(calendar.events());
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			expected.expect(SynchronisationException.class);
 			expected.expectMessage("IOException from insert.execute()");
@@ -464,7 +464,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars(calendar.calendars());
 			//			mockEvents_checkConversion(calendar.events());
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			expected.expect(SynchronisationException.class);
 			expected.expectMessage("IOException from list()");
@@ -483,7 +483,7 @@ public class GoogleCalendarDAOTest {
 			mockCalendars_GetExecuteReturnsNull(calendar.calendars());
 			//			mockEvents_checkConversion(calendar.events());
 
-			final GoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
+			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			expected.expect(SynchronisationException.class);
 			expected.expectMessage("Google calendar 'mycal' does not exist.");
