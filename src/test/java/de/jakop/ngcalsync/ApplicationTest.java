@@ -1,10 +1,15 @@
 package de.jakop.ngcalsync;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.io.IOException;
+
+import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -113,4 +118,55 @@ public class ApplicationTest {
 		verify(service, times(1)).executeSync(Matchers.eq(notesCalendarDao), Matchers.eq(googleCalendarDao), (ICalendarEventFilter[]) Matchers.any(),
 				(ICalendarEventObfuscator[]) Matchers.any(), Matchers.eq(settings));
 	}
+
+	/** 
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testReloadSettings_Success() throws Exception {
+		final Application application = new Application(settings, service, notesCalendarDaoFactory, googleCalendarDaoFactory);
+
+		application.reloadSettings();
+
+		verify(settings, times(1)).load();
+		verifyNoMoreInteractions(settings);
+	}
+
+	/** 
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testReloadSettings_ThrowsConfigurationException_ThrowsRuntimeException() throws Exception {
+		final Application application = new Application(settings, service, notesCalendarDaoFactory, googleCalendarDaoFactory);
+
+		doThrow(new ConfigurationException()).when(settings).load();
+
+		expected.expect(RuntimeException.class);
+
+		application.reloadSettings();
+
+		verify(settings, times(1)).load();
+		verifyNoMoreInteractions(settings);
+	}
+
+	/** 
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testReloadSettings_ThrowsIOException_ThrowsRuntimeException() throws Exception {
+		final Application application = new Application(settings, service, notesCalendarDaoFactory, googleCalendarDaoFactory);
+
+		doThrow(new IOException()).when(settings).load();
+
+		expected.expect(RuntimeException.class);
+
+		application.reloadSettings();
+
+		verify(settings, times(1)).load();
+		verifyNoMoreInteractions(settings);
+	}
+
 }

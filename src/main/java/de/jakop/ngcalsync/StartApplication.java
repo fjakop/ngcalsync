@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
+import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.service.SyncService;
 import de.jakop.ngcalsync.settings.Settings;
@@ -40,7 +41,7 @@ public class StartApplication {
 		final DefaultFileAccessor fileAccessor = new DefaultFileAccessor();
 		final Settings settings = new Settings(fileAccessor, LogFactory.getLog(Settings.class), new NotesHelper());
 
-		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(), new GoogleCalendarDaoFactory());
+		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
 
 		//Check the SystemTray is supported
 		if (SystemTray.isSupported()) {

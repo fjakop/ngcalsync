@@ -9,6 +9,16 @@ import de.jakop.ngcalsync.settings.Settings;
  */
 public class NotesCalendarDaoFactory {
 
+	private final IOpenDatabaseStrategy openDatabaseStrategy;
+
+	/**
+	 * 
+	 * @param openDatabaseStrategy
+	 */
+	public NotesCalendarDaoFactory(final IOpenDatabaseStrategy openDatabaseStrategy) {
+		this.openDatabaseStrategy = openDatabaseStrategy;
+	}
+
 	/**
 	 * Creates a {@link NotesCalendarDAO}
 	 * 
@@ -16,7 +26,6 @@ public class NotesCalendarDaoFactory {
 	 * @return a new {@link NotesCalendarDAO}
 	 */
 	public INotesCalendarDAO createNotesCalendarDao(final Settings settings) {
-		final NotesClientOpenDatabaseStrategy openDatabaseStrategy = new NotesClientOpenDatabaseStrategy();
 		return new NotesCalendarDAO(openDatabaseStrategy, settings.getDominoServer(), settings.getNotesCalendarDbFilePath(), settings.getSyncStartDate(), settings.getSyncEndDate());
 	}
 }
