@@ -29,9 +29,10 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * Zugriff auf Google-Kalendereinträge 
+ * Accesses Google calendar events 
  * 
  * @author fjakop
+ * TODO comments to english
  *
  */
 class GoogleCalendarDAO implements IGoogleCalendarDAO {
@@ -57,9 +58,6 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#insert(de.jakop.ngcalsync.calendar.CalendarEvent)
-	 */
 	@Override
 	public String insert(final CalendarEvent event) {
 		log.debug(String.format("executing insert: %s", event.getTitle()));
@@ -79,9 +77,6 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#update(java.lang.String, de.jakop.ngcalsync.calendar.CalendarEvent)
-	 */
 	@Override
 	public void update(final String id, final CalendarEvent event) {
 		log.debug(String.format("executing update: %s", event.getTitle()));
@@ -95,9 +90,6 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#delete(java.lang.String)
-	 */
 	@Override
 	public void delete(final String id) {
 		log.debug(String.format("executing delete: %s", id));
@@ -110,9 +102,6 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.jakop.ngcalsync.google.IGoogleCalendarDAO#getEvents(de.jakop.ngcalsync.filter.ICalendarEventFilter[])
-	 */
 	@Override
 	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));

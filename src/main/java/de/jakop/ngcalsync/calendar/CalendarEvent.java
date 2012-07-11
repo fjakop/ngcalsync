@@ -4,7 +4,8 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 /**
- * DTO für Kalendereinträge
+ * DTO for calendar events
+ * TODO comments to english
  */
 public class CalendarEvent {
 
@@ -137,14 +138,14 @@ public class CalendarEvent {
 	}
 
 	/**
-	 * @param lastupdated Letze Änderung des Kalendereintrags
+	 * @param lastupdated last update of the calendar entry 
 	 */
 	public void setLastUpdated(final Calendar lastupdated) {
 		lastUpdated = lastupdated;
 	}
 
 	/**
-	 * @return letze Änderung des Kalendereintrags
+	 * @return last update of the calendar entry
 	 */
 	public Calendar getLastUpdated() {
 		return lastUpdated;

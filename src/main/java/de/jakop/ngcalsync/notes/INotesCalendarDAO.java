@@ -8,17 +8,17 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 
 /**
- * Zugriff auf Notes-Kalendereinträge 
+ * Access to Lotus Notes calendar events 
  *
  * @author fjakop
  */
 public interface INotesCalendarDAO {
 
 	/**
-	 * Gibt alle Kalendereinträge zurück
+	 * Reads all calendar events matched by the filters
 	 * 
 	 * @param filters
-	 * @return alle Kalendereinträge
+	 * @return all matching events
 	 */
 	public abstract List<CalendarEvent> getEntries(ICalendarEventFilter[] filters) throws SynchronisationException;
 

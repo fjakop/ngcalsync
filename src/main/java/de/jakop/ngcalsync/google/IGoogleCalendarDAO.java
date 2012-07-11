@@ -8,41 +8,40 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 
 /**
- * Zugriff auf Google-Kalendereinträge 
+ * Access to Google calendar
  * 
  * @author fjakop
- *
  */
 public interface IGoogleCalendarDAO {
 
 	/**
-	 * Fügt einen Kalendereintrag ein.
+	 * Unserts a calendar event
 	 * 
 	 * @param event
-	 * @return die Id des eingefügten Kalendereintrags
+	 * @return the id of the inserted event
 	 */
 	public abstract String insert(CalendarEvent event);
 
 	/**
-	 * Ändert einen Kalendereintrag.
+	 * Updates a calendar event
+	 * 
 	 * @param id 
 	 * @param event
 	 */
 	public abstract void update(String id, CalendarEvent event);
 
 	/**
-	 * Löscht den Kalendereintrag zur Id.
+	 * Deletes a calendar event
 	 * 
 	 * @param id
 	 */
 	public abstract void delete(String id);
 
 	/**
-	 * Gibt alle Kalendereinträge zurück
+	 * Reads all calendar events
 	 * 
 	 * @param filters
-	 * @return alle Kalendereinträge
-	 * FIXME filters auswerten
+	 * @return all calendar event
 	 */
 	public abstract List<CalendarEvent> getEvents(ICalendarEventFilter[] filters) throws SynchronisationException;
 

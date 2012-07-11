@@ -29,7 +29,7 @@ import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 /**
- * Zugriff auf Notes-Kalendereinträge 
+ * Access to Lotus Notes calendar events 
  *
  * @author fjakop
  */
