@@ -96,7 +96,7 @@ public class TrayStarter implements IApplicationStarter {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final ExecutorService executor = Executors.newSingleThreadExecutor();
-				executor.submit(new SynchronizeCallable(application));
+				executor.submit(new SynchronizeCallable(application, tray));
 			}
 		};
 
@@ -145,9 +145,11 @@ public class TrayStarter implements IApplicationStarter {
 	private class SynchronizeCallable implements Callable<Void> {
 
 		private final Application application;
+		private final SystemTray tray;
 
-		public SynchronizeCallable(final Application application) {
+		public SynchronizeCallable(final Application application, final SystemTray tray) {
 			this.application = application;
+			this.tray = tray;
 		}
 
 		@Override
@@ -158,7 +160,12 @@ public class TrayStarter implements IApplicationStarter {
 					JOptionPane.showMessageDialog(null, String.format("The configuration was upgraded, please check and restart synchronisation."));
 					return null;
 				}
+				final TrayIconRunnable trayIconRunnable = new TrayIconRunnable(tray);
+				final Thread trayIconThread = new Thread(trayIconRunnable);
+				trayIconThread.start();
 				application.synchronize();
+				trayIconRunnable.finish();
+				trayIconThread.join();
 			} catch (final Exception ex) {
 				log.error(ExceptionUtils.getStackTrace(ex));
 				final String home = System.getenv("user.home");
@@ -167,6 +174,45 @@ public class TrayStarter implements IApplicationStarter {
 				JOptionPane.showMessageDialog(null, String.format("Oops, sync failed. See logfile %s for details.", logfile.getAbsolutePath()));
 			}
 			return null;
+		}
+	}
+
+	private class TrayIconRunnable implements Runnable {
+
+		private boolean finish = false;
+		private final SystemTray tray;
+
+		/**
+		 * 
+		 * @param tray
+		 */
+		public TrayIconRunnable(final SystemTray tray) {
+			this.tray = tray;
+		}
+
+		@Override
+		public void run() {
+			final TrayIcon[] trayIcons = tray.getTrayIcons();
+			while (!finish) {
+				try {
+
+					for (final TrayIcon trayIcon : trayIcons) {
+						tray.remove(trayIcon);
+					}
+					Thread.sleep(500);
+
+					for (final TrayIcon trayIcon : trayIcons) {
+						tray.add(trayIcon);
+					}
+					Thread.sleep(500);
+				} catch (final Exception e) {
+					// does not really matter
+				}
+			}
+		}
+
+		public void finish() {
+			finish = true;
 		}
 	}
 }
