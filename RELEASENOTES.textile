@@ -3,6 +3,7 @@
 p. For operating systems which support system tray the application now starts in ??tray mode??, which means, it will not start synchronisation immediately but show a tray icon. Right-clicking this icon shows a popup-menu, allowing the user to choose between synchronization, log view and exit. A double click on the icon also triggers synchronisation.
 
 *0.4.0*
+
 p. Fixed some bugs.
 
 *0.3.1*
