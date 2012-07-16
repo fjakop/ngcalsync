@@ -23,6 +23,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import de.jakop.ngcalsync.oauth.GuiReceiver;
+import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.StatefulTrayIcon;
 import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
 import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
@@ -40,8 +42,9 @@ public class TrayStarter implements IApplicationStarter {
 	private StatefulTrayIcon icon;
 
 	@Override
-	public void startApplication(final Application application) {
+	public void startApplication(final Application application, final Settings settings) {
 		log.debug("Starting application in tray mode.");
+		settings.setVerificationCodeReceiver(new GuiReceiver());
 		moveToTray(application);
 	}
 

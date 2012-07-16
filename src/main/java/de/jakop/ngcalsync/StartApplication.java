@@ -45,11 +45,11 @@ public class StartApplication {
 
 		//Check the SystemTray is supported
 		if (SystemTray.isSupported()) {
-			new TrayStarter().startApplication(application);
+			new TrayStarter().startApplication(application, settings);
 		} else {
 			// TODO i18n
 			log.info("SystemTray is not supported");
-			new ConsoleDirectStarter().startApplication(application);
+			new ConsoleDirectStarter().startApplication(application, settings);
 		}
 	}
 

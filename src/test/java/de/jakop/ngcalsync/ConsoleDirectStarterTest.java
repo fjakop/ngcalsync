@@ -1,6 +1,7 @@
 package de.jakop.ngcalsync;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * 
@@ -35,7 +38,7 @@ public class ConsoleDirectStarterTest {
 
 		doReturn(Boolean.TRUE).when(application).reloadSettings();
 
-		new ConsoleDirectStarter().startApplication(application);
+		new ConsoleDirectStarter().startApplication(application, mock(Settings.class));
 
 		verify(application, times(1)).reloadSettings();
 		verifyNoMoreInteractions(application);
@@ -50,7 +53,7 @@ public class ConsoleDirectStarterTest {
 
 		doReturn(Boolean.FALSE).when(application).reloadSettings();
 
-		new ConsoleDirectStarter().startApplication(application);
+		new ConsoleDirectStarter().startApplication(application, mock(Settings.class));
 
 		verify(application, times(1)).reloadSettings();
 		verify(application, times(1)).synchronize();

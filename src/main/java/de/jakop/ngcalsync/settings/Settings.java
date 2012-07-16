@@ -25,7 +25,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
-import de.jakop.ngcalsync.oauth.PromptReceiver;
+import de.jakop.ngcalsync.oauth.VerificationCodeReceiver;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
@@ -44,6 +44,7 @@ public class Settings {
 	private PropertiesConfiguration configuration;
 	private PrivacySettings privacySettings;
 	private com.google.api.services.calendar.Calendar calendarService = null;
+	private VerificationCodeReceiver verificationCodeReceiver;
 
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
@@ -355,7 +356,8 @@ public class Settings {
 				final JacksonFactory jsonFactory = new JacksonFactory();
 
 				final List<String> scopes = Arrays.asList(CalendarScopes.CALENDAR);
-				final GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, new PromptReceiver(), fileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
+				final GoogleOAuth2DAO googleOAuth2DAO = new GoogleOAuth2DAO(httpTransport, jsonFactory, getVerificationCodeReceiver(),
+						fileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
 				final Credential credential = googleOAuth2DAO.authorize(scopes, getGoogleAccountName());
 
 				calendarService = com.google.api.services.calendar.Calendar.builder(httpTransport, jsonFactory).setApplicationName(Constants.APPLICATION_NAME)
@@ -366,6 +368,24 @@ public class Settings {
 		}
 		return calendarService;
 	}
+
+	/**
+	 * 
+	 * @return the current {@link VerificationCodeReceiver}
+	 */
+	public VerificationCodeReceiver getVerificationCodeReceiver() {
+		return verificationCodeReceiver;
+	}
+
+	/**
+	 * 
+	 * @param verificationCodeReceiver the curent {@link VerificationCodeReceiver}
+	 */
+	public void setVerificationCodeReceiver(final VerificationCodeReceiver verificationCodeReceiver) {
+		this.verificationCodeReceiver = verificationCodeReceiver;
+	}
+
+
 
 	/* for JUnit-Tests */
 	protected Calendar getProgramStartTime() {
