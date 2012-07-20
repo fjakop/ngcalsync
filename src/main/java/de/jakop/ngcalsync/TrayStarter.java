@@ -43,6 +43,7 @@ public class TrayStarter implements IApplicationStarter {
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
+		// TODO i18n
 		log.debug("Starting application in tray mode.");
 		settings.setVerificationCodeReceiver(new GuiReceiver());
 		moveToTray(application);
@@ -69,6 +70,7 @@ public class TrayStarter implements IApplicationStarter {
 			icon = new StatefulTrayIcon();
 			icon.setState(State.NORMAL);
 		} catch (final IOException e) {
+			// TODO i18n
 			log.error("TrayIcon could not be loaded.", e);
 		}
 		final PopupMenu popup = new PopupMenu();
@@ -93,6 +95,7 @@ public class TrayStarter implements IApplicationStarter {
 		try {
 			tray.add(icon);
 		} catch (final AWTException e) {
+			// TODO i18n
 			log.error("TrayIcon could not be added.", e);
 		}
 
@@ -113,6 +116,7 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				// TODO i18n
 				log.debug("Showing log viewer.");
 				frame.setVisible(true);
 			}
@@ -122,6 +126,7 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				// TODO i18n
 				log.debug("Exiting the application.");
 				frame.dispose();
 				System.exit(0);

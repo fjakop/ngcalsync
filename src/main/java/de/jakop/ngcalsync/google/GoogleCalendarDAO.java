@@ -32,10 +32,10 @@ import de.jakop.ngcalsync.settings.Settings;
  * Accesses Google calendar events 
  * 
  * @author fjakop
- * TODO comments to english
  *
  */
 class GoogleCalendarDAO implements IGoogleCalendarDAO {
+
 
 	private final Log log = LogFactory.getLog(getClass());
 
@@ -60,6 +60,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public String insert(final CalendarEvent event) {
+		// TODO i18n
 		log.debug(String.format("executing insert: %s", event.getTitle()));
 
 		final Event myEvent = new Event();
@@ -79,6 +80,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public void update(final String id, final CalendarEvent event) {
+		// TODO i18n
 		log.debug(String.format("executing update: %s", event.getTitle()));
 
 		try {
@@ -92,6 +94,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public void delete(final String id) {
+		// TODO i18n
 		log.debug(String.format("executing delete: %s", id));
 
 		try {
@@ -104,6 +107,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
+		// TODO i18n
 		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
 
 		final List<CalendarEvent> events = new ArrayList<CalendarEvent>();
@@ -142,7 +146,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 	}
 
 	/**
-	 * Findet den Kalender zum Prosanamen (Summary)
+	 * retrieves the calendar for the given name (summary)
 	 *  
 	 * @return den Kalender
 	 */
@@ -164,7 +168,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 			if (calendar == null) {
 				// calendar with given name does not exist
-				throw new SynchronisationException(String.format("Google calendar '%s' does not exist.", settings.getGoogleCalendarName()));
+				throw new SynchronisationException(String.format(Constants.GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG, settings.getGoogleCalendarName()));
 			}
 		}
 		return calendar;

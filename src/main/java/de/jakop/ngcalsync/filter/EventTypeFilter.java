@@ -30,13 +30,16 @@ public class EventTypeFilter implements ICalendarEventFilter {
 	public boolean accept(final CalendarEvent calendarEntry) {
 		Validate.notNull(calendarEntry);
 		if (calendarEntry.getEventType() == null) {
+			// TODO i18n
 			log.debug("Not accepted - Calendar event is null.");
 			return false;
 		}
 		if (ArrayUtils.contains(acceptedEventTypes, calendarEntry.getEventType().getIntegerValue())) {
+			// TODO i18n
 			log.debug(String.format("Accepted - %s", calendarEntry.toString()));
 			return true;
 		}
+		// TODO i18n
 		log.debug(String.format("Not accepted - %s", calendarEntry.toString()));
 		return false;
 	}

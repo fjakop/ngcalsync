@@ -73,6 +73,7 @@ public class StatefulTrayIcon extends TrayIcon {
 		} else if (state == State.NORMAL) {
 			stateRunnable = new NormalRunnable();
 		} else {
+			// TODO i18n
 			throw new IllegalStateException(String.format("State %s is not supported.", state));
 		}
 

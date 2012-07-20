@@ -120,6 +120,7 @@ public class GoogleOAuth2DAO {
 
 	/** Open a browser at the given URL. */
 	private void browse(final String url) {
+		// TODO i18n
 		log.info(String.format(Constants.MSG_TRY_TO_OPEN_BROWSER_FOR_URL, url));
 
 		// first try the Java Desktop
@@ -151,7 +152,9 @@ public class GoogleOAuth2DAO {
 			}
 		}
 		// Finally just ask user to open in their browser using copy-paste
+		// TODO i18n
 		log.info(Constants.MSG_FAILED_TO_OPEN_BROWSER);
+		// TODO i18n
 		log.info(String.format(Constants.MSG_OPEN_URL_IN_BROWSER, url));
 	}
 

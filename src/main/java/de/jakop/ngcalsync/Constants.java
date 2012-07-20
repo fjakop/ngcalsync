@@ -9,6 +9,10 @@ public interface Constants {
 
 	/* messages */
 	/** */
+	public static final String GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG = "Google calendar '%s' does not exist.";
+	/** */
+	public static final String MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG = "Appointment type %s not recognized";
+	/** */
 	public static final String MSG_CONFIGURATION_UPGRADED = "The configuration file %s was upgraded, please check the keys %s and restart.";
 	/** */
 	public static final String MSG_ENVIRONMENT_CHANGED = "Environment information has changed, please restart the application.";
@@ -63,6 +67,18 @@ public interface Constants {
 	public static final String APPLICATION_NAME = "ngcalsync";
 	/** */
 	public static final String NOTES_HOME_ENVVAR_NAME = "NOTES_HOME";
+
+	/* event names */
+	/**  */
+	public static final String NORMAL_EVENT = "Termin";
+	/**  */
+	public static final String ANNIVERSARY = "Jahrestag";
+	/**  */
+	public static final String ALL_DAY_EVENT = "Ganztägig";
+	/**  */
+	public static final String MEETING = "Besprechung";
+	/**  */
+	public static final String REMINDER = "Erinnerung";
 
 
 }

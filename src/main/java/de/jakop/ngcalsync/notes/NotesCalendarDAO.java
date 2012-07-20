@@ -123,6 +123,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 			final DViewEntry viewEntry = viewEntries.next();
 			final DDocument currentWorkDoc = viewEntry.getDocument();
 
+			// TODO i18n
 			log.debug(String.format("Processing document with UNID '%s'", currentWorkDoc.getUniversalID()));
 
 			// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
@@ -131,6 +132,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 				if (FLAG_APPOINTMENT.equals(currentWorkDoc.getItemValueString(FIELDNAME_FORM))) {
 					// If this is a conflict document, skip to next document.
 					if (currentWorkDoc.hasItem(FIELDNAME_CONFLICT)) {
+						// TODO i18n
 						log.debug(String.format("Document with UNID '%s' is a conflict document", currentWorkDoc.getUniversalID()));
 						continue;
 					}
@@ -139,9 +141,11 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 					entries.addAll(convDocs);
 					processedNotesDocuments.add(currentWorkDoc.getUniversalID());
 				} else {
+					// TODO i18n
 					log.debug(String.format("Document with UNID '%s' has no appointment flag", currentWorkDoc.getUniversalID()));
 				}
 			} else {
+				// TODO i18n
 				log.debug(String.format("Document with UNID '%s' already processed", currentWorkDoc.getUniversalID()));
 			}
 		}
@@ -161,6 +165,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 	}
 
 	private CalendarEvent convSingleDoc(final DDocument doc) {
+		// TODO i18n
 		log.debug(String.format("Converting document with UNID '%s'", doc.getUniversalID()));
 
 		//		String generateXML = doc.generateXML();
@@ -216,11 +221,11 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 			bd.setStartDateTime(newStartDateTime);
 			bd.setEndDateTime(newEndDateTime);
+			// TODO i18n
 			log.debug(String.format("Conversion of document with UNID '%s' results in %s", doc.getUniversalID(), bd.toString()));
 
 		} catch (final NotesServiceRuntimeException e) {
-			log.error(bd.toString());
-			log.error(e.toString());
+			log.error(bd.toString(), e);
 			log.error("------------------------------------------------");
 			return null;
 		}

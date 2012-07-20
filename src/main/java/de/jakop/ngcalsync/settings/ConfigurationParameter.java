@@ -1,5 +1,6 @@
 package de.jakop.ngcalsync.settings;
 
+// no i18n for now
 enum ConfigurationParameter {
 
 	SYNC_TYPES("sync.types", "3", "# Types of events to sync\n" + //

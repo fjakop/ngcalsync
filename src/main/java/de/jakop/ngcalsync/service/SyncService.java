@@ -24,7 +24,7 @@ import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * Synchronisiert vom {@link INotesCalendarDAO} in das {@link IGoogleCalendarDAO}
+ * Synchronizes from {@link INotesCalendarDAO} into the {@link IGoogleCalendarDAO}
  * 
  * @author fjakop
  *
@@ -87,12 +87,12 @@ public class SyncService {
 		}
 
 		// actually do it
-
+		// TODO i18n
 		log.info(String.format(Constants.MSG_REMOVING_EVENTS_FROM_GOOGLE, new Integer(removeFromGoogle.size())));
 		for (final CalendarEvent event : removeFromGoogle) {
 			delete(googleDao, event.getId());
 		}
-
+		// TODO i18n
 		log.info(String.format(Constants.MSG_ADDING_EVENTS_TO_GOOGLE, new Integer(addToGoogle.size())));
 		for (final CalendarEvent event : addToGoogle) {
 			// obfuscate
@@ -101,7 +101,7 @@ public class SyncService {
 			}
 			insert(googleDao, event);
 		}
-
+		// TODO i18n
 		log.info(String.format(Constants.MSG_UPDATING_EVENTS_TO_GOOGLE, new Integer(updateToGoogle.size())));
 		for (final CalendarEvent event : updateToGoogle.keySet()) {
 			// obfuscate
@@ -185,9 +185,9 @@ public class SyncService {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
-			log.error("Error inserting entry");
+			// TODO i18n
+			log.error("Error inserting entry", e);
 			log.error(entry);
-			log.error(e.getStackTrace());
 		}
 	}
 

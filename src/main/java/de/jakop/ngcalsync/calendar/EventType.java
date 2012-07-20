@@ -1,22 +1,23 @@
 package de.jakop.ngcalsync.calendar;
 
+import de.jakop.ngcalsync.Constants;
+
 /**
  * Types of Events
  * 
  * @author fjakop
- * TODO i18n
  */
 public enum EventType {
 	/**  */
-	NORMAL_EVENT(0, "Termin"), //
+	NORMAL_EVENT(0, Constants.NORMAL_EVENT), //
 	/**  */
-	ANNIVERSARY(1, "Jahrestag"), //
+	ANNIVERSARY(1, Constants.ANNIVERSARY), //
 	/**  */
-	ALL_DAY_EVENT(2, "Ganztägig"), //
+	ALL_DAY_EVENT(2, Constants.ALL_DAY_EVENT), //
 	/**  */
-	MEETING(3, "Besprechung"), //+
+	MEETING(3, Constants.MEETING), //+
 	/**  */
-	REMINDER(4, "Erinnerung");
+	REMINDER(4, Constants.REMINDER);
 
 	private final int value;
 	private final String name;
@@ -35,7 +36,6 @@ public enum EventType {
 
 	/**
 	 * @return human readable name of this {@link EventType}
-	 * TODO i18n
 	 */
 	public String getName() {
 		return name;
@@ -60,7 +60,7 @@ public enum EventType {
 			case 4:
 				return EventType.REMINDER;
 			default:
-				throw new IllegalArgumentException(String.format("Appointment type %s not recognized", new Integer(type)));
+				throw new IllegalArgumentException(String.format(Constants.MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG, new Integer(type)));
 		}
 	}
 

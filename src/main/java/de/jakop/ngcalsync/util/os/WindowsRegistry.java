@@ -46,6 +46,7 @@ public class WindowsRegistry {
 			final String[] parsed = output.split("\t");
 			return parsed[parsed.length - 1];
 		} catch (final Exception e) {
+			// TODO i18n
 			log.error(String.format("Failed to read registry key '%s'", key), e);
 			return null;
 		}

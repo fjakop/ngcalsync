@@ -15,6 +15,6 @@ public interface IOpenDatabaseStrategy {
 	 * @param database
 	 * @return the open database
 	 */
-	DDatabase openDatabase(String dominoServer, String database);
+	public DDatabase openDatabase(String dominoServer, String database);
 
 }

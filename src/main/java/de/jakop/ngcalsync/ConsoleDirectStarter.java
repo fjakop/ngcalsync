@@ -19,6 +19,7 @@ public class ConsoleDirectStarter implements IApplicationStarter {
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
+		// TODO i18n
 		log.debug("Starting application in console mode.");
 		settings.setVerificationCodeReceiver(new PromptReceiver());
 		if (application.reloadSettings()) {

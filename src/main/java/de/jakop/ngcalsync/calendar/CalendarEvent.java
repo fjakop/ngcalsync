@@ -4,8 +4,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 /**
- * DTO for calendar events
- * TODO comments to english
+ * Value object for calendar events
  */
 public class CalendarEvent {
 
@@ -54,126 +53,126 @@ public class CalendarEvent {
 	}
 
 	/**
-	 * @return technische Id des Kalendereintrags
+	 * @return event's technical id
 	 */
 	public String getId() {
 		return id;
 	}
 
 	/**
-	 * @param id technische Id des Kalendereintrags
+	 * @param id event's technical id
 	 */
 	public void setId(final String id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return Titel des Kalendereintrags
+	 * @return event's title
 	 */
 	public String getTitle() {
 		return title;
 	}
 
 	/**
-	 * @param title Titel des Kalendereintrags
+	 * @param title event's title
 	 */
 	public void setTitle(final String title) {
 		this.title = title;
 	}
 
 	/**
-	 * @return Beschreibung des Kalendereintrags
+	 * @return event's description
 	 */
 	public String getContent() {
 		return content;
 	}
 
 	/**
-	 * @param content Beschreibung des Kalendereintrags
+	 * @param content event's description
 	 */
 	public void setContent(final String content) {
 		this.content = content;
 	}
 
 	/**
-	 * @return Startzeit des Kalendereintrags
+	 * @return event's starting time
 	 */
 	public Calendar getStartDateTime() {
 		return startDateTime;
 	}
 
 	/**
-	 * @param startDateTime Startzeit des Kalendereintrags
+	 * @param startDateTime event's starting time
 	 */
 	public void setStartDateTime(final Calendar startDateTime) {
 		this.startDateTime = startDateTime;
 	}
 
 	/**
-	 * @return Endzeit des Kalendereintrags
+	 * @return event's ending time
 	 */
 	public Calendar getEndDateTime() {
 		return endDateTime;
 	}
 
 	/**
-	 * @param endDateTime Endzeit des Kalendereintrags
+	 * @param endDateTime event's ending time
 	 */
 	public void setEndDateTime(final Calendar endDateTime) {
 		this.endDateTime = endDateTime;
 	}
 
 	/**
-	 * @param location Ort des Kalendereintrags
+	 * @param location event's location
 	 */
 	public void setLocation(final String location) {
 		this.location = location;
 	}
 
 	/**
-	 * @return Ort des Kalendereintrags
+	 * @return event's location
 	 */
 	public String getLocation() {
 		return location;
 	}
 
 	/**
-	 * @param lastupdated last update of the calendar entry 
+	 * @param lastupdated last update of this event
 	 */
 	public void setLastUpdated(final Calendar lastupdated) {
 		lastUpdated = lastupdated;
 	}
 
 	/**
-	 * @return last update of the calendar entry
+	 * @return last update of this event
 	 */
 	public Calendar getLastUpdated() {
 		return lastUpdated;
 	}
 
 	/**
-	 * @param appType Art des Kalendereintrags
+	 * @param type event's type
 	 */
-	public void setEventType(final EventType appType) {
-		eventType = appType;
+	public void setEventType(final EventType type) {
+		eventType = type;
 	}
 
 	/**
-	 * @return Art des Kalendereintrags
+	 * @return event's type
 	 */
 	public EventType getEventType() {
 		return eventType;
 	}
 
 	/**
-	 * @param _private Privat-Flag des Kalendereintrags
+	 * @param _private event's privacy flag
 	 */
 	public void setPrivate(final boolean _private) {
 		this._private = _private;
 	}
 
 	/**
-	 * @return Privat-Flag des Kalendereintrags
+	 * @return event's privacy flag
 	 */
 	public boolean isPrivate() {
 		return _private;
@@ -181,7 +180,7 @@ public class CalendarEvent {
 
 	/**
 	 * 
-	 * @return <code>true</code>, if all day event
+	 * @return <code>true</code>, if event's type is all day event or anniversary
 	 */
 	public boolean isAllDay() {
 		return getEventType() == EventType.ALL_DAY_EVENT || getEventType() == EventType.ANNIVERSARY;

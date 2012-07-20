@@ -20,29 +20,28 @@ import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Log4j-Appender, der Log-Ausgaben in einer TextArea ausgibt.
- * Die verschiedenen LogLevel werden wie folgt dargestellt:
+ * log4j appender outputting to a TextArea.
+ * The different log levels are visualized like this:
  * <table border="1">
- * <tr><td>LogLevel</td><td>Text-Eigenschaft</td></tr>
- * <tr><td>DEBUG</td><td>grau</td></tr>
- * <tr><td>INFO</td><td>schwarz</td></tr>
- * <tr><td>WARN</td><td>dunkles orange</td></tr>
- * <tr><td>ERROR</td><td>rot</td></tr>
- * <tr><td>FATAL</td><td>dunkles rot</td></tr>
+ * <tr><td>loglevel</td><td>text property</td></tr>
+ * <tr><td>DEBUG</td><td>grey</td></tr>
+ * <tr><td>INFO</td><td>black</td></tr>
+ * <tr><td>WARN</td><td>dark orange</td></tr>
+ * <tr><td>ERROR</td><td>red</td></tr>
+ * <tr><td>FATAL</td><td>dark red</td></tr>
  * </table>
  * <br>
- * Kann wie folgt konfiguriert werden
+ * Configuration is like this:
  * <pre>
- * log4j.appender.Programmausgaben=de.jakop.ngcalsync.util.logging.Log4JSwingAppender
- * log4j.appender.Programmausgaben.layout=org.apache.log4j.PatternLayout
- * log4j.appender.Programmausgaben.layout.ConversionPattern=%5p - %m%n
- * log4j.rootLogger = DEBUG, Programmausgaben
+ * log4j.appender.gui=de.jakop.ngcalsync.util.logging.Log4JSwingAppender
+ * log4j.appender.gui.layout=org.apache.log4j.PatternLayout
+ * log4j.appender.gui.layout.ConversionPattern=%5p - %m%n
+ * log4j.rootLogger = DEBUG, gui
  * </pre>
  * 
- * Im Anwendungscode kann mittels
- * <pre>((GUIAppender) Logger.getRootLogger().getAppender("Programmausgaben"))</pre>
- * auf benannte Instance zugegriffen werden
- * 
+ * Access to a configured named instance by code:
+ * <pre>((GUIAppender) Logger.getRootLogger().getAppender("gui"))</pre>
+ *  * 
  * @author fjakop
  */
 public class Log4JSwingAppender extends AppenderSkeleton {
@@ -109,7 +108,7 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+		// nop
 	}
 
 	@Override

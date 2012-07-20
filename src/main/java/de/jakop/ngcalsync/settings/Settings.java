@@ -35,6 +35,7 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  */
 public class Settings {
 
+	// no i18n for now
 	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
 	private final Log log;
