@@ -1,13 +1,42 @@
 package de.jakop.ngcalsync;
 
+import c10n.annotations.De;
+import c10n.annotations.En;
+
 /**
  * 
  * @author fjakop
  *
  */
-public interface Constants {
+public interface UserMessages {
 
-	/* messages */
+	/**
+	 * @param file {0}
+	 * @param keys {1}
+	 */
+	@En("The configuration file {0} was upgraded, please check the keys {1} and restart.")
+	String MSG_CONFIGURATION_UPGRADED(String file, String keys);
+
+	/**
+	 * @param calendarName {0}
+	 */
+	@De("Google Kalender \"{0}\" existiert nicht.")
+	@En("Google calendar \"{0}\" does not exist.")
+	String GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG(String calendarName);
+
+
+	/**
+	 * @param eventType {0}
+	 */
+	@En("Appointment type {0} not recognized")
+	String MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(int eventType);
+
+	/**
+	 * 
+	 */
+	@En("Environment information has changed, please restart the application.")
+	String MSG_ENVIRONMENT_CHANGED();
+
 	/** */
 	public static final String MSG_ENTER_CLIENT_ID_AND_SECRET = "Please enter your client ID and secret from the Google APIs Console in %s.";
 	/** */

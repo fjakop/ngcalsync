@@ -2,9 +2,15 @@ package de.jakop.ngcalsync.calendar;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import c10n.C10N;
+import c10n.annotations.DefaultC10NAnnotations;
+
+import de.jakop.ngcalsync.UserMessages;
 
 /**
  * 
@@ -16,6 +22,12 @@ public class EventTypeTest {
 	/** expected exception */
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
+	/** */
+	@Before
+	public void before() {
+		C10N.configure(new DefaultC10NAnnotations());
+	}
 
 	/**
 	 * 
@@ -37,7 +49,7 @@ public class EventTypeTest {
 	@Test
 	public void testCreateFromIntValue_ValueNotAllowed_ThrowsException() throws Exception {
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage(String.format("Appointment type %s not recognized", new Integer(5)));
+		thrown.expectMessage(C10N.get(UserMessages.class).MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(5));
 		EventType.create(5);
 	}
 

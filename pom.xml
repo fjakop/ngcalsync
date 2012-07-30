@@ -160,6 +160,11 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
+		<dependency>
+			<groupId>c10n</groupId>
+			<artifactId>c10n-core</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<!-- Notes Kram -->
 		<dependency>
@@ -194,6 +199,22 @@
 		<repository>
 			<id>google-api-services</id>
 			<url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+		</repository>
+		<repository>
+			<id>c10n-releases</id>
+			<name>C10N Releases</name>
+			<url>https://raw.github.com/rodionmoiseev/c10n/master/c10n-mvn-repo/releases</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
 		</repository>
 	</repositories>
 

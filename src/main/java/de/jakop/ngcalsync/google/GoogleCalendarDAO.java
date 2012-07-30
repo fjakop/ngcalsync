@@ -11,6 +11,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import c10n.C10N;
+
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar.Events.Insert;
 import com.google.api.services.calendar.model.CalendarList;
@@ -23,6 +25,7 @@ import com.google.api.services.calendar.model.Events;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
+import de.jakop.ngcalsync.UserMessages;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
@@ -168,7 +171,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 			if (calendar == null) {
 				// calendar with given name does not exist
-				throw new SynchronisationException(String.format(Constants.GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG, settings.getGoogleCalendarName()));
+				throw new SynchronisationException(C10N.get(UserMessages.class).GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG(settings.getGoogleCalendarName()));
 			}
 		}
 		return calendar;

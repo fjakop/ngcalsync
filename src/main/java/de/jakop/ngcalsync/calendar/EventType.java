@@ -1,6 +1,9 @@
 package de.jakop.ngcalsync.calendar;
 
+import c10n.C10N;
+
 import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.UserMessages;
 
 /**
  * Types of Events
@@ -60,7 +63,7 @@ public enum EventType {
 			case 4:
 				return EventType.REMINDER;
 			default:
-				throw new IllegalArgumentException(String.format(Constants.MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG, new Integer(type)));
+				throw new IllegalArgumentException(C10N.get(UserMessages.class).MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(type));
 		}
 	}
 

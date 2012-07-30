@@ -7,6 +7,11 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import c10n.C10N;
+import c10n.C10NConfigBase;
+import c10n.annotations.DefaultC10NAnnotations;
+import c10n.annotations.En;
+
 import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
@@ -37,6 +42,16 @@ public class StartApplication {
 	 * @throws ConfigurationException 
 	 */
 	public static void main(final String[] args) throws IOException, ConfigurationException {
+
+		C10N.configure(new C10NConfigBase() {
+			@Override
+			protected void configure() {
+				install(new DefaultC10NAnnotations());
+				// fallback locale is english
+				bindAnnotation(En.class);
+			}
+		});
+
 
 		final DefaultFileAccessor fileAccessor = new DefaultFileAccessor();
 		final Settings settings = new Settings(fileAccessor, LogFactory.getLog(Settings.class), new NotesHelper());

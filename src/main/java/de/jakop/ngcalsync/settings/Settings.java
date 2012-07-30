@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 
+import c10n.C10N;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -23,6 +25,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.UserMessages;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.VerificationCodeReceiver;
@@ -143,7 +146,7 @@ public class Settings {
 		if (!addedKeys.isEmpty()) {
 			// save the new config, if the old lacked a key
 			newConfiguration.save(settingsFile);
-			log.info(String.format(Constants.MSG_CONFIGURATION_UPGRADED, settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
+			log.info(C10N.get(UserMessages.class).MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
 			return true;
 		}
 		return false;
@@ -172,7 +175,7 @@ public class Settings {
 			envProperties.getLayout().setGlobalSeparator("=");
 			envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
 			envProperties.save();
-			log.info(String.format(Constants.MSG_ENVIRONMENT_CHANGED));
+			log.info(String.format(C10N.get(UserMessages.class).MSG_ENVIRONMENT_CHANGED()));
 			return true;
 		} catch (final ConfigurationException e) {
 			throw new RuntimeException(e);
