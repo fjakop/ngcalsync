@@ -11,8 +11,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import c10n.C10N;
-
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar.Events.Insert;
 import com.google.api.services.calendar.model.CalendarList;
@@ -23,12 +21,12 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 
-import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
-import de.jakop.ngcalsync.UserMessages;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
@@ -63,8 +61,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public String insert(final CalendarEvent event) {
-		// TODO i18n
-		log.debug(String.format("executing insert: %s", event.getTitle()));
+		log.debug(TechMessage.get().MSG_EXECUTING_INSERT(event.getTitle()));
 
 		final Event myEvent = new Event();
 		updateCalendarEventData(event, myEvent);
@@ -83,8 +80,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public void update(final String id, final CalendarEvent event) {
-		// TODO i18n
-		log.debug(String.format("executing update: %s", event.getTitle()));
+		log.debug(TechMessage.get().MSG_EXECUTING_UPDATE(event.getTitle()));
 
 		try {
 			final Event myEvent = service.events().get(getCalendar().getId(), id).execute();
@@ -97,8 +93,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public void delete(final String id) {
-		// TODO i18n
-		log.debug(String.format("executing delete: %s", id));
+		log.debug(TechMessage.get().MSG_EXECUTING_DELETE(id));
 
 		try {
 			service.events().delete(getCalendar().getId(), id).execute();
@@ -110,8 +105,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	@Override
 	public List<CalendarEvent> getEvents(final ICalendarEventFilter[] filters) throws SynchronisationException {
-		// TODO i18n
-		log.info(String.format(Constants.MSG_READING_GOOGLE_EVENTS, getCalendar().getSummary()));
+		log.info(UserMessage.get().MSG_READING_GOOGLE_EVENTS(getCalendar().getSummary()));
 
 		final List<CalendarEvent> events = new ArrayList<CalendarEvent>();
 		try {
@@ -171,7 +165,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 			if (calendar == null) {
 				// calendar with given name does not exist
-				throw new SynchronisationException(C10N.get(UserMessages.class).GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG(settings.getGoogleCalendarName()));
+				throw new SynchronisationException(UserMessage.get().GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG(settings.getGoogleCalendarName()));
 			}
 		}
 		return calendar;

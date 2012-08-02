@@ -2,15 +2,11 @@ package de.jakop.ngcalsync.calendar;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import c10n.C10N;
-import c10n.annotations.DefaultC10NAnnotations;
-
-import de.jakop.ngcalsync.UserMessages;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
  * 
@@ -22,12 +18,6 @@ public class EventTypeTest {
 	/** expected exception */
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
-	/** */
-	@Before
-	public void before() {
-		C10N.configure(new DefaultC10NAnnotations());
-	}
 
 	/**
 	 * 
@@ -49,7 +39,7 @@ public class EventTypeTest {
 	@Test
 	public void testCreateFromIntValue_ValueNotAllowed_ThrowsException() throws Exception {
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage(C10N.get(UserMessages.class).MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(5));
+		thrown.expectMessage(UserMessage.get().MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(5));
 		EventType.create(5);
 	}
 
@@ -72,11 +62,11 @@ public class EventTypeTest {
 	 */
 	@Test
 	public void testGetName() throws Exception {
-		assertEquals("Ganztägig", EventType.ALL_DAY_EVENT.getName());
-		assertEquals("Jahrestag", EventType.ANNIVERSARY.getName());
-		assertEquals("Besprechung", EventType.MEETING.getName());
-		assertEquals("Termin", EventType.NORMAL_EVENT.getName());
-		assertEquals("Erinnerung", EventType.REMINDER.getName());
+		assertEquals(UserMessage.get().ALL_DAY_EVENT(), EventType.ALL_DAY_EVENT.getName());
+		assertEquals(UserMessage.get().ANNIVERSARY(), EventType.ANNIVERSARY.getName());
+		assertEquals(UserMessage.get().MEETING(), EventType.MEETING.getName());
+		assertEquals(UserMessage.get().NORMAL_EVENT(), EventType.NORMAL_EVENT.getName());
+		assertEquals(UserMessage.get().REMINDER(), EventType.REMINDER.getName());
 	}
 
 

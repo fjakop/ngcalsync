@@ -4,6 +4,8 @@ import javax.swing.JOptionPane;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
+
 /**
  * 
  * @author fjakop
@@ -18,8 +20,8 @@ public class GuiReceiver implements VerificationCodeReceiver {
 
 	@Override
 	public String waitForCode() {
-		// TODO i18n
-		final String code = JOptionPane.showInputDialog(null, "Please enter code", "Verification requested", JOptionPane.QUESTION_MESSAGE);
+		final String code = JOptionPane.showInputDialog(null, UserMessage.get().MSG_ENTER_VERIFICATION_CODE(), UserMessage.get().TITLE_ENTER_VERIFICATION_CODE(),
+				JOptionPane.QUESTION_MESSAGE);
 		return code;
 	}
 

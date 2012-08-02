@@ -7,35 +7,6 @@ package de.jakop.ngcalsync;
  */
 public interface Constants {
 
-	/* messages */
-	/** */
-	public static final String MSG_ENTER_CLIENT_ID_AND_SECRET = "Please enter your client ID and secret from the Google APIs Console in %s.";
-	/** */
-	public static final String MSG_UNABLE_TO_PARSE_DATE_SHIFT = "Unable to parse start date shift '%s'.";
-	/** */
-	public static final String MSG_FAILED_TO_OPEN_BROWSER = "Failed to open browser.";
-	/** */
-	public static final String MSG_TRY_TO_OPEN_BROWSER_FOR_URL = "Trying to open a browser for URL %s";
-	/** */
-	public static final String MSG_OPEN_URL_IN_BROWSER = "Please open the following URL in your browser:";
-	/** */
-	public static final String MSG_ENTER_CODE = "Please enter code obtained from website: ";
-	/** */
-	public static final String MSG_SYNC_STARTED = "Synchronisation from Lotus Notes to Google has started.";
-	/** */
-	public static final String MSG_SYNC_ENDED = "Synchronisation from Lotus Notes to Google has ended.";
-	/** */
-	public static final String MSG_READING_LOTUS_NOTES_EVENTS = "Retrieving events from Lotus Notes database \"%s\"";
-	/** */
-	public static final String MSG_READING_GOOGLE_EVENTS = "Retrieving events from Google calendar \"%s\"";
-	/** */
-	public static final String MSG_REMOVING_EVENTS_FROM_GOOGLE = "Removing %s events from Google";
-	/** */
-	public static final String MSG_ADDING_EVENTS_TO_GOOGLE = "Adding %s events to Google";
-	/** */
-	public static final String MSG_UPDATING_EVENTS_TO_GOOGLE = "Updating %s events to Google";
-
-
 	/* defaults for settings */
 	/** */
 	public static final String DEFAULT_GOOGLE_CALENDAR_REMINDERMINUTES = "15";
@@ -59,18 +30,5 @@ public interface Constants {
 	public static final String APPLICATION_NAME = "ngcalsync";
 	/** */
 	public static final String NOTES_HOME_ENVVAR_NAME = "NOTES_HOME";
-
-	/* event names */
-	/**  */
-	public static final String NORMAL_EVENT = "Termin";
-	/**  */
-	public static final String ANNIVERSARY = "Jahrestag";
-	/**  */
-	public static final String ALL_DAY_EVENT = "Ganztägig";
-	/**  */
-	public static final String MEETING = "Besprechung";
-	/**  */
-	public static final String REMINDER = "Erinnerung";
-
 
 }

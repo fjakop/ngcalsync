@@ -27,10 +27,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import c10n.C10N;
-
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.UserMessages;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.rule.TestdataRule;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
@@ -114,7 +112,7 @@ public class SettingsTest {
 		loadSettings(true);
 
 		// verify message
-		verify(log, times(1)).info(C10N.get(UserMessages.class).MSG_ENVIRONMENT_CHANGED());
+		verify(log, times(1)).info(UserMessage.get().MSG_ENVIRONMENT_CHANGED());
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -134,7 +132,7 @@ public class SettingsTest {
 
 		// verify message
 		verify(log, times(1)).info(
-				C10N.get(UserMessages.class).MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(),
+				UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(),
 						"{sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
 								+ "notes.mail.db.file,notes.domino.server," + "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
 								+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
@@ -162,7 +160,7 @@ public class SettingsTest {
 		builder.deleteCharAt(builder.length() - 1);
 		builder.append("}");
 
-		verify(log, times(1)).info(C10N.get(UserMessages.class).MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(), builder.toString()));
+		verify(log, times(1)).info(UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(), builder.toString()));
 
 		// verify that all parameters are set with their defaults
 		verifyAllParametersAreSetWithDefaults();
@@ -257,7 +255,7 @@ public class SettingsTest {
 		propertiesConfiguration.save();
 
 		thrown.expect(ConfigurationException.class);
-		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
+		thrown.expectMessage(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT("foo-d"));
 
 		// #2 for testing (no restart)
 		loadSettings(false);
@@ -278,7 +276,7 @@ public class SettingsTest {
 		propertiesConfiguration.save();
 
 		thrown.expect(ConfigurationException.class);
-		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "foo-d"));
+		thrown.expectMessage(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT("foo-d"));
 
 		// #2 for testing (no restart)
 		loadSettings(false);
@@ -300,7 +298,7 @@ public class SettingsTest {
 		propertiesConfiguration.save();
 
 		thrown.expect(ConfigurationException.class);
-		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
+		thrown.expectMessage(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT("12x"));
 
 		// #2 for testing (no restart)
 		loadSettings(false);
@@ -322,7 +320,7 @@ public class SettingsTest {
 		propertiesConfiguration.save();
 
 		thrown.expect(ConfigurationException.class);
-		thrown.expectMessage(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, "12x"));
+		thrown.expectMessage(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT("12x"));
 
 		// #2 for testing (no restart)
 		loadSettings(false);

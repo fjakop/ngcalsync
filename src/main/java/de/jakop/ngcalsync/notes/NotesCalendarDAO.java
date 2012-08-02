@@ -22,11 +22,12 @@ import de.bea.domingo.DView;
 import de.bea.domingo.DViewEntry;
 import de.bea.domingo.service.NotesServiceRuntimeException;
 import de.bea.domingo.util.GregorianDateTime;
-import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
  * Access to Lotus Notes calendar events 
@@ -78,7 +79,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 	 */
 	@Override
 	public List<CalendarEvent> getEntries(final ICalendarEventFilter[] filters) throws SynchronisationException {
-		log.info(String.format(Constants.MSG_READING_LOTUS_NOTES_EVENTS, mailDb.getFilePath()));
+		log.info(UserMessage.get().MSG_READING_LOTUS_NOTES_EVENTS(mailDb.getFilePath()));
 
 		final Predicate<CalendarEvent> predicate = new Predicate<CalendarEvent>() {
 			@Override
@@ -123,8 +124,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 			final DViewEntry viewEntry = viewEntries.next();
 			final DDocument currentWorkDoc = viewEntry.getDocument();
 
-			// TODO i18n
-			log.debug(String.format("Processing document with UNID '%s'", currentWorkDoc.getUniversalID()));
+			log.debug(TechMessage.get().MSG_PROCESSING_DOCUMENT_UNID(currentWorkDoc.getUniversalID()));
 
 			// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
 			if (!processedNotesDocuments.contains(currentWorkDoc.getUniversalID())) {
@@ -132,8 +132,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 				if (FLAG_APPOINTMENT.equals(currentWorkDoc.getItemValueString(FIELDNAME_FORM))) {
 					// If this is a conflict document, skip to next document.
 					if (currentWorkDoc.hasItem(FIELDNAME_CONFLICT)) {
-						// TODO i18n
-						log.debug(String.format("Document with UNID '%s' is a conflict document", currentWorkDoc.getUniversalID()));
+						log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_CONFLICT_DOCUMENT(currentWorkDoc.getUniversalID()));
 						continue;
 					}
 
@@ -141,12 +140,10 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 					entries.addAll(convDocs);
 					processedNotesDocuments.add(currentWorkDoc.getUniversalID());
 				} else {
-					// TODO i18n
-					log.debug(String.format("Document with UNID '%s' has no appointment flag", currentWorkDoc.getUniversalID()));
+					log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_NOT_AN_APPOINTMENT(currentWorkDoc.getUniversalID()));
 				}
 			} else {
-				// TODO i18n
-				log.debug(String.format("Document with UNID '%s' already processed", currentWorkDoc.getUniversalID()));
+				log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_ALREADY_PROCESSED(currentWorkDoc.getUniversalID()));
 			}
 		}
 
@@ -165,11 +162,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 	}
 
 	private CalendarEvent convSingleDoc(final DDocument doc) {
-		// TODO i18n
-		log.debug(String.format("Converting document with UNID '%s'", doc.getUniversalID()));
-
-		//		String generateXML = doc.generateXML();
-		//		log.debug(generateXML);
+		log.debug(TechMessage.get().MSG_CONVERTING_DOCUMENT_UNID(doc.getUniversalID()));
 
 		final CalendarEvent bd = new CalendarEvent();
 		try {
@@ -221,8 +214,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 			bd.setStartDateTime(newStartDateTime);
 			bd.setEndDateTime(newEndDateTime);
-			// TODO i18n
-			log.debug(String.format("Conversion of document with UNID '%s' results in %s", doc.getUniversalID(), bd.toString()));
+			log.debug(TechMessage.get().MSG_CONVERSION_RESULT(doc.getUniversalID(), bd.toString()));
 
 		} catch (final NotesServiceRuntimeException e) {
 			log.error(bd.toString(), e);

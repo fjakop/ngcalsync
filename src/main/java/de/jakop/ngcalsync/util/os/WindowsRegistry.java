@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
+
 /**
  * Read keys from Windows registry
  * 
@@ -46,8 +48,8 @@ public class WindowsRegistry {
 			final String[] parsed = output.split("\t");
 			return parsed[parsed.length - 1];
 		} catch (final Exception e) {
-			// TODO i18n
-			log.error(String.format("Failed to read registry key '%s'", key), e);
+			log.error(UserMessage.get().MSG_FAILED_TO_READ_REGISTRY(key), e);
+			// TODO handle this correctly
 			return null;
 		}
 

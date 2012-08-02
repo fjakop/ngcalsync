@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 
 /**
  * Filters {@link CalendarEvent}s by {@link de.jakop.ngcalsync.calendar.EventType}.
@@ -27,20 +28,17 @@ public class EventTypeFilter implements ICalendarEventFilter {
 	}
 
 	@Override
-	public boolean accept(final CalendarEvent calendarEntry) {
-		Validate.notNull(calendarEntry);
-		if (calendarEntry.getEventType() == null) {
-			// TODO i18n
-			log.debug("Not accepted - Calendar event is null.");
+	public boolean accept(final CalendarEvent event) {
+		Validate.notNull(event);
+		if (event.getEventType() == null) {
+			log.debug(TechMessage.get().MSG_EVENT_NOT_ACCEPTED_BY_FILTER_IS_NULL());
 			return false;
 		}
-		if (ArrayUtils.contains(acceptedEventTypes, calendarEntry.getEventType().getIntegerValue())) {
-			// TODO i18n
-			log.debug(String.format("Accepted - %s", calendarEntry.toString()));
+		if (ArrayUtils.contains(acceptedEventTypes, event.getEventType().getIntegerValue())) {
+			log.debug(TechMessage.get().MSG_EVENT_ACCEPTED_BY_FILTER(event.toString()));
 			return true;
 		}
-		// TODO i18n
-		log.debug(String.format("Not accepted - %s", calendarEntry.toString()));
+		log.debug(TechMessage.get().MSG_EVENT_NOT_ACCEPTED_BY_FILTER(event.toString()));
 		return false;
 	}
 

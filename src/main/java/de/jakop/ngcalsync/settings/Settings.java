@@ -16,8 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 
-import c10n.C10N;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -25,7 +23,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.UserMessages;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.VerificationCodeReceiver;
@@ -146,7 +144,7 @@ public class Settings {
 		if (!addedKeys.isEmpty()) {
 			// save the new config, if the old lacked a key
 			newConfiguration.save(settingsFile);
-			log.info(C10N.get(UserMessages.class).MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
+			log.info(UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(), ArrayUtils.toString(addedKeys.toArray())));
 			return true;
 		}
 		return false;
@@ -175,7 +173,7 @@ public class Settings {
 			envProperties.getLayout().setGlobalSeparator("=");
 			envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
 			envProperties.save();
-			log.info(String.format(C10N.get(UserMessages.class).MSG_ENVIRONMENT_CHANGED()));
+			log.info(String.format(UserMessage.get().MSG_ENVIRONMENT_CHANGED()));
 			return true;
 		} catch (final ConfigurationException e) {
 			throw new RuntimeException(e);
@@ -402,9 +400,9 @@ public class Settings {
 			dateShift.periodType = parsePeriodType(shiftExpression);
 			dateShift.periodLength = parsePeriod(shiftExpression);
 		} catch (final ParseException e) {
-			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, shiftExpression), e);
+			throw new ConfigurationException(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT(shiftExpression), e);
 		} catch (final NumberFormatException e) {
-			throw new ConfigurationException(String.format(Constants.MSG_UNABLE_TO_PARSE_DATE_SHIFT, shiftExpression), e);
+			throw new ConfigurationException(UserMessage.get().MSG_UNABLE_TO_PARSE_DATE_SHIFT(shiftExpression), e);
 		}
 		return dateShift;
 	}
@@ -420,8 +418,7 @@ public class Settings {
 		} else if (start.endsWith("m")) {
 			return Calendar.MONTH;
 		}
-		// TODO i18n
-		throw new ParseException("Unparseable period type, valid values are 'd' (day) or 'm' (month)", start.length() - 1);
+		throw new ParseException(UserMessage.get().MSG_UNPARSEABLE_PERIOD_TYPE(), start.length() - 1);
 	}
 
 	private Calendar cloneStartTime() {

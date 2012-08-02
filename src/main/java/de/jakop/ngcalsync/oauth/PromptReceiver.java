@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 
-import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 
 /**
@@ -41,7 +41,7 @@ public class PromptReceiver implements VerificationCodeReceiver {
 	public String waitForCode() {
 		String code;
 		do {
-			out.print(Constants.MSG_ENTER_CODE);
+			out.print(UserMessage.get().MSG_ENTER_CODE());
 			code = new Scanner(in).nextLine();
 		} while (code.isEmpty());
 		return code;

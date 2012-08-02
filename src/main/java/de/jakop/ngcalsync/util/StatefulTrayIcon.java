@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 
 /**
  * Represent system tray icon with multiple states, which are e.g. represented by blinking the icon.
@@ -73,8 +74,7 @@ public class StatefulTrayIcon extends TrayIcon {
 		} else if (state == State.NORMAL) {
 			stateRunnable = new NormalRunnable();
 		} else {
-			// TODO i18n
-			throw new IllegalStateException(String.format("State %s is not supported.", state));
+			throw new IllegalStateException(TechMessage.get().MSG_STATE_NOT_SUPPORTED(state));
 		}
 
 		stateThread = new Thread(stateRunnable);

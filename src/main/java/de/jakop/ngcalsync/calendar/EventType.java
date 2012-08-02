@@ -1,9 +1,6 @@
 package de.jakop.ngcalsync.calendar;
 
-import c10n.C10N;
-
-import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.UserMessages;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
  * Types of Events
@@ -12,15 +9,15 @@ import de.jakop.ngcalsync.UserMessages;
  */
 public enum EventType {
 	/**  */
-	NORMAL_EVENT(0, Constants.NORMAL_EVENT), //
+	NORMAL_EVENT(0, UserMessage.get().NORMAL_EVENT()), //
 	/**  */
-	ANNIVERSARY(1, Constants.ANNIVERSARY), //
+	ANNIVERSARY(1, UserMessage.get().ANNIVERSARY()), //
 	/**  */
-	ALL_DAY_EVENT(2, Constants.ALL_DAY_EVENT), //
+	ALL_DAY_EVENT(2, UserMessage.get().ALL_DAY_EVENT()), //
 	/**  */
-	MEETING(3, Constants.MEETING), //+
+	MEETING(3, UserMessage.get().MEETING()), //+
 	/**  */
-	REMINDER(4, Constants.REMINDER);
+	REMINDER(4, UserMessage.get().REMINDER());
 
 	private final int value;
 	private final String name;
@@ -63,7 +60,7 @@ public enum EventType {
 			case 4:
 				return EventType.REMINDER;
 			default:
-				throw new IllegalArgumentException(C10N.get(UserMessages.class).MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(type));
+				throw new IllegalArgumentException(UserMessage.get().MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(type));
 		}
 	}
 

@@ -12,6 +12,7 @@ import de.jakop.ngcalsync.filter.EventTypeFilter;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
 import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.INotesCalendarDAO;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
 import de.jakop.ngcalsync.obfuscator.DefaultCalendarEventObfuscator;
@@ -61,7 +62,7 @@ public class Application {
 	 */
 	void synchronize() {
 
-		log.info(Constants.MSG_SYNC_STARTED);
+		log.info(UserMessage.get().MSG_SYNC_STARTED());
 
 		final ICalendarEventFilter typeFilter = new EventTypeFilter(settings.getSyncAppointmentTypes());
 		final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
@@ -78,7 +79,7 @@ public class Application {
 		settings.setSyncLastDateTime(Calendar.getInstance());
 		settings.saveLastSyncDateTime();
 
-		log.info(Constants.MSG_SYNC_ENDED);
+		log.info(UserMessage.get().MSG_SYNC_ENDED());
 
 	}
 

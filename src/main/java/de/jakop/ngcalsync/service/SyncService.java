@@ -14,11 +14,12 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.INotesCalendarDAO;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.settings.Settings;
@@ -46,54 +47,47 @@ public class SyncService {
 		Validate.notNull(googleDao);
 		Validate.notNull(settings);
 
-		final Collection<CalendarEvent> notesEntries = notesDao.getEntries(filters);
+		final Collection<CalendarEvent> notesEvents = notesDao.getEntries(filters);
 		final Collection<CalendarEvent> googleEntries = googleDao.getEvents(filters);
 
 		// schedule Events existing in Google but not in Notes for removal
 		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
 		for (final CalendarEvent baseDoc : googleEntries) {
-			if (CollectionUtils.select(notesEntries, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
+			if (CollectionUtils.select(notesEvents, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
 				removeFromGoogle.add(baseDoc);
-				// TODO i18n
-				log.debug(String.format("Scheduling for removal: %s", CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_REMOVAL(CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
 			}
 		}
 
 		// schedule Events existing in Notes but not in Google for addition
 		final List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
 		final Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
-		for (final CalendarEvent notesEntry : notesEntries) {
-			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEntry));
+		for (final CalendarEvent notesEvent : notesEvents) {
+			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEvent));
 			if (matchingEntries.isEmpty()) {
-				addToGoogle.add(notesEntry);
-				// TODO i18n
-				log.debug(String.format("Scheduling for addition: %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
+				addToGoogle.add(notesEvent);
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
 			} else {
 				if (matchingEntries.size() > 1) {
-					// TODO i18n
-					throw new SynchronisationException(String.format("Duplicate match (%s) for %s", new Integer(matchingEntries.size()), notesEntry));
+					throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent));
 				}
 				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
 				// check modification and update eventually
-				if (notesEntry.getLastUpdated().after(settings.getSyncLastDateTime())) {
-					updateToGoogle.put(notesEntry, matchingEntry);
-					// TODO i18n
-					log.debug(String.format("Scheduling for update: %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
+				if (notesEvent.getLastUpdated().after(settings.getSyncLastDateTime())) {
+					updateToGoogle.put(notesEvent, matchingEntry);
+					log.debug(TechMessage.get().MSG_SCHEDULING_FOR_UPDATE(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
 				} else {
-					// TODO i18n
-					log.debug(String.format("No update scheduled (not modified): %s", CalendarEventEqualsPredicate.getComparisonString(notesEntry)));
+					log.debug(TechMessage.get().MSG_NO_UPDATE_SCHEDULED(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
 				}
 			}
 		}
 
 		// actually do it
-		// TODO i18n
-		log.info(String.format(Constants.MSG_REMOVING_EVENTS_FROM_GOOGLE, new Integer(removeFromGoogle.size())));
+		log.info(UserMessage.get().MSG_REMOVING_EVENTS_FROM_GOOGLE(removeFromGoogle.size()));
 		for (final CalendarEvent event : removeFromGoogle) {
 			delete(googleDao, event.getId());
 		}
-		// TODO i18n
-		log.info(String.format(Constants.MSG_ADDING_EVENTS_TO_GOOGLE, new Integer(addToGoogle.size())));
+		log.info(UserMessage.get().MSG_ADDING_EVENTS_TO_GOOGLE(addToGoogle.size()));
 		for (final CalendarEvent event : addToGoogle) {
 			// obfuscate
 			for (final ICalendarEventObfuscator obfuscator : obfuscators) {
@@ -101,8 +95,7 @@ public class SyncService {
 			}
 			insert(googleDao, event);
 		}
-		// TODO i18n
-		log.info(String.format(Constants.MSG_UPDATING_EVENTS_TO_GOOGLE, new Integer(updateToGoogle.size())));
+		log.info(UserMessage.get().MSG_UPDATING_EVENTS_TO_GOOGLE(updateToGoogle.size()));
 		for (final CalendarEvent event : updateToGoogle.keySet()) {
 			// obfuscate
 			for (final ICalendarEventObfuscator obfuscator : obfuscators) {
@@ -185,7 +178,7 @@ public class SyncService {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
-			// TODO i18n
+			// TODO handle this corectly, i18n
 			log.error("Error inserting entry", e);
 			log.error(entry);
 		}

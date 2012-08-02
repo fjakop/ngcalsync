@@ -32,6 +32,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.GetEventsTest;
 import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.InsertTest;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
@@ -486,7 +487,7 @@ public class GoogleCalendarDAOTest {
 			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
 			expected.expect(SynchronisationException.class);
-			expected.expectMessage("Google calendar 'mycal' does not exist.");
+			expected.expectMessage(UserMessage.get().GOOGLE_CALENDAR_S_DOES_NOT_EXIST_CHECK_CONFIG("mycal"));
 			dao.insert(myEvent);
 
 		}

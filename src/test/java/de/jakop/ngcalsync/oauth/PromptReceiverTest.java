@@ -9,6 +9,8 @@ import java.io.PrintStream;
 
 import org.junit.Test;
 
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
+
 /**
  * 
  * @author fjakop
@@ -39,7 +41,7 @@ public class PromptReceiverTest {
 		final String code = promptReceiver.waitForCode();
 
 		// TODO i18n
-		assertEquals("Please enter code obtained from website: ", out.toString());
+		assertEquals(UserMessage.get().MSG_ENTER_CODE(), out.toString());
 		assertEquals("foo", code);
 	}
 

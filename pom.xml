@@ -163,7 +163,7 @@
 		<dependency>
 			<groupId>c10n</groupId>
 			<artifactId>c10n-core</artifactId>
-			<version>1.0</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Notes Kram -->
@@ -214,6 +214,22 @@
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>c10n-snapshots</id>
+			<name>C10N Snapshots</name>
+			<url>https://raw.github.com/rodionmoiseev/c10n/master/c10n-mvn-repo/snapshots</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fails</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 		</repository>
 	</repositories>

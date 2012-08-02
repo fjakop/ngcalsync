@@ -3,6 +3,7 @@ package de.jakop.ngcalsync;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.oauth.PromptReceiver;
 import de.jakop.ngcalsync.settings.Settings;
 
@@ -19,8 +20,7 @@ public class ConsoleDirectStarter implements IApplicationStarter {
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
-		// TODO i18n
-		log.debug("Starting application in console mode.");
+		log.debug(TechMessage.get().MSG_START_IN_CONSOLE_MODE());
 		settings.setVerificationCodeReceiver(new PromptReceiver());
 		if (application.reloadSettings()) {
 			return;

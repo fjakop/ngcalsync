@@ -23,6 +23,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.GuiReceiver;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.StatefulTrayIcon;
@@ -43,8 +45,7 @@ public class TrayStarter implements IApplicationStarter {
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
-		// TODO i18n
-		log.debug("Starting application in tray mode.");
+		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
 		settings.setVerificationCodeReceiver(new GuiReceiver());
 		moveToTray(application);
 	}
@@ -57,8 +58,7 @@ public class TrayStarter implements IApplicationStarter {
 		rootLogger.addAppender(appender);
 		rootLogger.setLevel(Level.INFO);
 
-		// FIXME i18n
-		final JFrame frame = new JFrame("ngcalsync log");
+		final JFrame frame = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
 		frame.getContentPane().add(appender.getLogPanel());
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		frame.pack();
@@ -70,18 +70,16 @@ public class TrayStarter implements IApplicationStarter {
 			icon = new StatefulTrayIcon();
 			icon.setState(State.NORMAL);
 		} catch (final IOException e) {
-			// TODO i18n
-			log.error("TrayIcon could not be loaded.", e);
+			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
 		}
 		final PopupMenu popup = new PopupMenu();
 
-		// FIXME i18n
 		// Create a pop-up menu components
-		final MenuItem syncItem = new MenuItem("Synchronize");
-		final MenuItem logItem = new MenuItem("Show log");
+		final MenuItem syncItem = new MenuItem(UserMessage.get().MENU_ITEM_SYNCHRONIZE());
+		final MenuItem logItem = new MenuItem(UserMessage.get().MENU_ITEM_SHOW_LOG());
 		// TODO About dialog
 		//		final MenuItem aboutItem = new MenuItem("About");
-		final MenuItem exitItem = new MenuItem("Exit");
+		final MenuItem exitItem = new MenuItem(UserMessage.get().MENU_ITEM_EXIT());
 
 		//Add components to pop-up menu
 		popup.add(syncItem);
@@ -95,8 +93,7 @@ public class TrayStarter implements IApplicationStarter {
 		try {
 			tray.add(icon);
 		} catch (final AWTException e) {
-			// TODO i18n
-			log.error("TrayIcon could not be added.", e);
+			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_ADDABLE(), e);
 		}
 
 		final ActionListener syncActionListener = new ActionListener() {
@@ -116,8 +113,6 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO i18n
-				log.debug("Showing log viewer.");
 				frame.setVisible(true);
 			}
 		});
@@ -126,8 +121,6 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO i18n
-				log.debug("Exiting the application.");
 				frame.dispose();
 				System.exit(0);
 			}

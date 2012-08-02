@@ -13,6 +13,7 @@ import c10n.annotations.DefaultC10NAnnotations;
 import c10n.annotations.En;
 
 import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
 import de.jakop.ngcalsync.notes.NotesHelper;
@@ -47,11 +48,9 @@ public class StartApplication {
 			@Override
 			protected void configure() {
 				install(new DefaultC10NAnnotations());
-				// fallback locale is english
 				bindAnnotation(En.class);
 			}
 		});
-
 
 		final DefaultFileAccessor fileAccessor = new DefaultFileAccessor();
 		final Settings settings = new Settings(fileAccessor, LogFactory.getLog(Settings.class), new NotesHelper());
@@ -62,8 +61,7 @@ public class StartApplication {
 		if (SystemTray.isSupported()) {
 			new TrayStarter().startApplication(application, settings);
 		} else {
-			// TODO i18n
-			log.info("SystemTray is not supported");
+			log.info(UserMessage.get().MSG_TRAY_NOT_SUPPORTED());
 			new ConsoleDirectStarter().startApplication(application, settings);
 		}
 	}

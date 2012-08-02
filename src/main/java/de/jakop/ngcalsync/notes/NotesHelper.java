@@ -7,6 +7,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.util.os.WindowsRegistry;
 
 /**
@@ -23,18 +24,16 @@ public class NotesHelper {
 	 * @return <code>true</code>, if Lotus Notes native library could be loaded from os path
 	 */
 	public boolean isNotesInSystemPath() {
-		// TODO i18n
-		log.debug("Checking for Lotus Notes in system path...");
+		log.debug(TechMessage.get().MSG_CHECKING_NOTES_IN_SYSTEM_PATH());
 		try {
 			// check for Lotus Notes
-			// TODO i18n
-			System.loadLibrary("nlsxbe");
-			log.debug("nlsxbe successfully loaded");
+			final String libname = "nlsxbe";
+			System.loadLibrary(libname);
+			log.debug(TechMessage.get().MSG_SUCCESSFULLY_LOADED(libname));
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
-			// TODO i18n
 			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
-			log.warn(String.format("Lotus Notes is not in the library path."));
+			log.warn(TechMessage.get().MSG_NOTES_NOT_IN_SYSTEM_PATH());
 			return false;
 		}
 	}
@@ -44,18 +43,16 @@ public class NotesHelper {
 	 * @return <code>true</code>, if Lotus Notes java classes could be loaded from the classpath
 	 */
 	public boolean isNotesInClassPath() {
-		// TODO i18n
-		log.debug("Checking for Lotus Notes jar in classpath...");
+		log.debug(TechMessage.get().MSG_CHECKING_NOTES_IN_CLASSPATH());
 		try {
 			// check for Lotus Notes java classes
-			Class.forName("lotus.notes.NotesException");
-			// TODO i18n
-			log.debug("lotus.notes.NotesException successfully loaded");
+			final String className = "lotus.notes.NotesException";
+			Class.forName(className);
+			log.debug(TechMessage.get().MSG_SUCCESSFULLY_LOADED(className));
 			return true;
 		} catch (final ClassNotFoundException e) {
-			// TODO i18n
 			// Lotus Notes jar is not in the classpath, NOTES_HOME not or incorrectly set
-			log.warn(String.format("Lotus Notes jar is not in the classpath."));
+			log.warn(TechMessage.get().MSG_NOTES_NOT_IN_CLASSPATH());
 			return false;
 		}
 	}
@@ -69,21 +66,17 @@ public class NotesHelper {
 	public String getLotusNotesPath() {
 		// check os and try to determine path to Lotus Notes
 		String lotusNotesHome = "";
-		// TODO i18n
-		log.debug("Trying to obtain Lotus Notes path");
-		// TODO i18n
-		log.debug(String.format("OS info: %s-%s-%s", SystemUtils.OS_NAME, SystemUtils.OS_VERSION, SystemUtils.OS_ARCH));
+		log.debug(TechMessage.get().MSG_OBTAINING_NOTES_SYSTEM_PATH());
+		log.debug(TechMessage.get().MSG_OS_INFO(SystemUtils.OS_NAME, SystemUtils.OS_VERSION, SystemUtils.OS_ARCH));
 		if (SystemUtils.IS_OS_WINDOWS) {
-			// TODO i18n
-			log.debug("OS is Windows");
 			lotusNotesHome = WindowsRegistry.readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
 			while (lotusNotesHome.endsWith("\n")) {
 				lotusNotesHome = StringUtils.chomp(lotusNotesHome);
 			}
-			// TODO i18n
-			log.info(String.format("Path to Lotus Notes read from Windows registry was %s.", lotusNotesHome));
+			log.info(TechMessage.get().MSG_PATH_READ_FROM_WINDOWS_REGISTRY(lotusNotesHome));
 		} else {
 			do {
+				// TODO use receiver, i18n
 				System.out.print("Please enter path to Lotus Notes installation: ");
 				lotusNotesHome = new Scanner(System.in).nextLine();
 			} while (lotusNotesHome.isEmpty());
