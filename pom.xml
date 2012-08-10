@@ -15,7 +15,7 @@
 	<licenses>
 		<license>
 			<name>BSD License</name>
-			<url>http://ngcalsync.sourceforge.net/license.html</url>
+			<url>LICENSE</url>
 		</license>
 	</licenses>
 	<scm>
@@ -27,7 +27,7 @@
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
-	<version>0.6.0-i18n-1-SNAPSHOT</version>
+	<version>0.6.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
