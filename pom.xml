@@ -14,8 +14,8 @@
 	</issueManagement>
 	<licenses>
 		<license>
-			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</url>
+			<name>BSD License</name>
+			<url>http://ngcalsync.sourceforge.net/license.html</url>
 		</license>
 	</licenses>
 	<scm>
@@ -27,7 +27,7 @@
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
-	<version>0.5.0-i18n-1-SNAPSHOT</version>
+	<version>0.6.0-i18n-1-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -233,6 +233,13 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<site>
+			<id>ngcalsync.sf.net</id>
+			<url>scp://fjakop@shell.sourceforge.net/home/project-web/ngcalsync/htdocs</url>
+		</site>
+	</distributionManagement>
 
 	<profiles>
 		<profile>

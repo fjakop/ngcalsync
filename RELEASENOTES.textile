@@ -1,3 +1,10 @@
+*0.6.0*
+
+p. The application has been given the capabilities to be internationalized. A first translation into english is available.
+
+p. The license has changed to a friendly BSD license.
+
+
 *0.5.0*
 
 p. For operating systems which support system tray the application now starts in ??tray mode??, which means, it will not start synchronisation immediately but show a tray icon. Right-clicking this icon shows a popup-menu, allowing the user to choose between synchronization, log view and exit. A double click on the icon also triggers synchronisation.
