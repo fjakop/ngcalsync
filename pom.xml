@@ -236,8 +236,8 @@
 
 	<distributionManagement>
 		<site>
-			<id>ngcalsync.sf.net</id>
-			<url>scp://fjakop@shell.sourceforge.net/home/project-web/ngcalsync/htdocs</url>
+			<id>shell.sourceforge.net</id>
+			<url>scp://shell.sourceforge.net/home/project-web/ngcalsync/htdocs</url>
 		</site>
 	</distributionManagement>
 
@@ -290,29 +290,29 @@
 						<artifactId>wagon-maven-plugin</artifactId>
 						<version>1.0-beta-4</version>
 						<executions>
-							<!-- <execution>
+							<execution>
 								<id>upload-dist-sf.net</id>
-								<phase>initialize</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<serverId>frs.sf.net</serverId>
-									<url>scp://fjakop@frs.sourceforge.net:/home/frs/project/ngcalsync</url>
+									<serverId>shell.sourceforge.net</serverId>
+									<url>scp://shell.sourceforge.net:/home/frs/project/ngcalsync</url>
 									<fromDir>${project.build.directory}</fromDir>
 									<includes>*.zip, *.tar.gz</includes>
-									<toDir>test_release</toDir>
+									<toDir>.</toDir>
 								</configuration>
-							</execution> -->
+							</execution>
 
 							<execution>
 								<id>upload-releasenotes-sf.net</id>
-								<phase>initialize</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>upload-single</goal>
 								</goals>
 								<configuration>
-									<serverId>frs.sf.net</serverId>
+									<serverId>frs.sourceforge.net</serverId>
 									<url>scp://frs.sourceforge.net</url>
 									<fromFile>${project.build.directory}/${project.build.finalName}-distribution/RELEASENOTES.textile</fromFile>
 									<toFile>/home/frs/project/ngcalsync/README.textile</toFile>
