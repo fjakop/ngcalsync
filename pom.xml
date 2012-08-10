@@ -282,6 +282,8 @@
 			</build>
 		</profile>
 		<profile>
+			<!-- before uploading start a new shell by executing 
+			     'ssh -t fjakop,ngcalsync@shell.sourceforge.net create' -->
 			<id>upload-sf.net</id>
 			<build>
 				<plugins>
