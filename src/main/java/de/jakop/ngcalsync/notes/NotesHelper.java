@@ -1,13 +1,13 @@
 package de.jakop.ngcalsync.notes;
 
-import java.util.Scanner;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
+import de.jakop.ngcalsync.oauth.IUserInputReceiver;
 import de.jakop.ngcalsync.util.os.WindowsRegistry;
 
 /**
@@ -63,7 +63,7 @@ public class NotesHelper {
 	 * 
 	 * @return the installation path
 	 */
-	public String getLotusNotesPath() {
+	public String getLotusNotesPath(final IUserInputReceiver receiver) {
 		// check os and try to determine path to Lotus Notes
 		String lotusNotesHome = "";
 		log.debug(TechMessage.get().MSG_OBTAINING_NOTES_SYSTEM_PATH());
@@ -74,13 +74,13 @@ public class NotesHelper {
 				lotusNotesHome = StringUtils.chomp(lotusNotesHome);
 			}
 			log.info(TechMessage.get().MSG_PATH_READ_FROM_WINDOWS_REGISTRY(lotusNotesHome));
-		} else {
-			do {
-				// TODO use receiver, i18n
-				System.out.print("Please enter path to Lotus Notes installation: ");
-				lotusNotesHome = new Scanner(System.in).nextLine();
-			} while (lotusNotesHome.isEmpty());
 		}
+
+		// Fallback for Windows, default for other os
+		if (StringUtils.isBlank(lotusNotesHome)) {
+			lotusNotesHome = receiver.waitForUserInput(UserMessage.get().MSG_ENTER_LOTUS_NOTES_PATH());
+		}
+
 		return lotusNotesHome;
 	}
 

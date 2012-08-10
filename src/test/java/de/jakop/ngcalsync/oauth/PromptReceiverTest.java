@@ -19,28 +19,18 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 public class PromptReceiverTest {
 
 	/**
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testGetRedirectUri() throws Exception {
-		assertEquals("urn:ietf:wg:oauth:2.0:oob", new PromptReceiver().getRedirectUri());
-	}
-
-	/**
 	* 
 	* @throws Exception
 	*/
 	@Test
-	public void testGetCode() throws Exception {
+	public void testWaitForUserInput() throws Exception {
 
 		final InputStream in = new ByteArrayInputStream(new byte[] { 'f', 'o', 'o' });
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		final PromptReceiver promptReceiver = new PromptReceiver(in, new PrintStream(out));
-		final String code = promptReceiver.waitForCode();
+		final String code = promptReceiver.waitForUserInput(UserMessage.get().MSG_ENTER_CODE());
 
-		// TODO i18n
 		assertEquals(UserMessage.get().MSG_ENTER_CODE(), out.toString());
 		assertEquals("foo", code);
 	}

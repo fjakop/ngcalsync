@@ -21,7 +21,7 @@ public class ConsoleDirectStarter implements IApplicationStarter {
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_CONSOLE_MODE());
-		settings.setVerificationCodeReceiver(new PromptReceiver());
+		settings.setUserInputReceiver(new PromptReceiver());
 		if (application.reloadSettings()) {
 			return;
 		}

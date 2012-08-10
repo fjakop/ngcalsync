@@ -46,6 +46,19 @@ public interface LocalizedUserStrings {
 	String MSG_CONFIGURATION_UPGRADED(String file, String keys);
 
 	/**
+	 * 
+	 */
+	@En("The configuration was upgraded, please check and restart synchronisation.")
+	String MSG_CONFIGURATION_UPGRADED();
+
+	/**
+	 * @param file {0}
+	 */
+	@En("The synchronisation failed. See logfile {0} for details.")
+	String MSG_SYNC_FAILED(String file);
+
+
+	/**
 	 * @param calendarName {0}
 	 */
 	@De("Google Kalender \"{0}\" existiert nicht.")
@@ -100,6 +113,12 @@ public interface LocalizedUserStrings {
 	 */
 	@En("Please enter code obtained from website: ")
 	String MSG_ENTER_CODE();
+
+	/**
+	 * 
+	 */
+	@En("Please enter path to Lotus Notes installation: ")
+	String MSG_ENTER_LOTUS_NOTES_PATH();
 
 	/**
 	 * 

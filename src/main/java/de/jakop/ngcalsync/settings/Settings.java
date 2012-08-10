@@ -26,7 +26,7 @@ import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
-import de.jakop.ngcalsync.oauth.VerificationCodeReceiver;
+import de.jakop.ngcalsync.oauth.IUserInputReceiver;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
@@ -46,7 +46,7 @@ public class Settings {
 	private PropertiesConfiguration configuration;
 	private PrivacySettings privacySettings;
 	private com.google.api.services.calendar.Calendar calendarService = null;
-	private VerificationCodeReceiver verificationCodeReceiver;
+	private IUserInputReceiver userInputReceiver;
 
 	private Calendar syncLastDateTime;
 	private final Calendar startTime = Calendar.getInstance();
@@ -165,7 +165,7 @@ public class Settings {
 			return false;
 		}
 
-		final String lotusNotesHome = notesHelper.getLotusNotesPath();
+		final String lotusNotesHome = notesHelper.getLotusNotesPath(userInputReceiver);
 
 		PropertiesConfiguration envProperties;
 		try {
@@ -373,18 +373,18 @@ public class Settings {
 
 	/**
 	 * 
-	 * @return the current {@link VerificationCodeReceiver}
+	 * @return the current {@link IUserInputReceiver}
 	 */
-	public VerificationCodeReceiver getVerificationCodeReceiver() {
-		return verificationCodeReceiver;
+	public IUserInputReceiver getVerificationCodeReceiver() {
+		return userInputReceiver;
 	}
 
 	/**
 	 * 
-	 * @param verificationCodeReceiver the curent {@link VerificationCodeReceiver}
+	 * @param userInputReceiver the curent {@link IUserInputReceiver}
 	 */
-	public void setVerificationCodeReceiver(final VerificationCodeReceiver verificationCodeReceiver) {
-		this.verificationCodeReceiver = verificationCodeReceiver;
+	public void setUserInputReceiver(final IUserInputReceiver userInputReceiver) {
+		this.userInputReceiver = userInputReceiver;
 	}
 
 

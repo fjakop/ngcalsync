@@ -21,6 +21,7 @@ import com.google.api.client.auth.oauth2.CredentialStoreRefreshListener;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -72,7 +73,7 @@ public class GoogleOAuth2DAO {
 
 	private final HttpTransport transport;
 	private final JsonFactory jsonFactory;
-	private final VerificationCodeReceiver receiver;
+	private final IUserInputReceiver receiver;
 	private final File userSecretsFile;
 
 	/** Google client secrets or {@code null} before initialized in {@link #authorize}. */
@@ -85,7 +86,7 @@ public class GoogleOAuth2DAO {
 	 * @param receiver verification code receiver
 	 * @param userSecretsFile file to store user secrets into
 	 */
-	public GoogleOAuth2DAO(final HttpTransport transport, final JsonFactory jsonFactory, final VerificationCodeReceiver receiver, final File userSecretsFile) {
+	public GoogleOAuth2DAO(final HttpTransport transport, final JsonFactory jsonFactory, final IUserInputReceiver receiver, final File userSecretsFile) {
 		this.transport = transport;
 		this.jsonFactory = jsonFactory;
 		this.receiver = receiver;
@@ -100,22 +101,18 @@ public class GoogleOAuth2DAO {
 	 * @throws IOException 
 	 */
 	private Credential authorizeViaWeb(final Iterable<String> scopes, final String user) throws IOException {
-		try {
-			// get client secrets
-			final GoogleClientSecrets secrets = getClientSecrets(RESOURCE_LOCATION);
+		// get client secrets
+		final GoogleClientSecrets secrets = getClientSecrets(RESOURCE_LOCATION);
 
-			// redirect to an authorization page
-			final String redirectUri = receiver.getRedirectUri();
-			final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, secrets, scopes).build();
-			browse(flow.newAuthorizationUrl().setRedirectUri(redirectUri).build());
-			// receive authorization code and exchange it for an access token
-			final String code = receiver.waitForCode();
-			final GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
-			// store credential and return it
-			return flow.createAndStoreCredential(response, user);
-		} finally {
-			receiver.stop();
-		}
+		// redirect to an authorization page
+		final String redirectUri = GoogleOAuthConstants.OOB_REDIRECT_URI;
+		final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, secrets, scopes).build();
+		browse(flow.newAuthorizationUrl().setRedirectUri(redirectUri).build());
+		// receive authorization code and exchange it for an access token
+		final String code = receiver.waitForUserInput(UserMessage.get().MSG_ENTER_CODE());
+		final GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUri).execute();
+		// store credential and return it
+		return flow.createAndStoreCredential(response, user);
 	}
 
 	/** Open a browser at the given URL. */

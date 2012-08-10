@@ -46,7 +46,7 @@ public class TrayStarter implements IApplicationStarter {
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
-		settings.setVerificationCodeReceiver(new GuiReceiver());
+		settings.setUserInputReceiver(new GuiReceiver());
 		moveToTray(application);
 	}
 
@@ -140,8 +140,7 @@ public class TrayStarter implements IApplicationStarter {
 		public Void call() throws Exception {
 			try {
 				if (application.reloadSettings()) {
-					// TODO i18n
-					JOptionPane.showMessageDialog(null, String.format("The configuration was upgraded, please check and restart synchronisation."));
+					JOptionPane.showMessageDialog(null, UserMessage.get().MSG_CONFIGURATION_UPGRADED());
 					return null;
 				}
 				icon.setState(State.BLINK);
@@ -151,8 +150,7 @@ public class TrayStarter implements IApplicationStarter {
 				log.error(ExceptionUtils.getStackTrace(ex));
 				final String home = System.getenv("user.home");
 				final File logfile = new File(home, "ngcalsync.log");
-				// TODO i18n
-				JOptionPane.showMessageDialog(null, String.format("Oops, sync failed. See logfile %s for details.", logfile.getAbsolutePath()));
+				JOptionPane.showMessageDialog(null, UserMessage.get().MSG_SYNC_FAILED(logfile.getAbsolutePath()));
 			}
 			return null;
 		}

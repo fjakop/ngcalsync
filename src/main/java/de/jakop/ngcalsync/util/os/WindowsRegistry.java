@@ -49,7 +49,7 @@ public class WindowsRegistry {
 			return parsed[parsed.length - 1];
 		} catch (final Exception e) {
 			log.error(UserMessage.get().MSG_FAILED_TO_READ_REGISTRY(key), e);
-			// TODO handle this correctly
+			// returning null is perfectly legal - the user then has to provide the path
 			return null;
 		}
 
