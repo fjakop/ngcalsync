@@ -418,7 +418,7 @@ public class Settings {
 		} else if (start.endsWith("m")) {
 			return Calendar.MONTH;
 		}
-		throw new ParseException(UserMessage.get().MSG_UNPARSEABLE_PERIOD_TYPE(), start.length() - 1);
+		throw new ParseException(UserMessage.get().MSG_UNPARSEABLE_PERIOD_TYPE(start.substring(start.length() - 1)), start.length() - 1);
 	}
 
 	private Calendar cloneStartTime() {

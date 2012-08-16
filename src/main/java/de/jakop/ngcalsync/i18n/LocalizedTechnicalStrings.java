@@ -61,6 +61,18 @@ public interface LocalizedTechnicalStrings {
 	/* Google */
 
 	/**
+	 * @param location {0} 
+	 */
+	@En("Please enter your client ID and secret from the Google APIs Console in {0}.")
+	String MSG_ENTER_CLIENT_ID_AND_SECRET(String location);
+
+	/**
+	 * @param url {0}
+	 */
+	@En("Trying to open a browser for URL {0}")
+	String MSG_TRY_TO_OPEN_BROWSER_FOR_URL(String url);
+
+	/**
 	 * @param title {0}
 	 */
 	@En("executing insert: {0}")

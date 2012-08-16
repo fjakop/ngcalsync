@@ -42,18 +42,21 @@ public interface LocalizedUserStrings {
 	 * @param file {0}
 	 * @param keys {1}
 	 */
+	@De("Die Konfigurationsdatei {0} wurde angepasst, bitte prüfen Sie die Parameter {1} und starten die Anwendung danach neu.")
 	@En("The configuration file {0} was upgraded, please check the keys {1} and restart.")
 	String MSG_CONFIGURATION_UPGRADED(String file, String keys);
 
 	/**
 	 * 
 	 */
+	@De("Die Konfigurationsdatei wurde angepasst, bitte prüfen Sie diese starten die Synchronisierung danach neu.")
 	@En("The configuration was upgraded, please check and restart synchronisation.")
 	String MSG_CONFIGURATION_UPGRADED();
 
 	/**
 	 * @param file {0}
 	 */
+	@De("Die Synchronisierung schlug fehl. Details finden Sie in der Datei {0}.")
 	@En("The synchronisation failed. See logfile {0} for details.")
 	String MSG_SYNC_FAILED(String file);
 
@@ -69,126 +72,126 @@ public interface LocalizedUserStrings {
 	/**
 	 * @param eventType {0}
 	 */
-	@En("Appointment type {0} not recognized")
+	@De("Kalendareintrag-Typ \"{0}\" ist unbekannt.")
+	@En("Event type \"{0}\" not recognized")
 	String MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(int eventType);
 
 	/**
 	 * 
 	 */
+	@De("Die Umgebungsvariablen wurden angepasst, bitte starten die Synchronisierung neu.")
 	@En("Environment information has changed, please restart the application.")
 	String MSG_ENVIRONMENT_CHANGED();
 
 	/**
-	 * @param location {0} 
-	 */
-	@En("Please enter your client ID and secret from the Google APIs Console in {0}.")
-	String MSG_ENTER_CLIENT_ID_AND_SECRET(String location);
-
-	/**
 	 * @param dateShift {0}
 	 */
+	@De("Die Datumsverschiebung \"{0}\" konnte nicht interpretiert werden, bitte prüfen Sie die Konfiguration.")
 	@En("Unable to parse start date shift \"{0}\".")
 	String MSG_UNABLE_TO_PARSE_DATE_SHIFT(String dateShift);
 
 	/**
 	 * 
 	 */
+	@De("Es konnte kein Browser geöffnet werden.")
 	@En("Failed to open browser.")
 	String MSG_FAILED_TO_OPEN_BROWSER();
 
 	/**
 	 * @param url {0}
 	 */
-	@En("Trying to open a browser for URL {0}")
-	String MSG_TRY_TO_OPEN_BROWSER_FOR_URL(String url);
-
-	/**
-	 * @param url {0}
-	 */
+	@De("Bitte öffnen Sie folgende URL in Ihrem Browser: {0}")
 	@En("Please open the following URL in your browser: {0}")
 	String MSG_OPEN_URL_IN_BROWSER(String url);
 
 	/**
 	 * 
 	 */
+	@De("Bitte geben Sie den Code von der Webseite ein: ")
 	@En("Please enter code obtained from website: ")
 	String MSG_ENTER_CODE();
 
 	/**
 	 * 
 	 */
+	@De("Bitte geben Sie den Pfad zu Ihrer Lotus Notes Installation ein: ")
 	@En("Please enter path to Lotus Notes installation: ")
 	String MSG_ENTER_LOTUS_NOTES_PATH();
 
 	/**
 	 * 
 	 */
+	@De("Die Synchronisierung von Lotus Notes in den Google-Kalender beginnt.")
 	@En("Synchronisation from Lotus Notes to Google has started.")
 	String MSG_SYNC_STARTED();
 
 	/**
 	 * 
 	 */
+	@De("Die Synchronisierung von Lotus Notes in den Google-Kalender ist beendet.")
 	@En("Synchronisation from Lotus Notes to Google has ended.")
 	String MSG_SYNC_ENDED();
 
 	/**
 	 * @param database {0}
 	 */
+	@De("Die Kalendereinträge aus der Lotus Notes Datenbank \"{0}\" werden gelesen.")
 	@En("Retrieving events from Lotus Notes database \"{0}\"")
 	String MSG_READING_LOTUS_NOTES_EVENTS(String database);
 
 	/**
 	 * @param calendar {0}
 	 */
+	@De("Die Kalendereinträge aus dem Google-Kalender \"{0}\" werden gelesen.")
 	@En("Retrieving events from Google calendar \"{0}\"")
 	String MSG_READING_GOOGLE_EVENTS(String calendar);
 
 	/**
 	 * @param count {0}
 	 */
+	@De("{0} Kalendereinträge werden aus Google-Kalender entfernt.")
 	@En("Removing {0} events from Google")
 	String MSG_REMOVING_EVENTS_FROM_GOOGLE(int count);
 
 	/**
 	 * @param count {0}
 	 */
+	@De("{0} Kalendereinträge werden zum Google-Kalender hinzugefügt.")
 	@En("Adding {0} events to Google")
 	String MSG_ADDING_EVENTS_TO_GOOGLE(int count);
 
 	/**
 	 * @param count {0}
 	 */
+	@De("{0} Kalendereinträge werden im Google-Kalender geändert.")
 	@En("Updating {0} events to Google")
 	String MSG_UPDATING_EVENTS_TO_GOOGLE(int count);
 
 	/**
 	 * 
 	 */
-	@En("Please enter code")
-	String MSG_ENTER_VERIFICATION_CODE();
-
-	/**
-	 * 
-	 */
-	@En("Verification requested")
+	@De("Eingabe erforderlich")
+	@En("Input requested")
 	String TITLE_ENTER_VERIFICATION_CODE();
 
 	/**
-	 * 
+	 * @param periodType {0}
 	 */
-	@En("Unparseable period type, valid values are \"d\" (day) or \"m\" (month)")
-	String MSG_UNPARSEABLE_PERIOD_TYPE();
+	@De("Der Zeitraum-Bezeichner \"{0}\" konnte nicht interpretiert werden.  Gültige Werte sind \"d\" (Tag) oder \"m\" (Monat).")
+	@En("Unparseable period type \"{0}\", valid values are \"d\" (day) or \"m\" (month).")
+	String MSG_UNPARSEABLE_PERIOD_TYPE(String periodType);
 
 	/**
 	 * @param key {0}
 	 */
+	@De("Der Registry-Schlüssel \"{0}\" konnte nicht gelesen werden.")
 	@En("Failed to read registry key \"{0}\".")
 	String MSG_FAILED_TO_READ_REGISTRY(String key);
 
 	/**
 	 * 
 	 */
+	@De("Das SystemTray wird nicht unterstützt.")
 	@En("SystemTray is not supported.")
 	String MSG_TRAY_NOT_SUPPORTED();
 

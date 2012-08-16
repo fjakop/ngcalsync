@@ -27,6 +27,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.common.base.Preconditions;
 
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 
@@ -117,7 +118,7 @@ public class GoogleOAuth2DAO {
 
 	/** Open a browser at the given URL. */
 	private void browse(final String url) {
-		log.info(UserMessage.get().MSG_TRY_TO_OPEN_BROWSER_FOR_URL(url));
+		log.debug(TechMessage.get().MSG_TRY_TO_OPEN_BROWSER_FOR_URL(url));
 
 		// first try the Java Desktop
 		if (Desktop.isDesktopSupported()) {
@@ -244,7 +245,7 @@ public class GoogleOAuth2DAO {
 			final InputStream inputStream = getClass().getResourceAsStream(location);
 			Preconditions.checkNotNull(inputStream, "missing resource %s", location);
 			clientSecrets = GoogleClientSecrets.load(jsonFactory, inputStream);
-			Preconditions.checkArgument(!clientSecrets.getDetails().getClientId().startsWith("[[") && !clientSecrets.getDetails().getClientSecret().startsWith("[["), UserMessage.get()
+			Preconditions.checkArgument(!clientSecrets.getDetails().getClientId().startsWith("[[") && !clientSecrets.getDetails().getClientSecret().startsWith("[["), TechMessage.get()
 					.MSG_ENTER_CLIENT_ID_AND_SECRET(location));
 		}
 		return clientSecrets;
