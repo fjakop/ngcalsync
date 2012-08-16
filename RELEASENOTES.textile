@@ -1,3 +1,8 @@
+
+p. Translation of user messages to German is available.
+
+p. About dialog with version number displayed is available from tray menu.
+
 *0.6.0*
 
 p. The application has been given the capabilities to be internationalized. A first translation into english is available.

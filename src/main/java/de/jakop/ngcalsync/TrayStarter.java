@@ -12,10 +12,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,11 +61,19 @@ public class TrayStarter implements IApplicationStarter {
 		rootLogger.addAppender(appender);
 		rootLogger.setLevel(Level.INFO);
 
-		final JFrame frame = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
-		frame.getContentPane().add(appender.getLogPanel());
-		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		frame.pack();
-		frame.setSize(500, 400);
+		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+		logWindow.getContentPane().add(appender.getLogPanel());
+		logWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		logWindow.pack();
+		logWindow.setSize(500, 400);
+
+		final JFrame aboutWindow = new JFrame(UserMessage.get().TITLE_ABOUT_WINDOW());
+		final JEditorPane textarea = new JEditorPane("text/html", getApplicationInformation());
+		textarea.setEditable(false);
+		aboutWindow.getContentPane().add(new JScrollPane(textarea));
+		aboutWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		aboutWindow.pack();
+		aboutWindow.setSize(500, 400);
 
 		final SystemTray tray = SystemTray.getSystemTray();
 
@@ -77,15 +88,14 @@ public class TrayStarter implements IApplicationStarter {
 		// Create a pop-up menu components
 		final MenuItem syncItem = new MenuItem(UserMessage.get().MENU_ITEM_SYNCHRONIZE());
 		final MenuItem logItem = new MenuItem(UserMessage.get().MENU_ITEM_SHOW_LOG());
-		// TODO About dialog
-		//		final MenuItem aboutItem = new MenuItem("About");
+		final MenuItem aboutItem = new MenuItem(UserMessage.get().MENU_ITEM_ABOUT());
 		final MenuItem exitItem = new MenuItem(UserMessage.get().MENU_ITEM_EXIT());
 
 		//Add components to pop-up menu
 		popup.add(syncItem);
 		popup.add(logItem);
+		popup.add(aboutItem);
 		popup.addSeparator();
-		//		popup.add(aboutItem);
 		popup.add(exitItem);
 
 		icon.setPopupMenu(popup);
@@ -113,7 +123,15 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				frame.setVisible(true);
+				logWindow.setVisible(true);
+			}
+		});
+
+		aboutItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				aboutWindow.setVisible(true);
 			}
 		});
 
@@ -121,13 +139,30 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				frame.dispose();
+				logWindow.dispose();
+				aboutWindow.dispose();
 				System.exit(0);
 			}
 		});
 	}
 
 
+	private String getApplicationInformation() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<b>").append(Constants.APPLICATION_NAME).append("</b>").append("<p>");
+		builder.append(UserMessage.get().APPLICATION_DESCRIPTION()).append("<p>");
+		builder.append("Version ").append(StartApplication.class.getPackage().getImplementationVersion()).append("<p>");
+		builder.append("").append("<br/>");
+		String license;
+		try {
+			license = IOUtils.toString(getClass().getResourceAsStream("/LICENSE"));
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+		builder.append(license.replaceAll("\n", "<br/>")).append("<br/>");
+
+		return builder.toString();
+	}
 	private class SynchronizeCallable implements Callable<Void> {
 
 		private final Application application;

@@ -39,6 +39,13 @@ public interface LocalizedUserStrings {
 	}
 
 	/**
+	 * 
+	 */
+	@De("Anonymisierte Lotus Notes Kalender-Einträge in einen Google-Kalender synchronisieren")
+	@En("Synchronize anonymized Lotus Notes calendar events to Google calendar")
+	String APPLICATION_DESCRIPTION();
+
+	/**
 	 * @param file {0}
 	 * @param keys {1}
 	 */
@@ -202,6 +209,13 @@ public interface LocalizedUserStrings {
 	@En("Synchronisation log")
 	String TITLE_SYNC_LOG_WINDOW();
 
+	/**
+	 * 
+	 */
+	@De("Anwendungsinformation")
+	@En("About this application")
+	String TITLE_ABOUT_WINDOW();
+
 	/* menu items */
 
 	/**
@@ -217,6 +231,13 @@ public interface LocalizedUserStrings {
 	@De("Verlauf anzeigen")
 	@En("Show log")
 	String MENU_ITEM_SHOW_LOG();
+
+	/**
+	 * 
+	 */
+	@De("Anwendungsinfo")
+	@En("About")
+	String MENU_ITEM_ABOUT();
 
 	/**
 	 * 
@@ -251,5 +272,6 @@ public interface LocalizedUserStrings {
 	@De("Reminder")
 	@En("Erinnerung")
 	String REMINDER();
+
 
 }
