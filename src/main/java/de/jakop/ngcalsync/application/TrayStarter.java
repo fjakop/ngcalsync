@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.application;
 
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -26,6 +26,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.StartApplication;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.GuiReceiver;
@@ -53,7 +55,7 @@ public class TrayStarter implements IApplicationStarter {
 		moveToTray(application);
 	}
 
-	void moveToTray(final Application application) {
+	private void moveToTray(final Application application) {
 
 		final Log4JSwingAppender appender = new Log4JSwingAppender();
 		appender.setLayout(new PatternLayout("%5p - %m%n"));

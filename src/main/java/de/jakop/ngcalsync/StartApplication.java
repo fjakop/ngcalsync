@@ -12,6 +12,10 @@ import c10n.C10NConfigBase;
 import c10n.annotations.DefaultC10NAnnotations;
 import c10n.annotations.En;
 
+import de.jakop.ngcalsync.application.Application;
+import de.jakop.ngcalsync.application.ConsoleDirectStarter;
+import de.jakop.ngcalsync.application.IApplicationStarter;
+import de.jakop.ngcalsync.application.TrayStarter;
 import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
@@ -57,13 +61,15 @@ public class StartApplication {
 
 		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
 
+		IApplicationStarter starter;
 		//Check the SystemTray is supported
 		if (SystemTray.isSupported()) {
-			new TrayStarter().startApplication(application, settings);
+			starter = new TrayStarter();
 		} else {
 			log.info(UserMessage.get().MSG_TRAY_NOT_SUPPORTED());
-			new ConsoleDirectStarter().startApplication(application, settings);
+			starter = new ConsoleDirectStarter();
 		}
+		starter.startApplication(application, settings);
 	}
 
 }

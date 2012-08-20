@@ -178,7 +178,7 @@ public class GoogleOAuth2DAO {
 	}
 
 
-	class FileCredentialStore implements CredentialStore {
+	private class FileCredentialStore implements CredentialStore {
 
 		private final File secretsFile;
 		private Properties properties;

@@ -56,7 +56,7 @@ public class WindowsRegistry {
 	}
 
 
-	static class StreamReader implements Callable<String> {
+	private static class StreamReader implements Callable<String> {
 		private final InputStream input;
 
 		public StreamReader(final InputStream is) {

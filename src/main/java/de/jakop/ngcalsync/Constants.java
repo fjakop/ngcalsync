@@ -7,12 +7,6 @@ package de.jakop.ngcalsync;
  */
 public interface Constants {
 
-	/* defaults for settings */
-	/** */
-	public static final String DEFAULT_GOOGLE_CALENDAR_REMINDERMINUTES = "15";
-	/** */
-	public static final String DEFAULT_GOOGLE_CALENDAR_NAME = "Calendar";
-
 	/* filenames */
 	/** */
 	public static final String FILENAME_SETTINGS_DIR = ".ngcalsync";

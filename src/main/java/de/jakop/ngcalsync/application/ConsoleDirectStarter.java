@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.application;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.application;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

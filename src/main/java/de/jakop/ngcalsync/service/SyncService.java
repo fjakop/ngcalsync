@@ -107,11 +107,11 @@ public class SyncService {
 
 	}
 
-	static class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
+	private static class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
 
 		private final CalendarEvent event;
 
-		public CalendarEventEqualsPredicate(final CalendarEvent baseDoc) {
+		private CalendarEventEqualsPredicate(final CalendarEvent baseDoc) {
 			Validate.notNull(baseDoc);
 			event = baseDoc;
 		}
@@ -154,24 +154,6 @@ public class SyncService {
 					.toString();
 		}
 
-	}
-
-	class CalendarEventLastUpdatedAfterPredicate implements Predicate<CalendarEvent> {
-
-		private final Calendar calendar;
-
-		public CalendarEventLastUpdatedAfterPredicate(final Calendar calendar) {
-			Validate.notNull(calendar);
-			this.calendar = calendar;
-		}
-
-		@Override
-		public boolean evaluate(final CalendarEvent object) {
-			if (object.getLastUpdated() == null || object.getLastUpdated().after(calendar)) {
-				return true;
-			}
-			return false;
-		}
 	}
 
 	private void insert(final IGoogleCalendarDAO dao, final CalendarEvent entry) {

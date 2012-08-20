@@ -19,8 +19,7 @@ public class PromptReceiver implements IUserInputReceiver {
 	 * 
 	 */
 	public PromptReceiver() {
-		in = System.in;
-		out = System.out;
+		this(System.in, System.out);
 	}
 
 	/**
@@ -28,7 +27,7 @@ public class PromptReceiver implements IUserInputReceiver {
 	 * @param in
 	 * @param out
 	 */
-	public PromptReceiver(final InputStream in, final PrintStream out) {
+	PromptReceiver(final InputStream in, final PrintStream out) {
 		this.in = in;
 		this.out = out;
 	}

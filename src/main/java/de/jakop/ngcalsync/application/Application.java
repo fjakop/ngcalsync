@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.application;
 
 import java.io.IOException;
 import java.util.Calendar;
