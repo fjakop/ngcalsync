@@ -1,8 +1,8 @@
 package de.jakop.ngcalsync.oauth;
 
-import javax.swing.JOptionPane;
-
-import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
+import org.apache.commons.lang3.Validate;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * 
@@ -11,10 +11,22 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  */
 public class GuiReceiver implements IUserInputReceiver {
 
+	private final Composite parent;
+
+	/** 
+	 * 
+	 * @param parent
+	 */
+	public GuiReceiver(final Composite parent) {
+		Validate.notNull(parent);
+		this.parent = parent;
+	}
+
 	@Override
 	public String waitForUserInput(final String message) {
-		final String code = JOptionPane.showInputDialog(null, message, UserMessage.get().TITLE_ENTER_VERIFICATION_CODE(), JOptionPane.QUESTION_MESSAGE);
-		return code;
+		final InputDialog dialog = new InputDialog(parent.getShell(), "title", "message", "", null);
+		dialog.open();
+		return dialog.getValue();
 	}
 
 }

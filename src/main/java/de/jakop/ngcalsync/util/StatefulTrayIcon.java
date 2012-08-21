@@ -1,13 +1,10 @@
 package de.jakop.ngcalsync.util;
 
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
+import org.apache.commons.lang3.Validate;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.TrayItem;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
@@ -16,13 +13,12 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
  * Represent system tray icon with multiple states, which are e.g. represented by blinking the icon.
  */
 
-public class StatefulTrayIcon extends TrayIcon {
+public class StatefulTrayIcon {
 
 	/** blinking interval in milliseconds */
 	private static final long BLINK_INTERVAL_MILLISECONDS = 100L;
 
-	/** Available widths and heights of image icons (always squares) */
-	private static int[] AVAILABLE_IMAGE_SIZES = new int[] { 76, 48, 32, 24, 20, 16 };
+	private final TrayItem trayItem;
 
 	private final Image iconNormal;
 	private final Image iconWorking;
@@ -46,15 +42,13 @@ public class StatefulTrayIcon extends TrayIcon {
 	* 
 	* @throws java.io.IOException if an I/O error occurs while reading the icon image resources
 	*/
-	public StatefulTrayIcon() throws IOException {
-		super(new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR));
-		setToolTip(Constants.APPLICATION_NAME);
-		setImageAutoSize(true);
+	public StatefulTrayIcon(final TrayItem trayItem) throws IOException {
+		Validate.notNull(trayItem);
+		this.trayItem = trayItem;
+		trayItem.setToolTipText(Constants.APPLICATION_NAME);
 
-		final int size = chooseImageSize();
-
-		iconNormal = ImageIO.read(getClass().getResource(String.format("/images/tray/normal/icon_normal_%s.png", String.valueOf(size))));
-		iconWorking = ImageIO.read(getClass().getResource(String.format("/images/tray/working/icon_working_%s.png", String.valueOf(size))));
+		iconNormal = new Image(trayItem.getDisplay(), getClass().getResourceAsStream("/images/tray/icon_normal.png"));
+		iconWorking = new Image(trayItem.getDisplay(), getClass().getResourceAsStream("/images/tray/icon_working.png"));
 
 	}
 
@@ -82,18 +76,6 @@ public class StatefulTrayIcon extends TrayIcon {
 
 	}
 
-	private int chooseImageSize() {
-		final int size = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
-		int leastDifference = 100;
-		for (final int availableSize : AVAILABLE_IMAGE_SIZES) {
-			final int difference = availableSize - size;
-			if (difference < leastDifference && difference >= 0) {
-				leastDifference = difference;
-			}
-		}
-
-		return size + leastDifference;
-	}
 	private abstract class AbstractFinishableRunnable implements Runnable {
 
 		private boolean finish = false;
@@ -112,10 +94,10 @@ public class StatefulTrayIcon extends TrayIcon {
 		@Override
 		public void run() {
 			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
+				trayItem.getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						setImage(iconNormal);
+						trayItem.setImage(iconNormal);
 					}
 				});
 			} catch (final Exception e) {
@@ -133,28 +115,28 @@ public class StatefulTrayIcon extends TrayIcon {
 		public void run() {
 
 			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
+				trayItem.getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						tempImage = getImage();
+						tempImage = trayItem.getImage();
 					}
 				});
 
 				while (!isFinished()) {
 
-					SwingUtilities.invokeAndWait(new Runnable() {
+					trayItem.getDisplay().syncExec(new Runnable() {
 						@Override
 						public void run() {
-							setImage(iconWorking);
+							trayItem.setImage(iconWorking);
 						}
 					});
 
 					Thread.sleep(BLINK_INTERVAL_MILLISECONDS);
 
-					SwingUtilities.invokeAndWait(new Runnable() {
+					trayItem.getDisplay().syncExec(new Runnable() {
 						@Override
 						public void run() {
-							setImage(tempImage);
+							trayItem.setImage(tempImage);
 						}
 					});
 

@@ -1,22 +1,10 @@
 package de.jakop.ngcalsync.application;
 
-import java.awt.AWTException;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.WindowConstants;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -25,6 +13,22 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tray;
+import org.eclipse.swt.widgets.TrayItem;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.StartApplication;
@@ -34,7 +38,7 @@ import de.jakop.ngcalsync.oauth.GuiReceiver;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.StatefulTrayIcon;
 import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
-import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
+import de.jakop.ngcalsync.util.logging.CompositeAppenderLog4J;
 
 /**
  * Starts the application without immediate synchronisation and moves it to the system tray
@@ -51,103 +55,142 @@ public class TrayStarter implements IApplicationStarter {
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
-		settings.setUserInputReceiver(new GuiReceiver());
-		moveToTray(application);
+
+		final Display display = new Display();
+		final Shell shell = new Shell(display);
+
+		settings.setUserInputReceiver(new GuiReceiver(shell));
+		moveToTray(shell, application);
+
+
+		// Create and check the event loop
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		display.dispose();
+
 	}
 
-	private void moveToTray(final Application application) {
+	private void moveToTray(final Shell parent, final Application application) {
 
-		final Log4JSwingAppender appender = new Log4JSwingAppender();
+		final Shell logShell = createShell(parent, UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+
+		final CompositeAppenderLog4J appender = new CompositeAppenderLog4J(logShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		appender.setLayout(new PatternLayout("%5p - %m%n"));
 		final Logger rootLogger = Logger.getRootLogger();
 		rootLogger.addAppender(appender);
 		rootLogger.setLevel(Level.INFO);
 
-		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
-		logWindow.getContentPane().add(appender.getLogPanel());
-		logWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		logWindow.pack();
-		logWindow.setSize(500, 400);
 
-		final JFrame aboutWindow = new JFrame(UserMessage.get().TITLE_ABOUT_WINDOW());
-		final JEditorPane textarea = new JEditorPane("text/html", getApplicationInformation());
-		textarea.setEditable(false);
-		aboutWindow.getContentPane().add(new JScrollPane(textarea));
-		aboutWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		aboutWindow.pack();
-		aboutWindow.setSize(500, 400);
+		final Shell aboutShell = createShell(parent, UserMessage.get().TITLE_ABOUT_WINDOW());
 
-		final SystemTray tray = SystemTray.getSystemTray();
+		final Browser aboutViewer = new Browser(aboutShell, SWT.NONE);
+		aboutViewer.setText(getApplicationInformation());
+
+		final Tray tray = logShell.getDisplay().getSystemTray();
+		final TrayItem trayItem = new TrayItem(tray, SWT.NONE);
 
 		try {
-			icon = new StatefulTrayIcon();
+			icon = new StatefulTrayIcon(trayItem);
 			icon.setState(State.NORMAL);
 		} catch (final IOException e) {
 			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
 		}
-		final PopupMenu popup = new PopupMenu();
+		final Menu popup = new Menu(logShell, SWT.POP_UP);
 
 		// Create a pop-up menu components
-		final MenuItem syncItem = new MenuItem(UserMessage.get().MENU_ITEM_SYNCHRONIZE());
-		final MenuItem logItem = new MenuItem(UserMessage.get().MENU_ITEM_SHOW_LOG());
-		final MenuItem aboutItem = new MenuItem(UserMessage.get().MENU_ITEM_ABOUT());
-		final MenuItem exitItem = new MenuItem(UserMessage.get().MENU_ITEM_EXIT());
+		final MenuItem syncItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SYNCHRONIZE());
+		final MenuItem logItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SHOW_LOG());
+		final MenuItem aboutItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_ABOUT());
+		final MenuItem exitItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_EXIT());
 
-		//Add components to pop-up menu
-		popup.add(syncItem);
-		popup.add(logItem);
-		popup.add(aboutItem);
-		popup.addSeparator();
-		popup.add(exitItem);
+		trayItem.addListener(SWT.MenuDetect, new Listener() {
+			@Override
+			public void handleEvent(final Event arg0) {
+				popup.setVisible(true);
+			}
+		});
 
-		icon.setPopupMenu(popup);
-
-		try {
-			tray.add(icon);
-		} catch (final AWTException e) {
-			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_ADDABLE(), e);
-		}
-
-		final ActionListener syncActionListener = new ActionListener() {
-
+		final SelectionListener syncActionListener = new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
 
 			@Override
-			public void actionPerformed(final ActionEvent e) {
+			public void widgetSelected(final SelectionEvent arg0) {
 				final ExecutorService executor = Executors.newSingleThreadExecutor();
-				executor.submit(new SynchronizeCallable(application));
+				executor.submit(new SynchronizeCallable(parent, application));
 			}
 		};
 
-		syncItem.addActionListener(syncActionListener);
-		icon.addActionListener(syncActionListener);
+		syncItem.addSelectionListener(syncActionListener);
 
-		logItem.addActionListener(new ActionListener() {
+
+		logItem.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void actionPerformed(final ActionEvent e) {
-				logWindow.setVisible(true);
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				logShell.open();
 			}
 		});
 
-		aboutItem.addActionListener(new ActionListener() {
+		aboutItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
 
 			@Override
-			public void actionPerformed(final ActionEvent e) {
-				aboutWindow.setVisible(true);
+			public void widgetSelected(final SelectionEvent arg0) {
+				aboutShell.open();
 			}
 		});
 
-		exitItem.addActionListener(new ActionListener() {
+		exitItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
 
 			@Override
-			public void actionPerformed(final ActionEvent e) {
-				logWindow.dispose();
-				aboutWindow.dispose();
-				System.exit(0);
+			public void widgetSelected(final SelectionEvent arg0) {
+				parent.dispose();
 			}
 		});
 	}
 
+	private Shell createShell(final Shell parent, final String title) {
+
+		final Shell shell = new Shell(parent, SWT.RESIZE | SWT.DIALOG_TRIM);
+
+		// do not dispose shell on closing the window(s)
+		shell.addShellListener(new ShellAdapter() {
+			@Override
+			public void shellClosed(final ShellEvent e) {
+				shell.setVisible(false);
+				e.doit = false;
+			}
+		});
+
+		shell.setText(title);
+		shell.setLayout(new FillLayout());
+		shell.setSize(500, 400);
+		return shell;
+	}
+
+	private MenuItem createMenuItem(final Menu parent, final String text) {
+		final MenuItem item = new MenuItem(parent, SWT.PUSH);
+		item.setText(text);
+		return item;
+	}
 
 	private String getApplicationInformation() {
 		final StringBuilder builder = new StringBuilder();
@@ -167,9 +210,11 @@ public class TrayStarter implements IApplicationStarter {
 	}
 	private class SynchronizeCallable implements Callable<Void> {
 
+		private final Shell parent;
 		private final Application application;
 
-		public SynchronizeCallable(final Application application) {
+		public SynchronizeCallable(final Shell parent, final Application application) {
+			this.parent = parent;
 			this.application = application;
 		}
 
@@ -177,7 +222,13 @@ public class TrayStarter implements IApplicationStarter {
 		public Void call() throws Exception {
 			try {
 				if (application.reloadSettings()) {
-					JOptionPane.showMessageDialog(null, UserMessage.get().MSG_CONFIGURATION_UPGRADED());
+					parent.getDisplay().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							// TODO window title
+							MessageDialog.open(MessageDialog.INFORMATION, parent, "", UserMessage.get().MSG_CONFIGURATION_UPGRADED(), SWT.BORDER);
+						}
+					});
 					return null;
 				}
 				icon.setState(State.BLINK);
@@ -187,11 +238,19 @@ public class TrayStarter implements IApplicationStarter {
 				log.error(ExceptionUtils.getStackTrace(ex));
 				final String home = System.getenv("user.home");
 				final File logfile = new File(home, "ngcalsync.log");
-				JOptionPane.showMessageDialog(null, UserMessage.get().MSG_SYNC_FAILED(logfile.getAbsolutePath()));
+				parent.getDisplay().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						// TODO window title
+						MessageDialog.open(MessageDialog.ERROR, parent, "", UserMessage.get().MSG_SYNC_FAILED(logfile.getAbsolutePath()), SWT.BORDER);
+					}
+				});
 			}
 			return null;
 		}
 	}
+
+
 
 
 }
