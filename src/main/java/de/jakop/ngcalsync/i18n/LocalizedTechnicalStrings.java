@@ -234,10 +234,4 @@ public interface LocalizedTechnicalStrings {
 	@En("TrayIcon could not be loaded.")
 	String MSG_TRAY_ICON_NOT_LOADABLE();
 
-	/**
-	 * 
-	 */
-	@En("TrayIcon could not be added to tray.")
-	String MSG_TRAY_ICON_NOT_ADDABLE();
-
 }

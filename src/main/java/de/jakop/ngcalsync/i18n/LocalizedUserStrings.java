@@ -179,7 +179,7 @@ public interface LocalizedUserStrings {
 	 */
 	@De("Eingabe erforderlich")
 	@En("Input requested")
-	String TITLE_ENTER_VERIFICATION_CODE();
+	String TITLE_INPUT_REQUESTED();
 
 	/**
 	 * @param periodType {0}

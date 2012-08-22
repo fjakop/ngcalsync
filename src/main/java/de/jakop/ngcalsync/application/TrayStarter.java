@@ -225,8 +225,7 @@ public class TrayStarter implements IApplicationStarter {
 					parent.getDisplay().syncExec(new Runnable() {
 						@Override
 						public void run() {
-							// TODO window title
-							MessageDialog.open(MessageDialog.INFORMATION, parent, "", UserMessage.get().MSG_CONFIGURATION_UPGRADED(), SWT.BORDER);
+							MessageDialog.open(MessageDialog.INFORMATION, parent, UserMessage.get().TITLE_INPUT_REQUESTED(), UserMessage.get().MSG_CONFIGURATION_UPGRADED(), SWT.BORDER);
 						}
 					});
 					return null;

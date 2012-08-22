@@ -1,4 +1,6 @@
 
+p. Tray icon display beautified with Windows.
+
 p. Translation of user messages to German is available.
 
 p. About dialog with version number displayed is available from tray menu.
