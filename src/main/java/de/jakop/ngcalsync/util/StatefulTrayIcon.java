@@ -47,8 +47,8 @@ public class StatefulTrayIcon {
 		this.trayItem = trayItem;
 		trayItem.setToolTipText(Constants.APPLICATION_NAME);
 
-		iconNormal = new Image(trayItem.getDisplay(), getClass().getResourceAsStream("/images/tray/icon_normal.png"));
-		iconWorking = new Image(trayItem.getDisplay(), getClass().getResourceAsStream("/images/tray/icon_working.png"));
+		iconNormal = new Image(trayItem.getDisplay(), getClass().getResourceAsStream(Constants.ICON_NORMAL));
+		iconWorking = new Image(trayItem.getDisplay(), getClass().getResourceAsStream(Constants.ICON_WORKING));
 
 	}
 

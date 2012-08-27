@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.IUserInputReceiver;
+import de.jakop.ngcalsync.util.os.DefaultRegistryQueryProcessFactory;
 import de.jakop.ngcalsync.util.os.WindowsRegistry;
 
 /**
@@ -69,7 +70,7 @@ public class NotesHelper {
 		log.debug(TechMessage.get().MSG_OBTAINING_NOTES_SYSTEM_PATH());
 		log.debug(TechMessage.get().MSG_OS_INFO(SystemUtils.OS_NAME, SystemUtils.OS_VERSION, SystemUtils.OS_ARCH));
 		if (SystemUtils.IS_OS_WINDOWS) {
-			lotusNotesHome = WindowsRegistry.readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
+			lotusNotesHome = new WindowsRegistry(new DefaultRegistryQueryProcessFactory()).readRegistry("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
 			while (lotusNotesHome.endsWith("\n")) {
 				lotusNotesHome = StringUtils.chomp(lotusNotesHome);
 			}

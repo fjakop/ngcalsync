@@ -20,6 +20,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -60,7 +61,7 @@ public class TrayStarter implements IApplicationStarter {
 		final Shell shell = new Shell(display);
 
 		settings.setUserInputReceiver(new GuiReceiver(shell));
-		moveToTray(shell, application);
+		createUI(shell, application);
 
 
 		// Create and check the event loop
@@ -73,23 +74,29 @@ public class TrayStarter implements IApplicationStarter {
 
 	}
 
-	private void moveToTray(final Shell parent, final Application application) {
+	private void synchronize(final Shell parent, final Application application) {
+		final ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.submit(new SynchronizeCallable(parent, application));
+	}
 
-		final Shell logShell = createShell(parent, UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+	private void createUI(final Shell parent, final Application application) {
 
-		final CompositeAppenderLog4J appender = new CompositeAppenderLog4J(logShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-		appender.setLayout(new PatternLayout("%5p - %m%n"));
-		final Logger rootLogger = Logger.getRootLogger();
-		rootLogger.addAppender(appender);
-		rootLogger.setLevel(Level.INFO);
+		// Create a pop-up menu and its components
+		final Menu popup = new Menu(parent, SWT.POP_UP);
 
+		createSyncUI(popup, parent, application);
+		createLogViewUI(popup);
+		createAboutUI(popup);
+		createExitUI(popup, parent);
 
-		final Shell aboutShell = createShell(parent, UserMessage.get().TITLE_ABOUT_WINDOW());
+		// put it into a tray item
+		createTrayItem(parent, application, popup);
 
-		final Browser aboutViewer = new Browser(aboutShell, SWT.NONE);
-		aboutViewer.setText(getApplicationInformation());
+	}
 
-		final Tray tray = logShell.getDisplay().getSystemTray();
+	private void createTrayItem(final Shell parent, final Application application, final Menu popup) {
+
+		final Tray tray = parent.getDisplay().getSystemTray();
 		final TrayItem trayItem = new TrayItem(tray, SWT.NONE);
 
 		try {
@@ -98,13 +105,6 @@ public class TrayStarter implements IApplicationStarter {
 		} catch (final IOException e) {
 			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
 		}
-		final Menu popup = new Menu(logShell, SWT.POP_UP);
-
-		// Create a pop-up menu components
-		final MenuItem syncItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SYNCHRONIZE());
-		final MenuItem logItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SHOW_LOG());
-		final MenuItem aboutItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_ABOUT());
-		final MenuItem exitItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_EXIT());
 
 		trayItem.addListener(SWT.MenuDetect, new Listener() {
 			@Override
@@ -113,46 +113,16 @@ public class TrayStarter implements IApplicationStarter {
 			}
 		});
 
-		final SelectionListener syncActionListener = new SelectionListener() {
+		trayItem.addListener(SWT.DefaultSelection, new Listener() {
 			@Override
-			public void widgetDefaultSelected(final SelectionEvent arg0) {
-				widgetSelected(arg0);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				final ExecutorService executor = Executors.newSingleThreadExecutor();
-				executor.submit(new SynchronizeCallable(parent, application));
-			}
-		};
-
-		syncItem.addSelectionListener(syncActionListener);
-
-
-		logItem.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent arg0) {
-				widgetSelected(arg0);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				logShell.open();
+			public void handleEvent(final Event arg0) {
+				synchronize(parent, application);
 			}
 		});
+	}
 
-		aboutItem.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent arg0) {
-				widgetSelected(arg0);
-			}
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				aboutShell.open();
-			}
-		});
+	private void createExitUI(final Menu popup, final Shell parent) {
+		final MenuItem exitItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_EXIT());
 
 		exitItem.addSelectionListener(new SelectionListener() {
 			@Override
@@ -167,9 +137,77 @@ public class TrayStarter implements IApplicationStarter {
 		});
 	}
 
-	private Shell createShell(final Shell parent, final String title) {
+	private void createSyncUI(final Menu popup, final Shell parent, final Application application) {
 
-		final Shell shell = new Shell(parent, SWT.RESIZE | SWT.DIALOG_TRIM);
+		final MenuItem syncItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SYNCHRONIZE());
+
+		syncItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				synchronize(parent, application);
+			}
+		});
+
+	}
+
+	private void createAboutUI(final Menu popup) {
+
+		final Shell aboutShell = createShell(UserMessage.get().TITLE_ABOUT_WINDOW());
+
+		final Browser aboutViewer = new Browser(aboutShell, SWT.NONE);
+		aboutViewer.setText(getApplicationInformation());
+
+		final MenuItem aboutItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_ABOUT());
+
+		aboutItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				aboutShell.open();
+			}
+		});
+
+	}
+
+	private void createLogViewUI(final Menu popup) {
+
+		final Shell logShell = createShell(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+
+		final CompositeAppenderLog4J appender = new CompositeAppenderLog4J(logShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		appender.setLayout(new PatternLayout("%5p - %m%n"));
+		final Logger rootLogger = Logger.getRootLogger();
+		rootLogger.addAppender(appender);
+		rootLogger.setLevel(Level.INFO);
+
+		final MenuItem logItem = createMenuItem(popup, UserMessage.get().MENU_ITEM_SHOW_LOG());
+
+		logItem.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				logShell.open();
+			}
+		});
+
+	}
+
+	private Shell createShell(final String title) {
+
+		final Shell shell = new Shell(SWT.RESIZE | SWT.DIALOG_TRIM);
 
 		// do not dispose shell on closing the window(s)
 		shell.addShellListener(new ShellAdapter() {
@@ -181,8 +219,9 @@ public class TrayStarter implements IApplicationStarter {
 		});
 
 		shell.setText(title);
+		shell.setImage(new Image(shell.getDisplay(), getClass().getResourceAsStream(Constants.ICON_NORMAL)));
 		shell.setLayout(new FillLayout());
-		shell.setSize(500, 400);
+		shell.setSize(700, 500);
 		return shell;
 	}
 

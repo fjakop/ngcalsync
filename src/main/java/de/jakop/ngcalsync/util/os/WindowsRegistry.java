@@ -1,42 +1,53 @@
 package de.jakop.ngcalsync.util.os;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
- * Read keys from Windows registry
+ * Read keys from Windows registry. <br>
+ * Tested with
+ * <ul>
+ * <li>Windows XP</li>
+ * <li>Windows 7</li>
+ * </ul>
  * 
  * @author fjakop
  *
  */
-public class WindowsRegistry {
+public final class WindowsRegistry {
 
-	private final static Log log = LogFactory.getLog(WindowsRegistry.class);
+	private final Log log = LogFactory.getLog(getClass());
+
+	private final IRegistryQueryProcessFactory processFactory;
 
 	/**
+	 * 
+	 * @param processFactory
+	 */
+	public WindowsRegistry(final IRegistryQueryProcessFactory processFactory) {
+		Validate.notNull(processFactory);
+		this.processFactory = processFactory;
+	}
+
+	/**
+	 * Reads the value of the registry key at the given location
 	 * 
 	 * @param location path in the registry
 	 * @param key registry key
 	 * @return registry value or null if not found
 	 */
-	public static final String readRegistry(final String location, final String key) {
+	public final String readRegistry(final String location, final String key) {
 		try {
 			// Run reg query, then read output with StreamReader (internal class)
-			final Process process = Runtime.getRuntime().exec("reg query " + '"' + location + "\" /v " + key);
+			final Process process = processFactory.createQueryProcess(location, key);
 
-			final WindowsRegistry.StreamReader reader = new StreamReader(process.getInputStream());
-			final ExecutorService pool = Executors.newSingleThreadExecutor();
-			final Future<String> future = pool.submit(reader);
-			final String output = future.get();
+			final String output = IOUtils.toString(process.getInputStream());
 
 			// the output has the following format:
 			// \n<Version information>\n\n<key>\t<registry type>\t<value>
@@ -47,32 +58,14 @@ public class WindowsRegistry {
 			// Parse out the value
 			final String[] parsed = output.split("\t");
 			return parsed[parsed.length - 1];
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			log.error(UserMessage.get().MSG_FAILED_TO_READ_REGISTRY(key), e);
-			// returning null is perfectly legal - the user then has to provide the path
+			// returning null is perfectly legal
 			return null;
 		}
 
 	}
 
 
-	private static class StreamReader implements Callable<String> {
-		private final InputStream input;
 
-		public StreamReader(final InputStream is) {
-			input = is;
-		}
-
-		@Override
-		public String call() throws Exception {
-			final StringWriter output = new StringWriter();
-
-			int character;
-			while ((character = input.read()) != -1) {
-				output.write(character);
-			}
-			return output.toString();
-		}
-
-	}
 }

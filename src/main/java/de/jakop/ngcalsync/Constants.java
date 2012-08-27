@@ -25,4 +25,9 @@ public interface Constants {
 	/** */
 	public static final String NOTES_HOME_ENVVAR_NAME = "NOTES_HOME";
 
+	/** */
+	public static final String ICON_NORMAL = "/images/tray/icon_normal.png";
+	/** */
+	public static final String ICON_WORKING = "/images/tray/icon_working.png";
+
 }
