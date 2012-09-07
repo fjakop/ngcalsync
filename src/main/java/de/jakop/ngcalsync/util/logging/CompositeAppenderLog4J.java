@@ -8,6 +8,8 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -50,6 +52,16 @@ public class CompositeAppenderLog4J extends WriterAppender {
 
 		text = new StyledText(parent, style);
 		text.setEditable(false);
+
+		// always scroll to bottom on modification
+		text.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(final ModifyEvent e) {
+				text.setTopIndex(text.getLineCount() - 1);
+
+			}
+		});
 
 	}
 

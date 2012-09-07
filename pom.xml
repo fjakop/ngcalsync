@@ -27,7 +27,7 @@
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
-	<version>0.7.0</version>
+	<version>0.7.1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,7 +35,6 @@
 
 
 	<build>
-
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
