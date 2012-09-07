@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
@@ -36,6 +38,7 @@ import de.jakop.ngcalsync.StartApplication;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.GuiReceiver;
+import de.jakop.ngcalsync.settings.PreferencesComposite;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.StatefulTrayIcon;
 import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
@@ -52,6 +55,7 @@ public class TrayStarter implements IApplicationStarter {
 
 	private final Log log = LogFactory.getLog(getClass());
 	private StatefulTrayIcon icon;
+	private Future<Void> synchronizing;
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
@@ -61,7 +65,7 @@ public class TrayStarter implements IApplicationStarter {
 		final Shell shell = new Shell(display);
 
 		settings.setUserInputReceiver(new GuiReceiver(shell));
-		createUI(shell, application);
+		createUI(shell, application, settings);
 
 
 		// Create and check the event loop
@@ -75,11 +79,15 @@ public class TrayStarter implements IApplicationStarter {
 	}
 
 	private void synchronize(final Shell parent, final Application application) {
+		if (synchronizing != null && !synchronizing.isDone()) {
+			log.warn(UserMessage.get().MSG_SYNC_IN_PROGRESS());
+			return;
+		}
 		final ExecutorService executor = Executors.newSingleThreadExecutor();
-		executor.submit(new SynchronizeCallable(parent, application));
+		synchronizing = executor.submit(new SynchronizeCallable(parent, application));
 	}
 
-	private void createUI(final Shell parent, final Application application) {
+	private void createUI(final Shell parent, final Application application, final Settings settings) {
 
 		// Create a pop-up menu and its components
 		final Menu popup = new Menu(parent, SWT.POP_UP);
@@ -87,6 +95,7 @@ public class TrayStarter implements IApplicationStarter {
 		createSyncUI(popup, parent, application);
 		createLogViewUI(popup);
 		createAboutUI(popup);
+		createSettingsUI(popup, settings);
 		createExitUI(popup, parent);
 
 		// put it into a tray item
@@ -203,6 +212,36 @@ public class TrayStarter implements IApplicationStarter {
 			}
 		});
 
+	}
+
+	private void createSettingsUI(final Menu popup, final Settings settings) {
+
+		final Shell settingsShell = createShell(UserMessage.get().TITLE_ABOUT_WINDOW());
+
+		try {
+			settings.load();
+		} catch (final ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		new PreferencesComposite(settingsShell, SWT.V_SCROLL | SWT.H_SCROLL, settings);
+
+		final MenuItem settingsItem = createMenuItem(popup, "Settings");
+
+		settingsItem.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent arg0) {
+				widgetSelected(arg0);
+			}
+
+			@Override
+			public void widgetSelected(final SelectionEvent arg0) {
+				settingsShell.open();
+			}
+		});
 	}
 
 	private Shell createShell(final String title) {

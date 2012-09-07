@@ -140,6 +140,13 @@ public interface LocalizedUserStrings {
 	String MSG_SYNC_ENDED();
 
 	/**
+	 * 
+	 */
+	@De("Die Synchronisierung läuft bereits, es wird keine neue gestartet.")
+	@En("Synchronisation is already running, a new one cannot be started.")
+	String MSG_SYNC_IN_PROGRESS();
+
+	/**
 	 * @param database {0}
 	 */
 	@De("Die Kalendereinträge aus der Lotus Notes Datenbank \"{0}\" werden gelesen.")
