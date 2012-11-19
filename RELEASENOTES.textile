@@ -1,5 +1,9 @@
 *0.7.1*
 
+p. Fixed problems with different architectures Windows/Linux 32/64-bit. 
+
+*0.7.1*
+
 p. Starting concurent synchronisations is now prohibited.
 
 p. The log viewer scrolls to the last logged entry on log change.
