@@ -1,3 +1,7 @@
+*0.7.2*
+
+p. Added Linux start script. 
+
 *0.7.1*
 
 p. Fixed problems with different architectures Windows/Linux 32/64-bit. 
