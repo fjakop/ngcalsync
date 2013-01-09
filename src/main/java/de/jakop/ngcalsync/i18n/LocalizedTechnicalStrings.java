@@ -234,4 +234,10 @@ public interface LocalizedTechnicalStrings {
 	@En("TrayIcon could not be loaded.")
 	String MSG_TRAY_ICON_NOT_LOADABLE();
 
+	/**
+	 * @param size
+	 */
+	@En("Chosen size for tray icon is {0}.")
+	String MSG_TRAY_ICON_SIZE_CHOSEN(int size);
+
 }

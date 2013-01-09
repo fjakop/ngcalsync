@@ -27,6 +27,9 @@
 			<source>contrib/sync.bat</source>
 		</file>
 		<file>
+			<source>contrib/sync.sh</source>
+		</file>
+		<file>
 			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
 			<destName>${project.artifactId}.jar</destName>
 		</file>

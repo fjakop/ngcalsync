@@ -1,3 +1,17 @@
+*0.7.2*
+
+p. Added Linux start script. 
+
+*0.7.1*
+
+p. Fixed problems with different architectures Windows/Linux 32/64-bit. 
+
+*0.7.1*
+
+p. Starting concurent synchronisations is now prohibited.
+
+p. The log viewer scrolls to the last logged entry on log change.
+
 *0.7.0*
 
 p. Tray icon display beautified with Windows.

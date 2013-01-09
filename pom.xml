@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<description>Synchronize anonymized Lotus Notes calendar events to your Google calendar</description>
+	<description>Synchronize anonymized Lotus Notes calendar events to your Google calendar. See http://sourceforge.net/projects/ngcalsync/</description>
 	<developers>
 		<developer>
 			<name>fjakop</name>
@@ -193,16 +193,6 @@
 			<artifactId>c10n-core</artifactId>
 			<version>1.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.swt</groupId>
-			<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
-			<version>3.8</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mod4j.org.eclipse</groupId>
-			<artifactId>jface</artifactId>
-			<version>3.5.0</version>
-		</dependency>
 
 		<!-- Notes Kram -->
 		<dependency>
@@ -268,22 +258,6 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>swt-releases</id>
-			<name>SWT Releases</name>
-			<url>https://swt-repo.googlecode.com/svn/repo</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
 		</repository>
 

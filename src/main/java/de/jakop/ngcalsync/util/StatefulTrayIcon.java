@@ -1,10 +1,16 @@
 package de.jakop.ngcalsync.util;
 
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import org.apache.commons.lang3.Validate;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.TrayItem;
+import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
@@ -13,12 +19,15 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
  * Represent system tray icon with multiple states, which are e.g. represented by blinking the icon.
  */
 
-public class StatefulTrayIcon {
+public class StatefulTrayIcon extends TrayIcon {
+
+	private final Log log = LogFactory.getLog(getClass());
 
 	/** blinking interval in milliseconds */
 	private static final long BLINK_INTERVAL_MILLISECONDS = 100L;
 
-	private final TrayItem trayItem;
+	/** Available widths and heights of image icons (always squares) */
+	private static int[] AVAILABLE_IMAGE_SIZES = new int[] { 76, 48, 32, 24, 20, 16 };
 
 	private final Image iconNormal;
 	private final Image iconWorking;
@@ -42,13 +51,16 @@ public class StatefulTrayIcon {
 	* 
 	* @throws java.io.IOException if an I/O error occurs while reading the icon image resources
 	*/
-	public StatefulTrayIcon(final TrayItem trayItem) throws IOException {
-		Validate.notNull(trayItem);
-		this.trayItem = trayItem;
-		trayItem.setToolTipText(Constants.APPLICATION_NAME);
+	public StatefulTrayIcon() throws IOException {
+		super(new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR));
+		setToolTip(Constants.APPLICATION_NAME);
+		setImageAutoSize(true);
 
-		iconNormal = new Image(trayItem.getDisplay(), getClass().getResourceAsStream(Constants.ICON_NORMAL));
-		iconWorking = new Image(trayItem.getDisplay(), getClass().getResourceAsStream(Constants.ICON_WORKING));
+		final int size = chooseImageSize();
+		log.debug(TechMessage.get().MSG_TRAY_ICON_SIZE_CHOSEN(size));
+
+		iconNormal = ImageIO.read(getClass().getResource(String.format("/images/tray/normal/icon_normal_%s.png", String.valueOf(size))));
+		iconWorking = ImageIO.read(getClass().getResource(String.format("/images/tray/working/icon_working_%s.png", String.valueOf(size))));
 
 	}
 
@@ -76,6 +88,18 @@ public class StatefulTrayIcon {
 
 	}
 
+	private int chooseImageSize() {
+		final int size = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
+		int leastDifference = 100;
+		for (final int availableSize : AVAILABLE_IMAGE_SIZES) {
+			final int difference = availableSize - size;
+			if (difference < leastDifference && difference >= 0) {
+				leastDifference = difference;
+			}
+		}
+
+		return size + leastDifference;
+	}
 	private abstract class AbstractFinishableRunnable implements Runnable {
 
 		private boolean finish = false;
@@ -94,10 +118,10 @@ public class StatefulTrayIcon {
 		@Override
 		public void run() {
 			try {
-				trayItem.getDisplay().syncExec(new Runnable() {
+				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
-						trayItem.setImage(iconNormal);
+						setImage(iconNormal);
 					}
 				});
 			} catch (final Exception e) {
@@ -115,28 +139,28 @@ public class StatefulTrayIcon {
 		public void run() {
 
 			try {
-				trayItem.getDisplay().syncExec(new Runnable() {
+				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
-						tempImage = trayItem.getImage();
+						tempImage = getImage();
 					}
 				});
 
 				while (!isFinished()) {
 
-					trayItem.getDisplay().syncExec(new Runnable() {
+					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
-							trayItem.setImage(iconWorking);
+							setImage(iconWorking);
 						}
 					});
 
 					Thread.sleep(BLINK_INTERVAL_MILLISECONDS);
 
-					trayItem.getDisplay().syncExec(new Runnable() {
+					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
-							trayItem.setImage(tempImage);
+							setImage(tempImage);
 						}
 					});
 
