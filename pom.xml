@@ -20,7 +20,7 @@
 	</licenses>
 	<scm>
 		<connection>scm:git:git://git.code.sf.net/p/ngcalsync/code</connection>
-		<developerConnection>scm:ssh://fjakop@git.code.sf.net/p/ngcalsync/code</developerConnection>
+		<developerConnection>scm:ssh://@git.code.sf.net/p/ngcalsync/code</developerConnection>
 		<url>https://sourceforge.net/projects/ngcalsync/</url>
 	</scm>
 	<url>https://sourceforge.net/projects/ngcalsync/</url>
@@ -49,13 +49,6 @@
 				</includes>
 			</resource>
 		</resources>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-7</version>
-			</extension>
-		</extensions>
 
 		<plugins>
 			<plugin>
@@ -77,6 +70,9 @@
 							<mainClass>de.jakop.ngcalsync.StartApplication</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
+						<manifestEntries>
+							<Sealed>true</Sealed>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -194,14 +190,14 @@
 			<version>1.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- Notes Kram -->
+		<!-- Notes Stuff -->
 		<dependency>
 			<groupId>de.bea</groupId>
 			<artifactId>domingo</artifactId>
 			<version>1.5.1</version>
 		</dependency>
 
-		<!-- Google Kram -->
+		<!-- Google Stuff -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-calendar</artifactId>
@@ -262,13 +258,6 @@
 		</repository>
 
 	</repositories>
-
-	<distributionManagement>
-		<site>
-			<id>shell.sourceforge.net</id>
-			<url>scp://shell.sourceforge.net/home/project-web/ngcalsync/htdocs</url>
-		</site>
-	</distributionManagement>
 
 	<profiles>
 		<profile>
@@ -340,52 +329,6 @@
 									<goal>check</goal>
 								</goals>
 							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<!-- before uploading start a new shell by executing 
-			     'ssh -t fjakop,ngcalsync@shell.sourceforge.net create' -->
-			<id>upload-sf.net</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
-						<version>1.0-beta-4</version>
-						<executions>
-							<execution>
-								<id>upload-dist-sf.net</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>upload</goal>
-								</goals>
-								<configuration>
-									<serverId>shell.sourceforge.net</serverId>
-									<url>scp://shell.sourceforge.net:/home/frs/project/ngcalsync</url>
-									<fromDir>${project.build.directory}</fromDir>
-									<includes>*.zip, *.tar.gz</includes>
-									<toDir>.</toDir>
-								</configuration>
-							</execution>
- 
-							<execution>
-								<id>upload-releasenotes-sf.net</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>upload-single</goal>
-								</goals>
-								<configuration>
-									<serverId>shell.sourceforge.net</serverId>
-									<url>scp://shell.sourceforge.net:/home/frs/project/ngcalsync</url>
-									<fromFile>${project.build.directory}/${project.build.finalName}-distribution/RELEASENOTES.textile</fromFile>
-									<toFile>README.textile</toFile>
-								</configuration>
-							</execution>
-
 						</executions>
 					</plugin>
 				</plugins>
