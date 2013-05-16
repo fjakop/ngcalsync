@@ -38,6 +38,11 @@ public class NotesHelper {
 		} catch (final UnsatisfiedLinkError e) {
 			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
 			log.warn(TechMessage.get().MSG_NOTES_NOT_IN_SYSTEM_PATH());
+			if (e.getMessage().contains("64-bit")) {
+				log.fatal(UserMessage.get().MSG_ARCHITECTURE_INCOMPATIBILITY(), e);
+				throw new IllegalStateException(e);
+			}
+			log.warn(e.getMessage());
 			return false;
 		}
 	}

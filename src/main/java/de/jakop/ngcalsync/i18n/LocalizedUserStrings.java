@@ -67,6 +67,13 @@ public interface LocalizedUserStrings {
 	@En("The synchronisation failed. See logfile {0} for details.")
 	String MSG_SYNC_FAILED(String file);
 
+	/**
+	 * 
+	 */
+	@De("Architektur-Inkompatibilität. Bitte stellen Sie sicher, dass die verwendete Java Runtime dieselbe Architektur (32/64-bit) wie Lotus Notes besitzt.")
+	@En("Architecture incompatibility. Please make sure that the Java Runtime is of same architecture (32/64-bit) as your Lotus Notes software.")
+	String MSG_ARCHITECTURE_INCOMPATIBILITY();
+
 
 	/**
 	 * @param calendarName {0}

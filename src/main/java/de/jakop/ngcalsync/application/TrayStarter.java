@@ -6,7 +6,6 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -120,7 +119,7 @@ public class TrayStarter implements IApplicationStarter {
 				}
 
 				final ExecutorService executor = Executors.newSingleThreadExecutor();
-				executor.submit(new SynchronizeCallable(application));
+				executor.submit(new SynchronizeCallable(application, logWindow));
 			}
 		};
 
@@ -170,12 +169,15 @@ public class TrayStarter implements IApplicationStarter {
 
 		return builder.toString();
 	}
+
 	private class SynchronizeCallable implements Callable<Void> {
 
 		private final Application application;
+		private final JFrame logwindow;
 
-		public SynchronizeCallable(final Application application) {
+		public SynchronizeCallable(final Application application, final JFrame logwindow) {
 			this.application = application;
+			this.logwindow = logwindow;
 		}
 
 		@Override
@@ -187,12 +189,11 @@ public class TrayStarter implements IApplicationStarter {
 				}
 				icon.setState(State.BLINK);
 				application.synchronize();
-				icon.setState(State.NORMAL);
 			} catch (final Exception ex) {
 				log.error(ExceptionUtils.getStackTrace(ex));
-				final String home = System.getenv("user.home");
-				final File logfile = new File(home, "ngcalsync.log");
-				JOptionPane.showMessageDialog(null, UserMessage.get().MSG_SYNC_FAILED(logfile.getAbsolutePath()));
+				logwindow.setVisible(true);
+			} finally {
+				icon.setState(State.NORMAL);
 			}
 			return null;
 		}
