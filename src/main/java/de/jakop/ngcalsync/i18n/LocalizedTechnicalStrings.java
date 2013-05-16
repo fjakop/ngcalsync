@@ -174,10 +174,24 @@ public interface LocalizedTechnicalStrings {
 	String MSG_OS_INFO(String name, String version, String arch);
 
 	/**
+	 * @param location {0}
+	 * @param key {1}
+	 */
+	@En("Checking Windows registry {0}:{1}.")
+	String MSG_CHECKING_REGISTRY_KEY_(String location, String key);
+
+	/**
 	 * @param path {0}
 	 */
 	@En("Path to Lotus Notes read from Windows registry was {0}.")
 	String MSG_PATH_READ_FROM_WINDOWS_REGISTRY(String path);
+
+	/**
+	 * @param path {0}
+	 */
+	@En("Path to Lotus Notes read from environment variable was {0}.")
+	String MSG_PATH_READ_FROM_SYSTEM_VARIABLE(String path);
+
 
 	/**
 	 * @param event {0}
@@ -239,5 +253,6 @@ public interface LocalizedTechnicalStrings {
 	 */
 	@En("Chosen size for tray icon is {0}.")
 	String MSG_TRAY_ICON_SIZE_CHOSEN(int size);
+
 
 }
