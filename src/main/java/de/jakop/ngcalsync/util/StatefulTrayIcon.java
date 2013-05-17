@@ -1,7 +1,6 @@
 package de.jakop.ngcalsync.util;
 
 import java.awt.Image;
-import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -25,9 +24,6 @@ public class StatefulTrayIcon extends TrayIcon {
 
 	/** blinking interval in milliseconds */
 	private static final long BLINK_INTERVAL_MILLISECONDS = 100L;
-
-	/** Available widths and heights of image icons (always squares) */
-	private static int[] AVAILABLE_IMAGE_SIZES = new int[] { 76, 48, 32, 24, 20, 16 };
 
 	private final Image iconNormal;
 	private final Image iconWorking;
@@ -56,11 +52,8 @@ public class StatefulTrayIcon extends TrayIcon {
 		setToolTip(Constants.APPLICATION_NAME);
 		setImageAutoSize(true);
 
-		final int size = chooseImageSize();
-		log.debug(TechMessage.get().MSG_TRAY_ICON_SIZE_CHOSEN(size));
-
-		iconNormal = ImageIO.read(getClass().getResource(String.format("/images/tray/normal/icon_normal_%s.png", String.valueOf(size))));
-		iconWorking = ImageIO.read(getClass().getResource(String.format("/images/tray/working/icon_working_%s.png", String.valueOf(size))));
+		iconNormal = ImageIO.read(getClass().getResource("/images/tray/icon_normal.png"));
+		iconWorking = ImageIO.read(getClass().getResource("/images/tray/icon_working.png"));
 
 	}
 
@@ -88,18 +81,6 @@ public class StatefulTrayIcon extends TrayIcon {
 
 	}
 
-	private int chooseImageSize() {
-		final int size = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
-		int leastDifference = 100;
-		for (final int availableSize : AVAILABLE_IMAGE_SIZES) {
-			final int difference = availableSize - size;
-			if (difference < leastDifference && difference >= 0) {
-				leastDifference = difference;
-			}
-		}
-
-		return size + leastDifference;
-	}
 	private abstract class AbstractFinishableRunnable implements Runnable {
 
 		private boolean finish = false;
