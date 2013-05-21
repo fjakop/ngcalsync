@@ -3,6 +3,8 @@ package de.jakop.ngcalsync.util.logging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -50,6 +52,7 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 	private static final String LINEBREAK = "\n";
 	private final JPanel panel;
 	private final JTextPane textPane = new JTextPane();
+	private ObservableBridge observable;
 
 	/**
 	 * Creates a new instance
@@ -79,6 +82,24 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 		textPane.setParagraphAttributes(getAttributeSet(event), false);
 		textPane.replaceSelection(layoutedMsg);
 		textPane.setEditable(false);
+
+		observable.setChanged();
+		observable.notifyObservers(event.getLevel());
+	}
+
+	/**
+	 * @param observer
+	 * @see Observable#addObserver(Observer)
+	 */
+	public void addObserver(final Observer observer) {
+		getObservable().addObserver(observer);
+	}
+
+	private ObservableBridge getObservable() {
+		if (observable == null) {
+			observable = new ObservableBridge();
+		}
+		return observable;
 	}
 
 	private AttributeSet getAttributeSet(final LoggingEvent event) {
@@ -124,4 +145,11 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 		return panel;
 	}
 
+	private class ObservableBridge extends Observable {
+
+		@Override
+		protected synchronized void setChanged() {
+			super.setChanged();
+		}
+	}
 }

@@ -1,12 +1,15 @@
 package de.jakop.ngcalsync.application;
 
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,13 +61,15 @@ public class TrayStarter implements IApplicationStarter {
 
 	private void moveToTray(final Application application) {
 
+		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+
 		final Log4JSwingAppender appender = new Log4JSwingAppender();
 		appender.setLayout(new PatternLayout("%5p - %m%n"));
+		appender.addObserver(new LogLevelObserver(Level.INFO, logWindow));
 		final Logger rootLogger = Logger.getRootLogger();
 		rootLogger.addAppender(appender);
 		rootLogger.setLevel(Level.INFO);
 
-		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
 		logWindow.getContentPane().add(appender.getLogPanel());
 		logWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		logWindow.pack();
@@ -199,7 +204,35 @@ public class TrayStarter implements IApplicationStarter {
 		}
 	}
 
+	/**
+	 * Makes a {@link Component} visible, when a logging event with a {@link Level} greater
+	 * or equal a given {@link Level} is observed. 
+	 * 
+	 * @author fjakop
+	 */
+	private class LogLevelObserver implements Observer {
 
+		private final Level popupThreshold;
+		private final Component componentToShow;
+
+		/**
+		 * 
+		 * @param popupThreshold
+		 * @param componentToShow
+		 */
+		public LogLevelObserver(final Level popupThreshold, final Component componentToShow) {
+			this.popupThreshold = popupThreshold;
+			this.componentToShow = componentToShow;
+		}
+
+		@Override
+		public void update(final Observable o, final Object arg) {
+			final Level level = (Level) arg;
+			if (level.isGreaterOrEqual(popupThreshold)) {
+				componentToShow.setVisible(true);
+			}
+		}
+	}
 
 
 }
