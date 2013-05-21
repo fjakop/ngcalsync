@@ -8,9 +8,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 
@@ -19,8 +16,6 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
  */
 
 public class StatefulTrayIcon extends TrayIcon {
-
-	private final Log log = LogFactory.getLog(getClass());
 
 	/** blinking interval in milliseconds */
 	private static final long BLINK_INTERVAL_MILLISECONDS = 100L;
