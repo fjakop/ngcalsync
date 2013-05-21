@@ -167,15 +167,12 @@ public class Settings {
 
 		final String lotusNotesHome = notesHelper.getLotusNotesPath(userInputReceiver);
 
-		PropertiesConfiguration envProperties;
+		final String notesHomeProperty = String.format("%s=%s", Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
 		try {
-			envProperties = new PropertiesConfiguration(environmentInformationFile);
-			envProperties.getLayout().setGlobalSeparator("=");
-			envProperties.setProperty(Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
-			envProperties.save();
+			FileUtils.write(environmentInformationFile, notesHomeProperty);
 			log.info(String.format(UserMessage.get().MSG_ENVIRONMENT_CHANGED()));
 			return true;
-		} catch (final ConfigurationException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 

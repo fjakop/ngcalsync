@@ -13,6 +13,8 @@ import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.IUserInputReceiver;
+import de.jakop.ngcalsync.util.os.DefaultRegistryQueryProcessFactory;
+import de.jakop.ngcalsync.util.os.WindowsRegistry;
 
 /**
  * 
@@ -110,17 +112,18 @@ public class NotesHelper {
 		// Map of possible Lotus Notes locations in the Windows registry 
 		final Map<String, String> registryKeys = new HashedMap<String, String>();
 		registryKeys.put("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
-		registryKeys.put("HKEY_USERS\\.DEFAULT\\Software\\Lotus\\Notes\\Installer", "PROGDIR");
+		registryKeys.put("HKEY_CURRENT_USER\\Software\\Lotus\\Notes\\Installer", "PROGDIR");
+		registryKeys.put("HKEY_CURRENT_USER\\Software\\IBM\\Notes\\Installer", "PROGDIR");
 
-		final String lotusNotesHome = null;
+		final WindowsRegistry windowsRegistry = new WindowsRegistry(new DefaultRegistryQueryProcessFactory());
 		final Iterator<String> locations = registryKeys.keySet().iterator();
+		String lotusNotesHome = null;
 		while (lotusNotesHome == null && locations.hasNext()) {
 			final String location = locations.next();
 			log.warn(TechMessage.get().MSG_CHECKING_REGISTRY_KEY_(location, registryKeys.get(location)));
+			lotusNotesHome = windowsRegistry.readRegistry(location, registryKeys.get(location));
 		}
 
 		return lotusNotesHome;
 	}
-
-
 }
