@@ -1,58 +1,60 @@
+Supports the command line argument _-console_, which triggers the synchronization headlessly.
+
 *0.7.2*
 
-p. Added Linux start script. 
+Added Linux start script. 
 
 *0.7.1*
 
-p. Fixed problems with different architectures Windows/Linux 32/64-bit. 
+Fixed problems with different architectures Windows/Linux 32/64-bit. 
 
 *0.7.1*
 
-p. Starting concurent synchronisations is now prohibited.
+Starting concurent synchronisations is now prohibited.
 
-p. The log viewer scrolls to the last logged entry on log change.
+The log viewer scrolls to the last logged entry on log change.
 
 *0.7.0*
 
-p. Tray icon display beautified with Windows.
+Tray icon display beautified with Windows.
 
-p. Translation of user messages to German is available.
+Translation of user messages to German is available.
 
-p. About dialog with version number displayed is available from tray menu.
+About dialog with version number displayed is available from tray menu.
 
 *0.6.0*
 
-p. The application has been given the capabilities to be internationalized. A first translation into english is available.
+The application has been given the capabilities to be internationalized. A first translation into english is available.
 
-p. The license has changed to a friendly BSD license.
+The license has changed to a friendly BSD license.
 
 
 *0.5.0*
 
-p. For operating systems which support system tray the application now starts in ??tray mode??, which means, it will not start synchronisation immediately but show a tray icon. Right-clicking this icon shows a popup-menu, allowing the user to choose between synchronization, log view and exit. A double click on the icon also triggers synchronisation.
+For operating systems which support system tray the application now starts in _tray mode_, which means, it will not start synchronisation immediately but show a tray icon. Right-clicking this icon shows a popup-menu, allowing the user to choose between synchronization, log view and exit. A double click on the icon also triggers synchronisation.
 
 *0.4.0*
 
-p. Fixed some bugs.
+Fixed some bugs.
 
 *0.3.1*
 
-p. Fixed bug with appointment types not read from config.
+Fixed bug with appointment types not read from config.
 
 *0.3.0*
 
-p. The Lotus Notes installation path is set via configuration file __env.properties__. For Microsoft Windows it is read from the registry on first start. All other os require the user to provide the path.  
+The Lotus Notes installation path is set via configuration file _env.properties_. For Microsoft Windows it is read from the registry on first start. All other os require the user to provide the path.  
 
 *0.2.0*
 
-p. The amount of data transferred to Google (title, description, location) is configurable in the settings file. If the event's title is not transfered, it will be replaced with the event's type.
+The amount of data transferred to Google (title, description, location) is configurable in the settings file. If the event's title is not transfered, it will be replaced with the event's type.
 
-p. The configuration file is upgraded automatically, if there are missing parameters. In this case these parameters are added and a message is prompted, asking the user to verify the default values and to restart.
+The configuration file is upgraded automatically, if there are missing parameters. In this case these parameters are added and a message is prompted, asking the user to verify the default values and to restart.
 
-p. Fixed a NPE with completely empty Google calendar.
+Fixed a NPE with completely empty Google calendar.
 
 *0.1.0*
 
-p. Initial release. Synchronizing works taking start and end dates into account. OAuth2 is used for authentication with Google.
+Initial release. Synchronizing works taking start and end dates into account. OAuth2 is used for authentication with Google.
 Event's data is blanked out except type, start and end date.
 
