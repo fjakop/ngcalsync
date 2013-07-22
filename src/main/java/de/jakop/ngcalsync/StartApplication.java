@@ -67,8 +67,7 @@ public class StartApplication {
 
 		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
 
-		final CommandLine commandLine = new BasicParser().parse(
-				new Options().addOption(COMMAND_OPTION_CONSOLE, false, "Starts the application without GUI (a.k.a. console mode) and with immediate synchronisation"), args);
+		final CommandLine commandLine = parseCommandLine(args);
 
 		IApplicationStarter starter;
 		//Check the SystemTray is supported
@@ -83,4 +82,11 @@ public class StartApplication {
 		starter.startApplication(application, settings);
 	}
 
+	private static CommandLine parseCommandLine(final String[] args) throws ParseException {
+		final Options options = new Options()//
+				.addOption(COMMAND_OPTION_CONSOLE, false, UserMessage.get().MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE())//
+		;
+		final CommandLine commandLine = new BasicParser().parse(options, args);
+		return commandLine;
+	}
 }

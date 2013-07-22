@@ -287,5 +287,8 @@ public interface LocalizedUserStrings {
 	@En("Erinnerung")
 	String REMINDER();
 
-
+	/** */
+	@De("Startet die Anwendung ohne GUI (a.k.a im Konsolenmodus) und synchronisiert sofort")
+	@En("Starts the application without GUI (a.k.a. console mode) and with immediate synchronisation")
+	String MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE();
 }
