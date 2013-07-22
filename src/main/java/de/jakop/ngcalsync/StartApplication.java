@@ -3,6 +3,10 @@ package de.jakop.ngcalsync;
 import java.awt.SystemTray;
 import java.io.IOException;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +39,7 @@ import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 public class StartApplication {
 
 	private static final Log log = LogFactory.getLog(StartApplication.class);
+	private static final String COMMAND_OPTION_CONSOLE = "console";
 
 	private StartApplication() {
 		// this starter class is not meant to be instantiated
@@ -45,8 +50,9 @@ public class StartApplication {
 	 * @param args
 	 * @throws IOException
 	 * @throws ConfigurationException 
+	 * @throws ParseException 
 	 */
-	public static void main(final String[] args) throws IOException, ConfigurationException {
+	public static void main(final String[] args) throws IOException, ConfigurationException, ParseException {
 
 		C10N.configure(new C10NConfigBase() {
 			@Override
@@ -61,15 +67,26 @@ public class StartApplication {
 
 		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
 
+		final CommandLine commandLine = parseCommandLine(args);
+
 		IApplicationStarter starter;
 		//Check the SystemTray is supported
-		if (SystemTray.isSupported()) {
-			starter = new TrayStarter();
-		} else {
+		if (!SystemTray.isSupported()) {
 			log.info(UserMessage.get().MSG_TRAY_NOT_SUPPORTED());
+		}
+		if (!SystemTray.isSupported() || commandLine.hasOption(COMMAND_OPTION_CONSOLE)) {
 			starter = new ConsoleDirectStarter();
+		} else {
+			starter = new TrayStarter();
 		}
 		starter.startApplication(application, settings);
 	}
 
+	private static CommandLine parseCommandLine(final String[] args) throws ParseException {
+		final Options options = new Options()//
+				.addOption(COMMAND_OPTION_CONSOLE, false, UserMessage.get().MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE())//
+		;
+		final CommandLine commandLine = new BasicParser().parse(options, args);
+		return commandLine;
+	}
 }
