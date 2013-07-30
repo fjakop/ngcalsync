@@ -8,6 +8,7 @@ import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
@@ -28,6 +29,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
@@ -219,7 +229,30 @@ public class TrayStarter implements IApplicationStarter {
 					return null;
 				}
 				icon.setState(State.BLINK);
-				application.synchronize();
+
+				final SchedulerFactory sf = new StdSchedulerFactory();
+				final Scheduler sched = sf.getScheduler();
+				final JobDataMap syncDataMap = new JobDataMap();
+				syncDataMap.put(SynchronizeJob.APPLICATION, application);
+
+				final JobDetail job = JobBuilder.newJob(SynchronizeJob.class) //
+						.withIdentity("syncJob", "group1") //
+						.setJobData(syncDataMap)//
+						.storeDurably()//
+						.build();
+
+				final Trigger trigger = TriggerBuilder.newTrigger() //
+						.withIdentity("trigger1", "group1") //
+						.withSchedule(SimpleScheduleBuilder.simpleSchedule() //
+								.withRepeatCount(1)//
+								.withIntervalInSeconds(1)//
+								.withMisfireHandlingInstructionFireNow()) //
+						.startNow() //
+						.build();
+
+				final Date firstfire = sched.scheduleJob(job, trigger);
+				System.out.println(firstfire);
+				//				application.synchronize();
 			} catch (final Exception ex) {
 				log.error(ExceptionUtils.getStackTrace(ex));
 				logwindow.setVisible(true);
