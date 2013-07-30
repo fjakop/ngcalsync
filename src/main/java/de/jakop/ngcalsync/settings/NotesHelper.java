@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync.notes;
+package de.jakop.ngcalsync.settings;
 
 import java.util.Iterator;
 import java.util.Map;

@@ -24,8 +24,8 @@ import de.jakop.ngcalsync.google.GoogleCalendarDaoFactory;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.notes.NotesCalendarDaoFactory;
 import de.jakop.ngcalsync.notes.NotesClientOpenDatabaseStrategy;
-import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.service.SyncService;
+import de.jakop.ngcalsync.settings.NotesHelper;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 

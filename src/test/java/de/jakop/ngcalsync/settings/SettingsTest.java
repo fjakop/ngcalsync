@@ -29,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
-import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.rule.TestdataRule;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
