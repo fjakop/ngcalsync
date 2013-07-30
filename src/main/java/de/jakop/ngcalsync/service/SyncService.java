@@ -48,36 +48,13 @@ public class SyncService {
 		final Collection<CalendarEvent> googleEntries = googleDao.getEvents(filters);
 
 		// schedule Events existing in Google but not in Notes for removal
-		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
-		for (final CalendarEvent baseDoc : googleEntries) {
-			if (CollectionUtils.select(notesEvents, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
-				removeFromGoogle.add(baseDoc);
-				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_REMOVAL(CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
-			}
-		}
+		final List<CalendarEvent> removeFromGoogle = getGoogleEntriesToRemove(notesEvents, googleEntries);
 
 		// schedule Events existing in Notes but not in Google for addition
-		final List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
-		final Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
-		for (final CalendarEvent notesEvent : notesEvents) {
-			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEvent));
-			if (matchingEntries.isEmpty()) {
-				addToGoogle.add(notesEvent);
-				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
-			} else {
-				if (matchingEntries.size() > 1) {
-					throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent.toString()));
-				}
-				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
-				// check modification and update eventually
-				if (notesEvent.getLastUpdated().after(settings.getSyncLastDateTime())) {
-					updateToGoogle.put(notesEvent, matchingEntry);
-					log.debug(TechMessage.get().MSG_SCHEDULING_FOR_UPDATE(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
-				} else {
-					log.debug(TechMessage.get().MSG_NO_UPDATE_SCHEDULED(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
-				}
-			}
-		}
+		final List<CalendarEvent> addToGoogle = getGoogleEntriesToAdd(notesEvents, googleEntries);
+
+		// schedule modified Events existing in Notes and Google for update
+		final Map<CalendarEvent, CalendarEvent> updateToGoogle = getGoogleEntriesToUpdate(settings, notesEvents, googleEntries);
 
 		// actually do it
 		log.info(UserMessage.get().MSG_REMOVING_EVENTS_FROM_GOOGLE(removeFromGoogle.size()));
@@ -102,6 +79,59 @@ public class SyncService {
 		}
 
 
+	}
+
+	private List<CalendarEvent> getGoogleEntriesToRemove(final Collection<CalendarEvent> notesEvents, final Collection<CalendarEvent> googleEntries) {
+		final List<CalendarEvent> removeFromGoogle = new ArrayList<CalendarEvent>();
+		for (final CalendarEvent baseDoc : googleEntries) {
+			if (CollectionUtils.select(notesEvents, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
+				removeFromGoogle.add(baseDoc);
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_REMOVAL(CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
+			}
+		}
+		return removeFromGoogle;
+	}
+
+	private Map<CalendarEvent, CalendarEvent> getGoogleEntriesToUpdate(final Settings settings, final Collection<CalendarEvent> notesEvents,
+			final Collection<CalendarEvent> googleEntries) {
+		final Map<CalendarEvent, CalendarEvent> updateToGoogle = new HashMap<CalendarEvent, CalendarEvent>();
+		for (final CalendarEvent notesEvent : notesEvents) {
+			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEvent));
+			if (!matchingEntries.isEmpty()) {
+				checkForDuplicates(notesEvent, matchingEntries);
+				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
+				// check modification and update eventually
+				if (notesEvent.getLastUpdated().after(settings.getSyncLastDateTime())) {
+					updateToGoogle.put(notesEvent, matchingEntry);
+					log.debug(TechMessage.get().MSG_SCHEDULING_FOR_UPDATE(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+				} else {
+					log.debug(TechMessage.get().MSG_NO_UPDATE_SCHEDULED(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+				}
+			}
+		}
+		return updateToGoogle;
+	}
+
+	private void checkForDuplicates(final CalendarEvent notesEvent, final Collection<CalendarEvent> matchingEntries) {
+		if (matchingEntries.size() > 1) {
+			throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent.toString()));
+		}
+	}
+
+	private List<CalendarEvent> getGoogleEntriesToAdd(final Collection<CalendarEvent> notesEvents, final Collection<CalendarEvent> googleEntries) {
+
+		// schedule Events existing in Notes but not in Google for addition
+		final List<CalendarEvent> addToGoogle = new ArrayList<CalendarEvent>();
+		for (final CalendarEvent notesEvent : notesEvents) {
+			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEvent));
+			if (matchingEntries.isEmpty()) {
+				addToGoogle.add(notesEvent);
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+			} else {
+				checkForDuplicates(notesEvent, matchingEntries);
+			}
+		}
+		return addToGoogle;
 	}
 
 	private void insert(final IGoogleCalendarDAO dao, final CalendarEvent entry) {
