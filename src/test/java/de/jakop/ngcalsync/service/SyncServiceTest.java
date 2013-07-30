@@ -26,8 +26,8 @@ import de.jakop.ngcalsync.exception.SynchronisationException;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.INotesCalendarDAO;
-import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
+import de.jakop.ngcalsync.settings.NotesHelper;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
