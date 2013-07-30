@@ -1,8 +1,10 @@
-package de.jakop.ngcalsync.notes;
+package de.jakop.ngcalsync.settings;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import de.jakop.ngcalsync.settings.NotesHelper;
 
 
 /**

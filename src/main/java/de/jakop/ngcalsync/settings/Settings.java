@@ -24,7 +24,6 @@ import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
-import de.jakop.ngcalsync.notes.NotesHelper;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.IUserInputReceiver;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
