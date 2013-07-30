@@ -27,9 +27,9 @@ import org.mockito.stubbing.Answer;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar.Events.Insert;
 
-import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
+import de.jakop.ngcalsync.exception.SynchronisationException;
 import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.GetEventsTest;
 import de.jakop.ngcalsync.google.GoogleCalendarDAOTest.InsertTest;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;

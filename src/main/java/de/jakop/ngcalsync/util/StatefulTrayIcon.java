@@ -68,7 +68,7 @@ public class StatefulTrayIcon extends TrayIcon {
 		} else if (state == State.NORMAL) {
 			stateRunnable = new NormalRunnable();
 		} else {
-			throw new IllegalStateException(TechMessage.get().MSG_STATE_NOT_SUPPORTED(state));
+			throw new IllegalStateException(TechMessage.get().MSG_STATE_NOT_SUPPORTED(state.toString()));
 		}
 
 		stateThread = new Thread(stateRunnable);

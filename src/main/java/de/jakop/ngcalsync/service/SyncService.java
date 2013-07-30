@@ -11,8 +11,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.exception.SynchronisationException;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
@@ -66,7 +66,7 @@ public class SyncService {
 				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
 			} else {
 				if (matchingEntries.size() > 1) {
-					throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent));
+					throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent.toString()));
 				}
 				final CalendarEvent matchingEntry = matchingEntries.iterator().next();
 				// check modification and update eventually

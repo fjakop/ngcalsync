@@ -1,8 +1,10 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.exception;
 
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
+
+import de.jakop.ngcalsync.exception.SynchronisationException;
 
 /**
  * 

@@ -20,9 +20,9 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
+import de.jakop.ngcalsync.exception.SynchronisationException;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 import de.jakop.ngcalsync.google.IGoogleCalendarDAO;
 import de.jakop.ngcalsync.notes.INotesCalendarDAO;

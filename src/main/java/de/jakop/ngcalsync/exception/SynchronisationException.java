@@ -1,4 +1,4 @@
-package de.jakop.ngcalsync;
+package de.jakop.ngcalsync.exception;
 
 /**
  * Exception indicating an error while synchronizing

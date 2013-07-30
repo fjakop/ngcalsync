@@ -2,8 +2,8 @@ package de.jakop.ngcalsync.notes;
 
 import java.util.List;
 
-import de.jakop.ngcalsync.SynchronisationException;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
+import de.jakop.ngcalsync.exception.SynchronisationException;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 

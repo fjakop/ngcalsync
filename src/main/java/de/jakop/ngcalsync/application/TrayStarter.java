@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
 import de.jakop.ngcalsync.Constants;
-import de.jakop.ngcalsync.StartApplication;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.GuiReceiver;
@@ -162,7 +161,7 @@ public class TrayStarter implements IApplicationStarter {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("<b>").append(Constants.APPLICATION_NAME).append("</b>").append("<p>");
 		builder.append(UserMessage.get().APPLICATION_DESCRIPTION()).append("<p>");
-		builder.append("Version ").append(StartApplication.class.getPackage().getImplementationVersion()).append("<p>");
+		builder.append("Version ").append(getClass().getPackage().getImplementationVersion()).append("<p>");
 		builder.append("").append("<br/>");
 		String license;
 		try {

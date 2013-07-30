@@ -3,9 +3,6 @@ package de.jakop.ngcalsync.i18n;
 import c10n.C10N;
 import c10n.annotations.En;
 
-import de.jakop.ngcalsync.calendar.CalendarEvent;
-import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
-
 /**
  * Contains localisation of all strings that are not visible to the normal end user, such as
  * <ul>
@@ -222,13 +219,13 @@ public interface LocalizedTechnicalStrings {
 	 * @param event {1}
 	 */
 	@En("Duplicate match ({0}) for {1}")
-	String MSG_DUPLICATE_MATCH(int matchCount, CalendarEvent event);
+	String MSG_DUPLICATE_MATCH(int matchCount, String event);
 
 	/**
 	 * @param state {0}
 	 */
 	@En("State {0} is not supported.")
-	String MSG_STATE_NOT_SUPPORTED(State state);
+	String MSG_STATE_NOT_SUPPORTED(String state);
 
 	/**
 	 * 
