@@ -60,36 +60,9 @@ public class TrayStarter implements IApplicationStarter {
 
 	private void moveToTray(final Application application) {
 
-		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
 
-		final Log4JSwingAppender appender = new Log4JSwingAppender();
-		appender.setLayout(new PatternLayout("%5p - %m%n"));
-		appender.addObserver(new LogLevelObserver(Level.INFO, logWindow));
-		final Logger rootLogger = Logger.getRootLogger();
-		rootLogger.addAppender(appender);
-		rootLogger.setLevel(Level.INFO);
 
-		logWindow.getContentPane().add(appender.getLogPanel());
-		logWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		logWindow.pack();
-		logWindow.setSize(500, 400);
 
-		final JFrame aboutWindow = new JFrame(UserMessage.get().TITLE_ABOUT_WINDOW());
-		final JEditorPane textarea = new JEditorPane("text/html", getApplicationInformation());
-		textarea.setEditable(false);
-		aboutWindow.getContentPane().add(new JScrollPane(textarea));
-		aboutWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		aboutWindow.pack();
-		aboutWindow.setSize(500, 400);
-
-		final SystemTray tray = SystemTray.getSystemTray();
-
-		try {
-			icon = new StatefulTrayIcon();
-			icon.setState(State.NORMAL);
-		} catch (final IOException e) {
-			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
-		}
 		final PopupMenu popup = new PopupMenu();
 
 		// Create a pop-up menu components
@@ -104,16 +77,55 @@ public class TrayStarter implements IApplicationStarter {
 		popup.add(aboutItem);
 		popup.addSeparator();
 		popup.add(exitItem);
-		icon.setPopupMenu(popup);
+		getTrayIcon().setPopupMenu(popup);
 
-		try {
-			tray.add(icon);
-		} catch (final AWTException e) {
-			log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
-		}
+		final JFrame logWindow = createLogWindow();
+		final JFrame aboutWindow = createAboutWindow();
 
+		final ActionListener syncActionListener = createSyncActionListener(application, logWindow);
+		syncItem.addActionListener(syncActionListener);
+		// sync also on double click
+		getTrayIcon().addActionListener(syncActionListener);
+
+		logItem.addActionListener(createLogActionListener(logWindow));
+		aboutItem.addActionListener(createAbourActionListener(aboutWindow));
+		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
+	}
+
+	private ActionListener createExitActionListener(final JFrame logWindow, final JFrame aboutWindow) {
+		return new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				logWindow.dispose();
+				aboutWindow.dispose();
+				System.exit(0);
+			}
+		};
+	}
+
+	private ActionListener createAbourActionListener(final JFrame aboutWindow) {
+		return new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				aboutWindow.setVisible(true);
+			}
+		};
+	}
+
+	private ActionListener createLogActionListener(final JFrame logWindow) {
+		return new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				logWindow.setVisible(true);
+			}
+		};
+	}
+
+	private ActionListener createSyncActionListener(final Application application, final JFrame logWindow) {
 		final ActionListener syncActionListener = new ActionListener() {
-
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -126,35 +138,50 @@ public class TrayStarter implements IApplicationStarter {
 				executor.submit(new SynchronizeCallable(application, logWindow));
 			}
 		};
+		return syncActionListener;
+	}
 
-		syncItem.addActionListener(syncActionListener);
-		icon.addActionListener(syncActionListener);
+	private JFrame createAboutWindow() {
+		final JFrame aboutWindow = new JFrame(UserMessage.get().TITLE_ABOUT_WINDOW());
+		final JEditorPane textarea = new JEditorPane("text/html", getApplicationInformation());
+		textarea.setEditable(false);
+		aboutWindow.getContentPane().add(new JScrollPane(textarea));
+		aboutWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		aboutWindow.pack();
+		aboutWindow.setSize(500, 400);
+		return aboutWindow;
+	}
 
-		logItem.addActionListener(new ActionListener() {
+	private JFrame createLogWindow() {
+		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
+		final Log4JSwingAppender appender = new Log4JSwingAppender();
+		appender.setLayout(new PatternLayout("%5p - %m%n"));
+		appender.addObserver(new LogLevelObserver(Level.INFO, logWindow));
+		final Logger rootLogger = Logger.getRootLogger();
+		rootLogger.addAppender(appender);
+		rootLogger.setLevel(Level.INFO);
 
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				logWindow.setVisible(true);
+		logWindow.getContentPane().add(appender.getLogPanel());
+		logWindow.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		logWindow.pack();
+		logWindow.setSize(500, 400);
+
+		return logWindow;
+	}
+
+	private StatefulTrayIcon getTrayIcon() {
+		if (icon == null) {
+			try {
+				icon = new StatefulTrayIcon();
+				icon.setState(State.NORMAL);
+				SystemTray.getSystemTray().add(icon);
+			} catch (final AWTException e) {
+				log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
+			} catch (final IOException e) {
+				log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);
 			}
-		});
-
-		aboutItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				aboutWindow.setVisible(true);
-			}
-		});
-
-		exitItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				logWindow.dispose();
-				aboutWindow.dispose();
-				System.exit(0);
-			}
-		});
+		}
+		return icon;
 	}
 
 	private String getApplicationInformation() {
