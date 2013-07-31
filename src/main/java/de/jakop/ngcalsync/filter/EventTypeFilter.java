@@ -35,10 +35,10 @@ public class EventTypeFilter implements ICalendarEventFilter {
 			return false;
 		}
 		if (ArrayUtils.contains(acceptedEventTypes, event.getEventType().getIntegerValue())) {
-			log.debug(TechMessage.get().MSG_EVENT_ACCEPTED_BY_FILTER(event.toString()));
+			log.debug(TechMessage.get().MSG_EVENT_ACCEPTED_BY_FILTER(event.format()));
 			return true;
 		}
-		log.debug(TechMessage.get().MSG_EVENT_NOT_ACCEPTED_BY_FILTER(event.toString()));
+		log.debug(TechMessage.get().MSG_EVENT_NOT_ACCEPTED_BY_FILTER(event.format()));
 		return false;
 	}
 

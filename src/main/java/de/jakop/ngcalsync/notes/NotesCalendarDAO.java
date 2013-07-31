@@ -214,10 +214,10 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 			bd.setStartDateTime(newStartDateTime);
 			bd.setEndDateTime(newEndDateTime);
-			log.debug(TechMessage.get().MSG_CONVERSION_RESULT(doc.getUniversalID(), bd.toString()));
+			log.debug(TechMessage.get().MSG_CONVERSION_RESULT(doc.getUniversalID(), bd.format()));
 
 		} catch (final NotesServiceRuntimeException e) {
-			log.error(bd.toString(), e);
+			log.error(bd.format(), e);
 			log.error("------------------------------------------------");
 			return null;
 		}

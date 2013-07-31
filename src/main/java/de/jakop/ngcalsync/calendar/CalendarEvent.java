@@ -31,9 +31,10 @@ public class CalendarEvent {
 
 
 
-	// This method is for debugging.
-	@Override
-	public String toString() {
+	/**
+	 * @return The string representing this object's values.
+	 */
+	public String format() {
 		return String.format(toStringFormat, //
 				id, //
 				title, //

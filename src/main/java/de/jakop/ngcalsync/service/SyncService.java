@@ -114,7 +114,7 @@ public class SyncService {
 
 	private void checkForDuplicates(final CalendarEvent notesEvent, final Collection<CalendarEvent> matchingEntries) {
 		if (matchingEntries.size() > 1) {
-			throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent.toString()));
+			throw new SynchronisationException(TechMessage.get().MSG_DUPLICATE_MATCH(matchingEntries.size(), notesEvent.format()));
 		}
 	}
 
