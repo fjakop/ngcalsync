@@ -10,7 +10,7 @@ import java.util.Scanner;
  *
  * @author Yaniv Inbar
  */
-public class PromptReceiver implements IUserInputReceiver {
+class PromptReceiver implements IUserInputReceiver {
 
 	private final InputStream in;
 	private final PrintStream out;

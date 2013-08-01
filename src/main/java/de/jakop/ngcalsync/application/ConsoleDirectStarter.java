@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
-import de.jakop.ngcalsync.oauth.PromptReceiver;
+import de.jakop.ngcalsync.oauth.UserInputReceiverFactory;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
@@ -21,7 +21,7 @@ public class ConsoleDirectStarter implements IApplicationStarter {
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_CONSOLE_MODE());
-		settings.setUserInputReceiver(new PromptReceiver());
+		settings.setUserInputReceiver(UserInputReceiverFactory.createPromptReceiver());
 		if (application.reloadSettings()) {
 			return;
 		}

@@ -42,7 +42,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import de.jakop.ngcalsync.Constants;
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
-import de.jakop.ngcalsync.oauth.GuiReceiver;
+import de.jakop.ngcalsync.oauth.UserInputReceiverFactory;
 import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.StatefulTrayIcon;
 import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
@@ -64,7 +64,7 @@ public class TrayStarter implements IApplicationStarter {
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
-		settings.setUserInputReceiver(new GuiReceiver());
+		settings.setUserInputReceiver(UserInputReceiverFactory.createGuiReceiver());
 		moveToTray(application);
 	}
 

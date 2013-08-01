@@ -9,7 +9,7 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  * @author fjakop
  *
  */
-public class GuiReceiver implements IUserInputReceiver {
+class GuiReceiver implements IUserInputReceiver {
 
 	@Override
 	public String waitForUserInput(final String message) {
