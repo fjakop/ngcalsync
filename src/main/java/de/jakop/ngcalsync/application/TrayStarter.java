@@ -1,40 +1,41 @@
 package de.jakop.ngcalsync.application;
 
 import java.awt.AWTException;
+import java.awt.CheckboxMenuItem;
 import java.awt.Component;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.util.Date;
+import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
-import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -58,31 +59,42 @@ import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
 public class TrayStarter implements IApplicationStarter {
 
 	private final Log log = LogFactory.getLog(getClass());
+
 	private StatefulTrayIcon icon;
 	private Future<Void> synchronizing;
+
+	private Scheduler scheduler;
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
 		settings.setUserInputReceiver(UserInputReceiverFactory.createGuiReceiver());
+		try {
+			createScheduler(application);
+		} catch (final SchedulerException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		} catch (final ParseException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		}
 		moveToTray(application);
 	}
 
 	private void moveToTray(final Application application) {
 
-
-
-
 		final PopupMenu popup = new PopupMenu();
 
 		// Create a pop-up menu components
 		final MenuItem syncItem = new MenuItem(UserMessage.get().MENU_ITEM_SYNCHRONIZE());
+		final CheckboxMenuItem schedulerItem = new CheckboxMenuItem(UserMessage.get().MENU_ITEM_SCHEDULER_ACTIVE());
 		final MenuItem logItem = new MenuItem(UserMessage.get().MENU_ITEM_SHOW_LOG());
 		final MenuItem aboutItem = new MenuItem(UserMessage.get().MENU_ITEM_ABOUT());
 		final MenuItem exitItem = new MenuItem(UserMessage.get().MENU_ITEM_EXIT());
 
 		//Add components to pop-up menu
 		popup.add(syncItem);
+		popup.add(schedulerItem);
 		popup.add(logItem);
 		popup.add(aboutItem);
 		popup.addSeparator();
@@ -97,9 +109,28 @@ public class TrayStarter implements IApplicationStarter {
 		// sync also on double click
 		getTrayIcon().addActionListener(syncActionListener);
 
+		schedulerItem.addItemListener(createSchedulerItemListener());
 		logItem.addActionListener(createLogActionListener(logWindow));
 		aboutItem.addActionListener(createAbourActionListener(aboutWindow));
 		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
+	}
+
+	private ItemListener createSchedulerItemListener() {
+		return new ItemListener() {
+
+			@Override
+			public void itemStateChanged(final ItemEvent e) {
+				try {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						scheduler.start();
+					} else {
+						scheduler.standby();
+					}
+				} catch (final SchedulerException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		};
 	}
 
 	private ActionListener createExitActionListener(final JFrame logWindow, final JFrame aboutWindow) {
@@ -139,13 +170,7 @@ public class TrayStarter implements IApplicationStarter {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				if (synchronizing != null && !synchronizing.isDone()) {
-					log.warn(UserMessage.get().MSG_SYNC_IN_PROGRESS());
-					return;
-				}
-
-				final ExecutorService executor = Executors.newSingleThreadExecutor();
-				executor.submit(new SynchronizeCallable(application, logWindow));
+				doSync(application, logWindow);
 			}
 		};
 		return syncActionListener;
@@ -211,58 +236,38 @@ public class TrayStarter implements IApplicationStarter {
 		return builder.toString();
 	}
 
-	private class SynchronizeCallable implements Callable<Void> {
-
-		private final Application application;
-		private final JFrame logwindow;
-
-		public SynchronizeCallable(final Application application, final JFrame logwindow) {
-			this.application = application;
-			this.logwindow = logwindow;
+	private void doSync(final Application application, final JFrame logWindow) {
+		if (synchronizing != null && !synchronizing.isDone()) {
+			log.warn(UserMessage.get().MSG_SYNC_IN_PROGRESS());
+			return;
 		}
 
-		@Override
-		public Void call() throws Exception {
-			try {
-				if (application.reloadSettings()) {
-					JOptionPane.showMessageDialog(null, UserMessage.get().MSG_CONFIGURATION_UPGRADED());
-					return null;
-				}
-				icon.setState(State.BLINK);
-
-				final SchedulerFactory sf = new StdSchedulerFactory();
-				final Scheduler sched = sf.getScheduler();
-				final JobDataMap syncDataMap = new JobDataMap();
-				syncDataMap.put(SynchronizeJob.APPLICATION, application);
-
-				final JobDetail job = JobBuilder.newJob(SynchronizeJob.class) //
-						.withIdentity("syncJob", "group1") //
-						.setJobData(syncDataMap)//
-						.storeDurably()//
-						.build();
-
-				final Trigger trigger = TriggerBuilder.newTrigger() //
-						.withIdentity("trigger1", "group1") //
-						.withSchedule(SimpleScheduleBuilder.simpleSchedule() //
-								.withRepeatCount(1)//
-								.withIntervalInSeconds(1)//
-								.withMisfireHandlingInstructionFireNow()) //
-						.startNow() //
-						.build();
-
-				final Date firstfire = sched.scheduleJob(job, trigger);
-				System.out.println(firstfire);
-				//				application.synchronize();
-			} catch (final Exception ex) {
-				log.error(ExceptionUtils.getStackTrace(ex));
-				logwindow.setVisible(true);
-			} finally {
-				icon.setState(State.NORMAL);
-			}
-			return null;
-		}
+		final ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.submit(new SynchronizeCallable(icon, application, logWindow));
 	}
 
+
+	private void createScheduler(final Application application) throws SchedulerException, ParseException {
+		if (scheduler == null) {
+			scheduler = new StdSchedulerFactory().getScheduler();
+			final JobDataMap syncDataMap = new JobDataMap();
+			syncDataMap.put(SynchronizeJob.APPLICATION, application);
+
+			final JobDetail job = JobBuilder.newJob(SynchronizeJob.class) //
+					.withIdentity("syncJob", "group1") //
+					.setJobData(syncDataMap)//
+					.build();
+
+			final Trigger trigger = TriggerBuilder.newTrigger() //
+					.withIdentity("trigger1", "group1") //
+					.withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 * * * * ?"))) //
+					.forJob(job) //
+					.build();
+
+			scheduler.scheduleJob(job, trigger);
+			scheduler.standby();
+		}
+	}
 	/**
 	 * Makes a {@link Component} visible, when a logging event with a {@link Level} greater
 	 * or equal a given {@link Level} is observed. 

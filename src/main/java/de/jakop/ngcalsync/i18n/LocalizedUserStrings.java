@@ -242,6 +242,13 @@ public interface LocalizedUserStrings {
 	/**
 	 * 
 	 */
+	@De("Scheduler")
+	@En("Scheduler")
+	String MENU_ITEM_SCHEDULER_ACTIVE();
+
+	/**
+	 * 
+	 */
 	@De("Verlauf anzeigen")
 	@En("Show log")
 	String MENU_ITEM_SHOW_LOG();
@@ -291,4 +298,6 @@ public interface LocalizedUserStrings {
 	@De("Startet die Anwendung ohne GUI (a.k.a im Konsolenmodus) und synchronisiert sofort")
 	@En("Starts the application without GUI (a.k.a. console mode) and with immediate synchronisation")
 	String MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE();
+
+
 }
