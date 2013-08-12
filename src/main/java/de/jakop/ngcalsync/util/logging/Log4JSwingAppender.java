@@ -48,8 +48,8 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class Log4JSwingAppender extends AppenderSkeleton {
 
-	private static final Font DEFAULT_FONT = new Font("COURIER", Font.PLAIN, 12);
-	private static final String LINEBREAK = "\n";
+	private static final Font DEFAULT_FONT = new Font("COURIER", Font.PLAIN, 12); //$NON-NLS-1$
+	private static final String LINEBREAK = "\n"; //$NON-NLS-1$
 	private final JPanel panel;
 	private final JTextPane textPane = new JTextPane();
 	private ObservableBridge observable;

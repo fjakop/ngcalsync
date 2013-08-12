@@ -47,8 +47,8 @@ public class StatefulTrayIcon extends TrayIcon {
 		setToolTip(Constants.APPLICATION_NAME);
 		setImageAutoSize(true);
 
-		iconNormal = ImageIO.read(getClass().getResource("/images/tray/icon_normal.png"));
-		iconWorking = ImageIO.read(getClass().getResource("/images/tray/icon_working.png"));
+		iconNormal = ImageIO.read(getClass().getResource(Constants.ICON_NORMAL));
+		iconWorking = ImageIO.read(getClass().getResource(Constants.ICON_WORKING));
 
 	}
 

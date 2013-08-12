@@ -62,13 +62,13 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  */
 public class GoogleOAuth2DAO {
 
-	private static final String RESOURCE_LOCATION = "/client_secrets.json";
+	private static final String RESOURCE_LOCATION = "/client_secrets.json"; //$NON-NLS-1$
 
 	/**
 	 * Browser to open in case {@link Desktop#isDesktopSupported()} is {@code false} or {@code null}
 	 * to prompt user to open the URL in their favorite browser.
 	 */
-	private static final String BROWSER = "google-chrome";
+	private static final String BROWSER = "google-chrome"; //$NON-NLS-1$
 
 	private final Log log = LogFactory.getLog(getClass());
 
@@ -134,7 +134,7 @@ public class GoogleOAuth2DAO {
 		}
 		// Next try rundll32 (only works on Windows)
 		try {
-			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
 			return;
 		} catch (final IOException e) {
 			// handled below
@@ -180,6 +180,8 @@ public class GoogleOAuth2DAO {
 
 	private class FileCredentialStore implements CredentialStore {
 
+		private static final String STRINGFORMAT_REFRESH_TOKEN = "%s.refreshToken"; //$NON-NLS-1$
+		private static final String STRINGFORMAT_ACCESS_TOKEN = "%s.accessToken"; //$NON-NLS-1$
 		private final File secretsFile;
 		private Properties properties;
 
@@ -195,8 +197,8 @@ public class GoogleOAuth2DAO {
 
 		@Override
 		public boolean load(final String userId, final Credential credential) {
-			final String keyAccessToken = String.format("%s.accessToken", userId);
-			final String keyRefreshToken = String.format("%s.refreshToken", userId);
+			final String keyAccessToken = String.format(STRINGFORMAT_ACCESS_TOKEN, userId);
+			final String keyRefreshToken = String.format(STRINGFORMAT_REFRESH_TOKEN, userId);
 			credential.setAccessToken((String) getProperties().get(keyAccessToken));
 			credential.setRefreshToken((String) getProperties().get(keyRefreshToken));
 			return StringUtils.isNotBlank(credential.getAccessToken()) && StringUtils.isNotBlank(credential.getRefreshToken());
@@ -204,8 +206,8 @@ public class GoogleOAuth2DAO {
 
 		@Override
 		public void store(final String userId, final Credential credential) {
-			final String keyAccessToken = String.format("%s.accessToken", userId);
-			final String keyRefreshToken = String.format("%s.refreshToken", userId);
+			final String keyAccessToken = String.format(STRINGFORMAT_ACCESS_TOKEN, userId);
+			final String keyRefreshToken = String.format(STRINGFORMAT_REFRESH_TOKEN, userId);
 			getProperties().put(keyAccessToken, credential.getAccessToken());
 			getProperties().put(keyRefreshToken, credential.getRefreshToken());
 			save();
@@ -245,8 +247,9 @@ public class GoogleOAuth2DAO {
 			final InputStream inputStream = getClass().getResourceAsStream(location);
 			Preconditions.checkNotNull(inputStream, "missing resource %s", location);
 			clientSecrets = GoogleClientSecrets.load(jsonFactory, inputStream);
-			Preconditions.checkArgument(!clientSecrets.getDetails().getClientId().startsWith("[[") && !clientSecrets.getDetails().getClientSecret().startsWith("[["), TechMessage.get()
-					.MSG_ENTER_CLIENT_ID_AND_SECRET(location));
+			Preconditions.checkArgument(//
+					!clientSecrets.getDetails().getClientId().startsWith("[[") && // //$NON-NLS-1$
+							!clientSecrets.getDetails().getClientSecret().startsWith("[["), TechMessage.get().MSG_ENTER_CLIENT_ID_AND_SECRET(location)); //$NON-NLS-1$
 		}
 		return clientSecrets;
 	}

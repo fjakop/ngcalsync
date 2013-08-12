@@ -39,7 +39,7 @@ import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 public class StartApplication {
 
 	private static final Log log = LogFactory.getLog(StartApplication.class);
-	private static final String COMMAND_OPTION_CONSOLE = "console";
+	private static final String COMMAND_OPTION_CONSOLE = "console"; //$NON-NLS-1$
 
 	private StartApplication() {
 		// this starter class is not meant to be instantiated

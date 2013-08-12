@@ -46,7 +46,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	private com.google.api.services.calendar.model.Calendar calendar;
 
-	private final static SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("yyyy-MM-dd");
+	private final static SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
 
 
 	/**
@@ -120,7 +120,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 			final Events googleEvents = service.events().list(getCalendar().getId())//
 					.setTimeMin(startDateTime).setTimeMax(endDateTime)//
 					.setMaxResults(new Integer(65535))//
-					.setOrderBy("starttime")//
+					.setOrderBy("starttime")// //$NON-NLS-1$
 					// handling recurrence is not necessary, since Lotus Notes recurrence is a pain in the a..
 					.setSingleEvents(Boolean.TRUE)//
 					.execute();
@@ -203,7 +203,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 		final Reminders reminders = new Reminders();
 		final EventReminder eventReminder = new EventReminder();
 		eventReminder.setMinutes(new Integer(settings.getReminderMinutes()));
-		eventReminder.setMethod("popup");
+		eventReminder.setMethod("popup"); //$NON-NLS-1$
 		reminders.setOverrides(Arrays.asList(eventReminder));
 		reminders.setUseDefault(Boolean.FALSE);
 		googleEvent.setReminders(reminders);

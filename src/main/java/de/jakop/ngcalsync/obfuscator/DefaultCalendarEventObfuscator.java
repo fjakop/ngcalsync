@@ -29,10 +29,10 @@ public class DefaultCalendarEventObfuscator implements ICalendarEventObfuscator 
 			event.setTitle(event.getEventType().getName());
 		}
 		if (!privacySettings.isTransferDescription()) {
-			event.setContent("");
+			event.setContent(new String());
 		}
 		if (!privacySettings.isTransferLocation()) {
-			event.setLocation("");
+			event.setLocation(new String());
 		}
 	}
 

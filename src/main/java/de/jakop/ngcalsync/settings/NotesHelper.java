@@ -33,14 +33,14 @@ public class NotesHelper {
 		log.debug(TechMessage.get().MSG_CHECKING_NOTES_IN_SYSTEM_PATH());
 		try {
 			// check for Lotus Notes
-			final String libname = "nlsxbe";
+			final String libname = "nlsxbe"; //$NON-NLS-1$
 			System.loadLibrary(libname);
 			log.debug(TechMessage.get().MSG_SUCCESSFULLY_LOADED(libname));
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
 			// Lotus Notes is not in the library path, NOTES_HOME not or incorrectly set
 			log.warn(TechMessage.get().MSG_NOTES_NOT_IN_SYSTEM_PATH());
-			if (e.getMessage().contains("64-bit")) {
+			if (e.getMessage().contains("64-bit")) { //$NON-NLS-1$
 				log.fatal(UserMessage.get().MSG_ARCHITECTURE_INCOMPATIBILITY(), e);
 				throw new IllegalStateException(e);
 			}
@@ -57,7 +57,7 @@ public class NotesHelper {
 		log.debug(TechMessage.get().MSG_CHECKING_NOTES_IN_CLASSPATH());
 		try {
 			// check for Lotus Notes java classes
-			final String className = "lotus.notes.NotesException";
+			final String className = "lotus.notes.NotesException"; //$NON-NLS-1$
 			Class.forName(className);
 			log.debug(TechMessage.get().MSG_SUCCESSFULLY_LOADED(className));
 			return true;
@@ -77,7 +77,7 @@ public class NotesHelper {
 	 */
 	public String getLotusNotesPath(final IUserInputReceiver receiver) {
 		// check os and try to determine path to Lotus Notes
-		String lotusNotesHome = "";
+		String lotusNotesHome = new String();
 		log.debug(TechMessage.get().MSG_OBTAINING_NOTES_SYSTEM_PATH());
 		log.debug(TechMessage.get().MSG_OS_INFO(SystemUtils.OS_NAME, SystemUtils.OS_VERSION, SystemUtils.OS_ARCH));
 
@@ -96,7 +96,7 @@ public class NotesHelper {
 			lotusNotesHome = receiver.waitForUserInput(UserMessage.get().MSG_ENTER_LOTUS_NOTES_PATH());
 		}
 
-		while (lotusNotesHome != null && lotusNotesHome.endsWith("\n")) {
+		while (lotusNotesHome != null && lotusNotesHome.endsWith("\n")) { //$NON-NLS-1$
 			lotusNotesHome = StringUtils.chomp(lotusNotesHome);
 		}
 
@@ -111,9 +111,9 @@ public class NotesHelper {
 
 		// Map of possible Lotus Notes locations in the Windows registry 
 		final Map<String, String> registryKeys = new HashedMap<String, String>();
-		registryKeys.put("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path");
-		registryKeys.put("HKEY_CURRENT_USER\\Software\\Lotus\\Notes\\Installer", "PROGDIR");
-		registryKeys.put("HKEY_CURRENT_USER\\Software\\IBM\\Notes\\Installer", "PROGDIR");
+		registryKeys.put("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path"); //$NON-NLS-1$//$NON-NLS-2$
+		registryKeys.put("HKEY_CURRENT_USER\\Software\\Lotus\\Notes\\Installer", "PROGDIR"); //$NON-NLS-1$ //$NON-NLS-2$
+		registryKeys.put("HKEY_CURRENT_USER\\Software\\IBM\\Notes\\Installer", "PROGDIR"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		final WindowsRegistry windowsRegistry = new WindowsRegistry(new DefaultRegistryQueryProcessFactory());
 		final Iterator<String> locations = registryKeys.keySet().iterator();

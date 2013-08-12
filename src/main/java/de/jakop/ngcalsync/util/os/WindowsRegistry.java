@@ -24,6 +24,8 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  */
 public final class WindowsRegistry {
 
+	private static final String TAB = "\t"; //$NON-NLS-1$
+
 	private final Log log = LogFactory.getLog(getClass());
 
 	private final IRegistryQueryProcessFactory processFactory;
@@ -73,12 +75,12 @@ public final class WindowsRegistry {
 	private String findKeyOnWindowsXP(final String output) {
 		// the output has the following format:
 		// \n<Version information>\n\n<key>\t<registry type>\t<value>
-		if (!output.contains("\t")) {
+		if (!output.contains(TAB)) {
 			return null;
 		}
 
 		// Parse out the value
-		final String[] parsed = output.split("\t");
+		final String[] parsed = output.split(TAB);
 		return parsed[parsed.length - 1];
 	}
 
@@ -88,7 +90,7 @@ public final class WindowsRegistry {
 		// example:
 		// \r\nHKEY_CURRENT_USER\\Software\\IBM\\Notes\\Installer\r\n    PROGDIR    REG_SZ    c:\\Program Files (x86)\\IBM\\Notes\\\r\n\r\n
 
-		final Pattern pattern = Pattern.compile("\\r\\n" + Pattern.quote(location) + "\\s+" + Pattern.quote(key) + "\\s+REG_SZ\\s+(.*)\\r\\n\\r\\n");
+		final Pattern pattern = Pattern.compile("\\r\\n" + Pattern.quote(location) + "\\s+" + Pattern.quote(key) + "\\s+REG_SZ\\s+(.*)\\r\\n\\r\\n"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		final Matcher matcher = pattern.matcher(output);
 		final boolean found = matcher.find();
 		String value = null;

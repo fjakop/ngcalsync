@@ -36,22 +36,22 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  */
 class NotesCalendarDAO implements INotesCalendarDAO {
 
-	private static final String VIEWNAME_CALENDAR = "Calendar";
+	private static final String VIEWNAME_CALENDAR = "Calendar"; //$NON-NLS-1$
 
-	private static final String FIELDNAME_APPOINTMENT_TYPE = "AppointmentType";
-	private static final String FIELDNAME_ROOM = "Room";
-	private static final String FIELDNAME_LOCATION = "Location";
-	private static final String FIELDNAME_BODY = "Body";
-	private static final String FIELDNAME_SUBJECT = "Subject";
-	private static final String FIELDNAME_CONFLICT = "$Conflict";
-	private static final String FIELDNAME_FORM = "Form";
-	private static final String FIELDNAME_CALENDAR_DATE_TIME = "CalendarDateTime";
-	private static final String FIELDNAME_END_DATE_TIME = "EndDateTime";
-	private static final String FIELDNAME_START_DATE_TIME = "StartDateTime";
-	private static final String FIELDNAME_REPEATS = "Repeats";
-	private static final String FIELDNAME_PRIVATE = "OrgConfidential";
+	private static final String FIELDNAME_APPOINTMENT_TYPE = "AppointmentType"; //$NON-NLS-1$
+	private static final String FIELDNAME_ROOM = "Room"; //$NON-NLS-1$
+	private static final String FIELDNAME_LOCATION = "Location"; //$NON-NLS-1$
+	private static final String FIELDNAME_BODY = "Body"; //$NON-NLS-1$
+	private static final String FIELDNAME_SUBJECT = "Subject"; //$NON-NLS-1$
+	private static final String FIELDNAME_CONFLICT = "$Conflict"; //$NON-NLS-1$
+	private static final String FIELDNAME_FORM = "Form"; //$NON-NLS-1$
+	private static final String FIELDNAME_CALENDAR_DATE_TIME = "CalendarDateTime"; //$NON-NLS-1$
+	private static final String FIELDNAME_END_DATE_TIME = "EndDateTime"; //$NON-NLS-1$
+	private static final String FIELDNAME_START_DATE_TIME = "StartDateTime"; //$NON-NLS-1$
+	private static final String FIELDNAME_REPEATS = "Repeats"; //$NON-NLS-1$
+	private static final String FIELDNAME_PRIVATE = "OrgConfidential"; //$NON-NLS-1$
 
-	private static final String FLAG_APPOINTMENT = "Appointment";
+	private static final String FLAG_APPOINTMENT = "Appointment"; //$NON-NLS-1$
 
 	private final Log log = LogFactory.getLog(getClass());
 
@@ -177,7 +177,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 			String room = doc.getItemValueString(FIELDNAME_ROOM);
 			room = StringUtils.trimToEmpty(room);
 
-			String loc = "";
+			String loc = new String();
 			if (initloc.length() != 0 && room.length() != 0) {
 				loc = "L: " + initloc + " R: " + room;
 			}
@@ -191,7 +191,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 			// "OrgConfidential" == 1 Private 
 			final String markPrivate = doc.getItemValueString(FIELDNAME_PRIVATE);
-			bd.setPrivate(StringUtils.trimToEmpty(markPrivate).equals("1"));
+			bd.setPrivate(StringUtils.trimToEmpty(markPrivate).equals("1")); //$NON-NLS-1$
 
 			bd.setLastUpdated(doc.getLastModified());
 			final String appointType = doc.getItemValueString(FIELDNAME_APPOINTMENT_TYPE);
@@ -218,7 +218,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 		} catch (final NotesServiceRuntimeException e) {
 			log.error(bd.format(), e);
-			log.error("------------------------------------------------");
+			log.error("------------------------------------------------"); //$NON-NLS-1$
 			return null;
 		}
 		return bd;

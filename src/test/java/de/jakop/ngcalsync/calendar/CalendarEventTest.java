@@ -30,9 +30,9 @@ public class CalendarEventTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testToString_EmptyObject() throws Exception {
+	public void testFormat_EmptyObject() throws Exception {
 		final CalendarEvent calendarEvent = new CalendarEvent();
-		assertEquals(String.format(toStringFormat, null, null, null, null, null, null, null, EventType.NORMAL_EVENT), calendarEvent.toString());
+		assertEquals(String.format(toStringFormat, null, null, null, null, null, null, null, EventType.NORMAL_EVENT), calendarEvent.format());
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class CalendarEventTest {
 		calendarEvent.setStartDateTime(startDateTime);
 		calendarEvent.setTitle(title);
 
-		assertEquals(String.format(toStringFormat, id, title, content, "10.06.12 11:00", "10.06.12 13:00", location, "06.06.12 10:22", EventType.MEETING), calendarEvent.toString());
+		assertEquals(String.format(toStringFormat, id, title, content, "10.06.12 11:00", "10.06.12 13:00", location, "06.06.12 10:22", EventType.MEETING), calendarEvent.format());
 	}
 
 	/**

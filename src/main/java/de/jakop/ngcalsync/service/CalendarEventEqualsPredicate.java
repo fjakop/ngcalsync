@@ -49,13 +49,13 @@ class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
 	 * @param doc
 	 * @return a condensed representation of the event
 	 */
-	public static String getComparisonString(final CalendarEvent doc) {
+	public static String format(final CalendarEvent doc) {
 		final DateFormat df = DateFormat.getDateTimeInstance();
 		return new StringBuilder()//
 				.append(doc.getEventType() == null ? null : doc.getEventType().getName())//
-				.append(": ")//
+				.append(": ")// //$NON-NLS-1$
 				.append(doc.getStartDateTime() == null ? null : df.format(doc.getStartDateTime().getTime()))//
-				.append(" -> ")//
+				.append(" -> ")// //$NON-NLS-1$
 				.append(doc.getEndDateTime() == null ? null : df.format(doc.getEndDateTime().getTime()))//
 				.toString();
 	}

@@ -86,7 +86,7 @@ public class SyncService {
 		for (final CalendarEvent baseDoc : googleEntries) {
 			if (CollectionUtils.select(notesEvents, new CalendarEventEqualsPredicate(baseDoc)).isEmpty()) {
 				removeFromGoogle.add(baseDoc);
-				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_REMOVAL(CalendarEventEqualsPredicate.getComparisonString(baseDoc)));
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_REMOVAL(CalendarEventEqualsPredicate.format(baseDoc)));
 			}
 		}
 		return removeFromGoogle;
@@ -103,9 +103,9 @@ public class SyncService {
 				// check modification and update eventually
 				if (notesEvent.getLastUpdated().after(settings.getSyncLastDateTime())) {
 					updateToGoogle.put(notesEvent, matchingEntry);
-					log.debug(TechMessage.get().MSG_SCHEDULING_FOR_UPDATE(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+					log.debug(TechMessage.get().MSG_SCHEDULING_FOR_UPDATE(CalendarEventEqualsPredicate.format(notesEvent)));
 				} else {
-					log.debug(TechMessage.get().MSG_NO_UPDATE_SCHEDULED(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+					log.debug(TechMessage.get().MSG_NO_UPDATE_SCHEDULED(CalendarEventEqualsPredicate.format(notesEvent)));
 				}
 			}
 		}
@@ -126,7 +126,7 @@ public class SyncService {
 			final Collection<CalendarEvent> matchingEntries = CollectionUtils.select(googleEntries, new CalendarEventEqualsPredicate(notesEvent));
 			if (matchingEntries.isEmpty()) {
 				addToGoogle.add(notesEvent);
-				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.getComparisonString(notesEvent)));
+				log.debug(TechMessage.get().MSG_SCHEDULING_FOR_ADDITION(CalendarEventEqualsPredicate.format(notesEvent)));
 			} else {
 				checkForDuplicates(notesEvent, matchingEntries);
 			}
@@ -138,7 +138,7 @@ public class SyncService {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
-			// TODO handle this corectly, i18n
+			// TODO handle this correctly, i18n
 			log.error("Error inserting entry", e);
 			log.error(entry);
 		}

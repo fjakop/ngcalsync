@@ -9,15 +9,15 @@ import java.util.Calendar;
 public class CalendarEvent {
 
 	private final static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-	private final static String toStringFormat = "" + //
-			"ID             : %s%n" + //
-			"Title          : %s%n" + //
-			"Content        : %s%n" + //
-			"StartDateTime  : %s%n" + //
-			"EndDateTime    : %s%n" + //
-			"Location       : %s%n" + //
-			"LastUpdated    : %s%n" + //
-			"EventType      : %s";
+	private final static String toStringFormat = "" + // //$NON-NLS-1$
+			"ID             : %s%n" + // //$NON-NLS-1$
+			"Title          : %s%n" + // //$NON-NLS-1$
+			"Content        : %s%n" + // //$NON-NLS-1$
+			"StartDateTime  : %s%n" + // //$NON-NLS-1$
+			"EndDateTime    : %s%n" + // //$NON-NLS-1$
+			"Location       : %s%n" + // //$NON-NLS-1$
+			"LastUpdated    : %s%n" + // //$NON-NLS-1$
+			"EventType      : %s"; //$NON-NLS-1$
 
 	private String id;
 	private String title;

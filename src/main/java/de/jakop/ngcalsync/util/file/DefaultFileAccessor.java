@@ -18,7 +18,7 @@ public class DefaultFileAccessor implements IFileAccessor {
 	 */
 	private File getSettingsDir() {
 		if (settingsDir == null) {
-			settingsDir = new File(System.getProperty("user.home"), Constants.FILENAME_SETTINGS_DIR);
+			settingsDir = new File(System.getProperty("user.home"), Constants.FILENAME_SETTINGS_DIR); //$NON-NLS-1$
 			if (!settingsDir.isDirectory()) {
 				settingsDir.mkdirs();
 			}

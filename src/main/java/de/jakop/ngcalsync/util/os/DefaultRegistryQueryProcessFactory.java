@@ -17,7 +17,7 @@ public class DefaultRegistryQueryProcessFactory implements IRegistryQueryProcess
 
 	@Override
 	public final Process createQueryProcess(final String location, final String key) throws IOException {
-		final String command = "reg query " + '"' + location + "\" /v " + key;
+		final String command = "reg query " + '"' + location + "\" /v " + key; //$NON-NLS-1$ //$NON-NLS-2$
 		log.debug(String.format("Executing command \"%s\"", command));
 		return Runtime.getRuntime().exec(command);
 	}

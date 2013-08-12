@@ -23,6 +23,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
+import de.jakop.ngcalsync.i18n.LocalizedConfigurationStrings.ConfigurationDescription;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.GoogleOAuth2DAO;
 import de.jakop.ngcalsync.oauth.IUserInputReceiver;
@@ -34,9 +35,6 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  * 
  */
 public class Settings {
-
-	// no i18n for now
-	private final static String HEADER_COMMENT = "# Configuration file for ngcalsync";
 
 	private final Log log;
 	private final IFileAccessor fileAccessor;
@@ -127,7 +125,7 @@ public class Settings {
 		// appending is not preserving the desired ordering, so we need to copy
 		final PropertiesConfiguration newConfiguration = new PropertiesConfiguration();
 
-		newConfiguration.getLayout().setHeaderComment(HEADER_COMMENT);
+		newConfiguration.getLayout().setHeaderComment(ConfigurationDescription.get().CONFIG_FILE_HEADER());
 
 		for (final ConfigurationParameter parameter : ConfigurationParameter.values()) {
 			final String key = parameter.getKey();
@@ -166,7 +164,7 @@ public class Settings {
 
 		final String lotusNotesHome = notesHelper.getLotusNotesPath(userInputReceiver);
 
-		final String notesHomeProperty = String.format("%s=%s", Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome);
+		final String notesHomeProperty = String.format("%s=%s", Constants.NOTES_HOME_ENVVAR_NAME, lotusNotesHome); //$NON-NLS-1$
 		try {
 			FileUtils.write(environmentInformationFile, notesHomeProperty);
 			log.info(String.format(UserMessage.get().MSG_ENVIRONMENT_CHANGED()));
@@ -253,7 +251,7 @@ public class Settings {
 	public void saveLastSyncDateTime() {
 		try {
 			final File file = fileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
-			FileUtils.writeStringToFile(file, String.format("%s%n", Long.valueOf(syncLastDateTime.getTimeInMillis())));
+			FileUtils.writeStringToFile(file, String.format("%s%n", Long.valueOf(syncLastDateTime.getTimeInMillis()))); //$NON-NLS-1$
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -343,10 +341,10 @@ public class Settings {
 
 		if (calendarService == null) {
 			if (!StringUtils.isBlank(getProxyHost()) && !StringUtils.isBlank(getProxyPort())) {
-				System.setProperty("http.proxyHost", getProxyHost());
-				System.setProperty("http.proxyPort", getProxyPort());
-				System.setProperty("https.proxyHost", getProxyHost());
-				System.setProperty("https.proxyPort", getProxyPort());
+				System.setProperty("http.proxyHost", getProxyHost()); //$NON-NLS-1$
+				System.setProperty("http.proxyPort", getProxyPort()); //$NON-NLS-1$
+				System.setProperty("https.proxyHost", getProxyHost()); //$NON-NLS-1$
+				System.setProperty("https.proxyPort", getProxyPort()); //$NON-NLS-1$
 			}
 
 			try {
@@ -409,9 +407,9 @@ public class Settings {
 	}
 
 	private int parsePeriodType(final String start) throws ParseException {
-		if (start.endsWith("d")) {
+		if (start.endsWith("d")) { //$NON-NLS-1$
 			return Calendar.DAY_OF_YEAR;
-		} else if (start.endsWith("m")) {
+		} else if (start.endsWith("m")) { //$NON-NLS-1$
 			return Calendar.MONTH;
 		}
 		throw new ParseException(UserMessage.get().MSG_UNPARSEABLE_PERIOD_TYPE(start.substring(start.length() - 1)), start.length() - 1);

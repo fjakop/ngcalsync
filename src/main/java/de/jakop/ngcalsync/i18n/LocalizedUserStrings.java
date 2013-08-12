@@ -38,9 +38,7 @@ public interface LocalizedUserStrings {
 		}
 	}
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Anonymisierte Lotus Notes Kalender-Einträge in einen Google-Kalender synchronisieren")
 	@En("Synchronize anonymized Lotus Notes calendar events to Google calendar")
 	String APPLICATION_DESCRIPTION();
@@ -53,9 +51,7 @@ public interface LocalizedUserStrings {
 	@En("The configuration file {0} was upgraded, please check the keys {1} and restart.")
 	String MSG_CONFIGURATION_UPGRADED(String file, String keys);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Die Konfigurationsdatei wurde angepasst, bitte prüfen Sie diese starten die Synchronisierung danach neu.")
 	@En("The configuration was upgraded, please check and restart synchronisation.")
 	String MSG_CONFIGURATION_UPGRADED();
@@ -67,9 +63,7 @@ public interface LocalizedUserStrings {
 	@En("The synchronisation failed. See logfile {0} for details.")
 	String MSG_SYNC_FAILED(String file);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Architektur-Inkompatibilität. Bitte stellen Sie sicher, dass die verwendete Java Runtime dieselbe Architektur (32/64-bit) wie Lotus Notes besitzt.")
 	@En("Architecture incompatibility. Please make sure that the Java Runtime is of same architecture (32/64-bit) as your Lotus Notes software.")
 	String MSG_ARCHITECTURE_INCOMPATIBILITY();
@@ -90,9 +84,7 @@ public interface LocalizedUserStrings {
 	@En("Event type \"{0}\" not recognized")
 	String MSG_EVENT_TYPE_S_NOT_RECOGNIZED_CHECK_CONFIG(int eventType);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Die Umgebungsvariablen wurden angepasst, bitte starten die Synchronisierung neu.")
 	@En("Environment information has changed, please restart the application.")
 	String MSG_ENVIRONMENT_CHANGED();
@@ -104,9 +96,7 @@ public interface LocalizedUserStrings {
 	@En("Unable to parse start date shift \"{0}\".")
 	String MSG_UNABLE_TO_PARSE_DATE_SHIFT(String dateShift);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Es konnte kein Browser geöffnet werden.")
 	@En("Failed to open browser.")
 	String MSG_FAILED_TO_OPEN_BROWSER();
@@ -118,37 +108,27 @@ public interface LocalizedUserStrings {
 	@En("Please open the following URL in your browser: {0}")
 	String MSG_OPEN_URL_IN_BROWSER(String url);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Bitte geben Sie den Code von der Webseite ein: ")
 	@En("Please enter code obtained from website: ")
 	String MSG_ENTER_CODE();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Bitte geben Sie den Pfad zu Ihrer Lotus Notes Installation ein: ")
 	@En("Please enter path to Lotus Notes installation: ")
 	String MSG_ENTER_LOTUS_NOTES_PATH();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Die Synchronisierung von Lotus Notes in den Google-Kalender beginnt.")
 	@En("Synchronisation from Lotus Notes to Google has started.")
 	String MSG_SYNC_STARTED();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Die Synchronisierung von Lotus Notes in den Google-Kalender ist beendet.")
 	@En("Synchronisation from Lotus Notes to Google has ended.")
 	String MSG_SYNC_ENDED();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Die Synchronisierung läuft bereits, es wird keine neue gestartet.")
 	@En("Synchronisation is already running, a new one cannot be started.")
 	String MSG_SYNC_IN_PROGRESS();
@@ -188,9 +168,7 @@ public interface LocalizedUserStrings {
 	@En("Updating {0} events to Google")
 	String MSG_UPDATING_EVENTS_TO_GOOGLE(int count);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Eingabe erforderlich")
 	@En("Input requested")
 	String TITLE_INPUT_REQUESTED();
@@ -209,95 +187,84 @@ public interface LocalizedUserStrings {
 	@En("Failed to read registry key \"{0}\".")
 	String MSG_FAILED_TO_READ_REGISTRY(String key);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Das SystemTray wird nicht unterstützt.")
 	@En("SystemTray is not supported.")
 	String MSG_TRAY_NOT_SUPPORTED();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Synchronisationsverlauf")
 	@En("Synchronisation log")
 	String TITLE_SYNC_LOG_WINDOW();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Anwendungsinformation")
 	@En("About this application")
 	String TITLE_ABOUT_WINDOW();
 
 	/* menu items */
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Synchronisieren")
 	@En("Synchronize")
 	String MENU_ITEM_SYNCHRONIZE();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Scheduler")
 	@En("Scheduler")
 	String MENU_ITEM_SCHEDULER_ACTIVE();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Verlauf anzeigen")
 	@En("Show log")
 	String MENU_ITEM_SHOW_LOG();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Anwendungsinfo")
 	@En("About")
 	String MENU_ITEM_ABOUT();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@De("Beenden")
 	@En("Exit")
 	String MENU_ITEM_EXIT();
 
 
 	/* event names */
-	/**  */
+	@SuppressWarnings("javadoc")
 	@De("Termin")
 	@En("Event")
 	String NORMAL_EVENT();
 
-	/**  */
+	@SuppressWarnings("javadoc")
 	@De("Jahrestag")
 	@En("Anniversary")
 	String ANNIVERSARY();
 
-	/**  */
+	@SuppressWarnings("javadoc")
 	@De("All day event")
 	@En("Ganztägig")
 	String ALL_DAY_EVENT();
 
-	/**  */
+	@SuppressWarnings("javadoc")
 	@De("Meeting")
 	@En("Besprechung")
 	String MEETING();
 
-	/**  */
+	@SuppressWarnings("javadoc")
 	@De("Reminder")
 	@En("Erinnerung")
 	String REMINDER();
 
-	/** */
+	@SuppressWarnings("javadoc")
 	@De("Startet die Anwendung ohne GUI (a.k.a im Konsolenmodus) und synchronisiert sofort")
 	@En("Starts the application without GUI (a.k.a. console mode) and with immediate synchronisation")
 	String MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE();
+
+	@SuppressWarnings("javadoc")
+	@De("Version")
+	@En("Version")
+	String VERSION();
 
 
 }

@@ -36,7 +36,7 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * This test class uses extensive mocking, therefore it is split into several subclasses which run
+ * This test class uses intensive mocking, therefore it is split into several subclasses which run
  * as a test suite. I decided not to use different source files because of convenience to 
  * MoreUnit-plugin's test detection and association under Eclipse.
  *  
@@ -500,11 +500,7 @@ public class GoogleCalendarDAOTest {
 					assertEquals(2, invocation.getArguments().length);
 					final com.google.api.services.calendar.model.Event event = (com.google.api.services.calendar.model.Event) invocation.getArguments()[1];
 					assertEquals(sourceEvent.getContent(), event.getDescription());
-					// FIXME check conversions
-					//					assertEquals(sourceEvent.getEndDateTime(), event);
-					//					assertEquals(sourceEvent.getEventType(), event.);
-					//					assertEquals(sourceEvent.getId(), event.getId());
-					//					assertEquals(sourceEvent.getLastUpdated().getTimeInMillis(), event.getUpdated().getValue());
+					assertEquals(sourceEvent.getEndDateTime().getTimeInMillis(), event.getEnd().getDateTime().getValue());
 					assertEquals(sourceEvent.getLocation(), event.getLocation());
 					assertEquals(sourceEvent.getStartDateTime().getTimeInMillis(), event.getStart().getDateTime().getValue());
 					assertEquals(sourceEvent.getTitle(), event.getSummary());
