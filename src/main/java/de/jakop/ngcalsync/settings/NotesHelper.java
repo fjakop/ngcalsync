@@ -64,7 +64,7 @@ public class NotesHelper {
 		} catch (final ClassNotFoundException e) {
 			// Lotus Notes jar is not in the classpath, NOTES_HOME not or incorrectly set
 			log.warn(TechMessage.get().MSG_NOTES_NOT_IN_CLASSPATH());
-			log.debug("Exception was", e);
+			log.debug(TechMessage.get().MSG_SOURCE_EXCEPTION_WAS(), e);
 			return false;
 		}
 	}

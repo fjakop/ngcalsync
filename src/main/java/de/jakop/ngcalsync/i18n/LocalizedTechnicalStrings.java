@@ -37,9 +37,7 @@ public interface LocalizedTechnicalStrings {
 
 	/* filters */
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("not accepted - calendar event is null.")
 	String MSG_EVENT_NOT_ACCEPTED_BY_FILTER_IS_NULL();
 
@@ -126,9 +124,7 @@ public interface LocalizedTechnicalStrings {
 	@En("Document with UNID \"{0}\" is already processed")
 	String MSG_DOCUMENT_WITH_UNID_ALREADY_PROCESSED(String unid);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Checking for Lotus Notes in system path...")
 	String MSG_CHECKING_NOTES_IN_SYSTEM_PATH();
 
@@ -138,27 +134,19 @@ public interface LocalizedTechnicalStrings {
 	@En("{0} successfully loaded")
 	String MSG_SUCCESSFULLY_LOADED(String library);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Lotus Notes is not in the library path.")
 	String MSG_NOTES_NOT_IN_SYSTEM_PATH();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Lotus Notes is not in the classpath.")
 	String MSG_NOTES_NOT_IN_CLASSPATH();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Checking for Lotus Notes in classpath...")
 	String MSG_CHECKING_NOTES_IN_CLASSPATH();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Trying to obtain Lotus Notes path...")
 	String MSG_OBTAINING_NOTES_SYSTEM_PATH();
 
@@ -227,22 +215,36 @@ public interface LocalizedTechnicalStrings {
 	@En("State {0} is not supported.")
 	String MSG_STATE_NOT_SUPPORTED(String state);
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Starting application in console mode.")
 	String MSG_START_IN_CONSOLE_MODE();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("Starting application in tray mode.")
 	String MSG_START_IN_TRAY_MODE();
 
-	/**
-	 * 
-	 */
+	@SuppressWarnings("javadoc")
 	@En("TrayIcon could not be loaded.")
 	String MSG_TRAY_ICON_NOT_LOADABLE();
+
+	/**
+	 * @param command {0}
+	 */
+	@En("Executing command \"{0}\"")
+	String MSG_EXECUTING_COMMAND(String command);
+
+	/**
+	 * @param resource {0}
+	 */
+	@En("Missing resource \"{0}\"")
+	String MSG_MISSING_RESOURCE(String resource);
+
+	@SuppressWarnings("javadoc")
+	@En("Source exception was ")
+	String MSG_SOURCE_EXCEPTION_WAS();
+
+	@SuppressWarnings("javadoc")
+	@En("Error inserting entry")
+	String MSG_INSERT_ERROR();
 
 }

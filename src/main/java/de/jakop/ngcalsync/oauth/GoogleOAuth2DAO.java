@@ -245,7 +245,7 @@ public class GoogleOAuth2DAO {
 	private GoogleClientSecrets getClientSecrets(final String location) throws IOException {
 		if (clientSecrets == null) {
 			final InputStream inputStream = getClass().getResourceAsStream(location);
-			Preconditions.checkNotNull(inputStream, "missing resource %s", location);
+			Preconditions.checkNotNull(inputStream, TechMessage.get().MSG_MISSING_RESOURCE(location));
 			clientSecrets = GoogleClientSecrets.load(jsonFactory, inputStream);
 			Preconditions.checkArgument(//
 					!clientSecrets.getDetails().getClientId().startsWith("[[") && // //$NON-NLS-1$

@@ -74,7 +74,7 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 		String layoutedMsg = getLayout().format(event);
 		if (event.getThrowableInformation() != null) {
 			final String stacktrace = StringUtils.trimToEmpty(StringUtils.join(event.getThrowableInformation().getThrowableStrRep(), LINEBREAK));
-			layoutedMsg += "Stacktrace:\n" + stacktrace;
+			layoutedMsg += "Stacktrace:\n" + stacktrace; //$NON-NLS-1$
 		}
 		final int length = textPane.getDocument().getLength();
 		textPane.setSelectionStart(length);

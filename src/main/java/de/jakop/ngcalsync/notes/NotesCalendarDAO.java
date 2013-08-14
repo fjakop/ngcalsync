@@ -179,7 +179,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 			String loc = new String();
 			if (initloc.length() != 0 && room.length() != 0) {
-				loc = "L: " + initloc + " R: " + room;
+				loc = "L: " + initloc + " R: " + room; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (initloc.length() == 0 && room.length() != 0) {
 				loc = room;

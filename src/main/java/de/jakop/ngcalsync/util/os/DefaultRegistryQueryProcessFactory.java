@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
+
 /**
  * Default implementation of {@link IRegistryQueryProcessFactory}.
  * 
@@ -18,7 +20,7 @@ public class DefaultRegistryQueryProcessFactory implements IRegistryQueryProcess
 	@Override
 	public final Process createQueryProcess(final String location, final String key) throws IOException {
 		final String command = "reg query " + '"' + location + "\" /v " + key; //$NON-NLS-1$ //$NON-NLS-2$
-		log.debug(String.format("Executing command \"%s\"", command));
+		log.debug(TechMessage.get().MSG_EXECUTING_COMMAND(command));
 		return Runtime.getRuntime().exec(command);
 	}
 }

@@ -138,8 +138,8 @@ public class SyncService {
 		try {
 			dao.insert(entry);
 		} catch (final SynchronisationException e) {
-			// TODO handle this correctly, i18n
-			log.error("Error inserting entry", e);
+			// TODO handle this correctly
+			log.error(TechMessage.get().MSG_INSERT_ERROR(), e);
 			log.error(entry);
 		}
 	}
