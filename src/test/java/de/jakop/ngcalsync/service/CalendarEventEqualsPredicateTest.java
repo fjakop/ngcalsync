@@ -265,7 +265,8 @@ public class CalendarEventEqualsPredicateTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testEvaluate_AllDayEventAndNotAllDayCompareTo_ReturnsFalse() throws Exception {
+	public void testEvaluate_AllDayEventsAndNotAllDayCompareTo() throws Exception {
+
 		final Calendar eventStart = Calendar.getInstance();
 		final Calendar eventEnd = Calendar.getInstance();
 		when(event.getStartDateTime()).thenReturn(eventStart);
@@ -277,14 +278,35 @@ public class CalendarEventEqualsPredicateTest {
 		when(compareTo.getStartDateTime()).thenReturn(compareStart);
 		when(compareTo.getEndDateTime()).thenReturn(compareEnd);
 
-		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.TRUE);
-		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.FALSE);
-
-		eventStart.setTimeInMillis(5);
+		eventStart.setTimeInMillis(0);
 		eventEnd.setTimeInMillis(0);
 		compareStart.setTimeInMillis(0);
 		compareEnd.setTimeInMillis(0);
 
+		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.TRUE);
+		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.TRUE);
+		assertTrue(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
+
+		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.TRUE);
+		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.FALSE);
+		assertFalse(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
+
+		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.FALSE);
+		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.TRUE);
+		assertFalse(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
+
+		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.FALSE);
+		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.FALSE);
+		assertTrue(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
+
+		when(Boolean.valueOf(event.isAllDay())).thenReturn(Boolean.TRUE);
+		when(Boolean.valueOf(compareTo.isAllDay())).thenReturn(Boolean.TRUE);
+		compareStart.set(2012, 2, 2);
+		eventStart.set(2012, 2, 3);
+		assertFalse(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
+
+		compareStart.set(2012, 2, 2);
+		eventStart.set(2012, 1, 2);
 		assertFalse(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
 	}
 
@@ -300,5 +322,19 @@ public class CalendarEventEqualsPredicateTest {
 		when(event.getEventType()).thenReturn(EventType.REMINDER);
 
 		assertEquals("LocalizedUserStrings.REMINDER: 31.12.0002 00:00:00 -> 31.12.0002 00:00:00", CalendarEventEqualsPredicate.format(event));
+	}
+
+	/** 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFormat_ValuesAreNull() throws Exception {
+		final Calendar date = Calendar.getInstance();
+		date.set(0, 0, 0, 0, 0, 0);
+		when(event.getStartDateTime()).thenReturn(null);
+		when(event.getEndDateTime()).thenReturn(null);
+		when(event.getEventType()).thenReturn(null);
+
+		assertEquals("null: null -> null", CalendarEventEqualsPredicate.format(event));
 	}
 }

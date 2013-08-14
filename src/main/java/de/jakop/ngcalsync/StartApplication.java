@@ -36,39 +36,17 @@ import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
  * @author fjakop
  *
  */
-public class StartApplication {
+public final class StartApplication {
 
 	private static final Log log = LogFactory.getLog(StartApplication.class);
 	private static final String COMMAND_OPTION_CONSOLE = "console"; //$NON-NLS-1$
 
-	private StartApplication() {
-		// this starter class is not meant to be instantiated
+	StartApplication() {
+		// this starter class is not meant to be instantiated from outside
 	}
 
-	/**
-	 * 
-	 * @param args
-	 * @throws IOException
-	 * @throws ConfigurationException 
-	 * @throws ParseException 
-	 */
-	public static void main(final String[] args) throws IOException, ConfigurationException, ParseException {
 
-		C10N.configure(new C10NConfigBase() {
-			@Override
-			protected void configure() {
-				install(new DefaultC10NAnnotations());
-				bindAnnotation(En.class);
-			}
-		});
-
-		final DefaultFileAccessor fileAccessor = new DefaultFileAccessor();
-		final Settings settings = new Settings(fileAccessor, LogFactory.getLog(Settings.class), new NotesHelper());
-
-		final Application application = new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
-
-		final CommandLine commandLine = parseCommandLine(args);
-
+	IApplicationStarter createStarter(final CommandLine commandLine) {
 		IApplicationStarter starter;
 		//Check the SystemTray is supported
 		if (!SystemTray.isSupported()) {
@@ -79,10 +57,52 @@ public class StartApplication {
 		} else {
 			starter = new TrayStarter();
 		}
-		starter.startApplication(application, settings);
+		return starter;
 	}
 
-	private static CommandLine parseCommandLine(final String[] args) throws ParseException {
+
+	Application initApplication(final Settings settings) {
+		return new Application(settings, new SyncService(), new NotesCalendarDaoFactory(new NotesClientOpenDatabaseStrategy()), new GoogleCalendarDaoFactory());
+	}
+
+
+	Settings initSettings(final DefaultFileAccessor fileAccessor, final NotesHelper notesHelper) {
+		return new Settings(fileAccessor, LogFactory.getLog(Settings.class), notesHelper);
+	}
+
+
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 * @throws ConfigurationException 
+	 * @throws ParseException 
+	 */
+	public static void main(final String[] args) throws IOException, ConfigurationException, ParseException {
+
+		final StartApplication main = new StartApplication();
+
+		main.i18n();
+
+		final Settings settings = main.initSettings(new DefaultFileAccessor(), new NotesHelper());
+		final Application application = main.initApplication(settings);
+		final CommandLine commandLine = main.parseCommandLine(args);
+		final IApplicationStarter starter = main.createStarter(commandLine);
+		starter.startApplication(application, settings);
+
+	}
+
+	void i18n() {
+		C10N.configure(new C10NConfigBase() {
+			@Override
+			protected void configure() {
+				install(new DefaultC10NAnnotations());
+				bindAnnotation(En.class);
+			}
+		});
+	}
+
+	CommandLine parseCommandLine(final String[] args) throws ParseException {
 		final Options options = new Options()//
 				.addOption(COMMAND_OPTION_CONSOLE, false, UserMessage.get().MSG_COMMAND_OPTION_DESCRIPTION_CONSOLE())//
 		;

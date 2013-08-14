@@ -26,21 +26,32 @@ class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
 
 		// The event type cannot be evaluated, since Google has no real event types
 
-		if (object.getStartDateTime() == null || event.getStartDateTime() == null) {
-			return false;
-		}
-		if (object.getEndDateTime() == null || event.getEndDateTime() == null) {
+		final Calendar startDateTime1 = object.getStartDateTime();
+		final Calendar startDateTime2 = event.getStartDateTime();
+		if (startDateTime1 == null || startDateTime2 == null) {
 			return false;
 		}
 
-		if (object.isAllDay() && event.isAllDay()) {
-			return object.getStartDateTime().get(Calendar.YEAR) == event.getStartDateTime().get(Calendar.YEAR) && //
-					object.getStartDateTime().get(Calendar.MONTH) == event.getStartDateTime().get(Calendar.MONTH) && //
-					object.getStartDateTime().get(Calendar.DAY_OF_YEAR) == event.getStartDateTime().get(Calendar.DAY_OF_YEAR);
+		final Calendar endDateTime1 = object.getEndDateTime();
+		final Calendar endDateTime2 = event.getEndDateTime();
+		if (endDateTime1 == null || endDateTime2 == null) {
+			return false;
 		}
 
-		return event.getStartDateTime().equals(object.getStartDateTime()) && //
-				event.getEndDateTime().equals(object.getEndDateTime());
+		// if one is allDay and the other one not, they are not equal
+		if (object.isAllDay() != event.isAllDay()) {
+			return false;
+		}
+
+		final boolean isAllDay = object.isAllDay();
+		if (isAllDay) {
+			final boolean yearIsEqual = startDateTime1.get(Calendar.YEAR) == startDateTime2.get(Calendar.YEAR);
+			final boolean monthIsEqual = startDateTime1.get(Calendar.MONTH) == startDateTime2.get(Calendar.MONTH);
+			final boolean dayIsEqual = startDateTime1.get(Calendar.DAY_OF_YEAR) == startDateTime2.get(Calendar.DAY_OF_YEAR);
+			return yearIsEqual && monthIsEqual && dayIsEqual;
+		}
+
+		return startDateTime2.equals(startDateTime1) && endDateTime2.equals(endDateTime1);
 
 	}
 
