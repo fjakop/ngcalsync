@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Observable;
@@ -96,10 +98,11 @@ public class TrayStarter implements IApplicationStarter {
 		syncItem.addActionListener(syncActionListener);
 		// sync also on double click
 		getTrayIcon().addActionListener(syncActionListener);
+		getTrayIcon().addMouseListener(createLogMouseListener(logWindow));
 
 		schedulerItem.addItemListener(createSchedulerItemListener());
 		logItem.addActionListener(createLogActionListener(logWindow));
-		aboutItem.addActionListener(createAbourActionListener(aboutWindow));
+		aboutItem.addActionListener(createAboutActionListener(aboutWindow));
 		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
 	}
 
@@ -133,7 +136,7 @@ public class TrayStarter implements IApplicationStarter {
 		};
 	}
 
-	private ActionListener createAbourActionListener(final JFrame aboutWindow) {
+	private ActionListener createAboutActionListener(final JFrame aboutWindow) {
 		return new ActionListener() {
 
 			@Override
@@ -150,6 +153,19 @@ public class TrayStarter implements IApplicationStarter {
 			public void actionPerformed(final ActionEvent e) {
 				logWindow.setVisible(true);
 			}
+		};
+	}
+
+	private MouseAdapter createLogMouseListener(final JFrame logWindow) {
+		return new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+				if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1) {
+					logWindow.setVisible(!logWindow.isVisible());
+				}
+			}
+
 		};
 	}
 
@@ -211,12 +227,11 @@ public class TrayStarter implements IApplicationStarter {
 		return icon;
 	}
 
-	@SuppressWarnings("nls")
 	private String getApplicationInformation() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("<b>").append(Constants.APPLICATION_NAME).append("</b>").append("<p>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		builder.append(UserMessage.get().APPLICATION_DESCRIPTION()).append("<p>"); //$NON-NLS-1$
-		builder.append(UserMessage.get().VERSION()).append(getClass().getPackage().getImplementationVersion()).append("<p>"); //$NON-NLS-2$
+		builder.append(UserMessage.get().VERSION()).append(getClass().getPackage().getImplementationVersion()).append("<p>"); //$NON-NLS-1$
 		builder.append("<br/>"); //$NON-NLS-1$
 		String license;
 		try {
