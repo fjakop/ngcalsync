@@ -1,4 +1,10 @@
+Added a scheduler facility in tray mode. The synchronize times can be configured by a cron expression in the settings file.  The default interval is 15 minutes.
+
 Supports the command line argument _-console_, which triggers the synchronization headlessly. 
+
+The log window will pop up on new log entries.
+
+A single left click on the tray icon shows or hides the log window.
 
 *0.7.2*
 

@@ -41,7 +41,7 @@ public class StatefulTrayIcon extends TrayIcon implements Observer {
 		iconNormal = ImageIO.read(getClass().getResource(Constants.ICON_NORMAL));
 		iconWorking = ImageIO.read(getClass().getResource(Constants.ICON_WORKING));
 
-		setState(SynchronizeState.STOP);
+		setState(SynchronizeState.IDLE);
 	}
 
 	/**
@@ -55,9 +55,9 @@ public class StatefulTrayIcon extends TrayIcon implements Observer {
 			stateRunnable.finish();
 		}
 
-		if (state == SynchronizeState.START) {
+		if (state == SynchronizeState.RUNNING) {
 			stateRunnable = new BlinkingRunnable();
-		} else if (state == SynchronizeState.STOP) {
+		} else if (state == SynchronizeState.IDLE) {
 			stateRunnable = new NormalRunnable();
 		} else {
 			throw new IllegalStateException(TechMessage.get().MSG_STATE_NOT_SUPPORTED(state.toString()));

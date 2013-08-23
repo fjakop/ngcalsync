@@ -63,7 +63,7 @@ public class Application extends Observable {
 
 		try {
 			setChanged();
-			notifyObservers(SynchronizeState.START);
+			notifyObservers(SynchronizeState.RUNNING);
 
 			log.info(UserMessage.get().MSG_SYNC_STARTED());
 
@@ -85,7 +85,7 @@ public class Application extends Observable {
 			log.info(UserMessage.get().MSG_SYNC_ENDED());
 		} finally {
 			setChanged();
-			notifyObservers(SynchronizeState.STOP);
+			notifyObservers(SynchronizeState.IDLE);
 		}
 
 	}
