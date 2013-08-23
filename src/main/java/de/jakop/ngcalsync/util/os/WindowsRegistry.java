@@ -9,6 +9,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
@@ -26,7 +28,8 @@ public final class WindowsRegistry {
 
 	private static final String TAB = "\t"; //$NON-NLS-1$
 
-	private final Log log = LogFactory.getLog(getClass());
+	@VisibleForTesting
+	Log log = LogFactory.getLog(getClass());
 
 	private final IRegistryQueryProcessFactory processFactory;
 

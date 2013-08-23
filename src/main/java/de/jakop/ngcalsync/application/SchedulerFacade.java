@@ -43,12 +43,10 @@ public class SchedulerFacade {
 	/**
 	 * 
 	 * @param application
-	 * @param cronExpression
 	 * @throws ParseException
 	 */
-	public SchedulerFacade(final Application application, final String cronExpression) throws ParseException {
+	public SchedulerFacade(final Application application) throws ParseException {
 		Validate.notNull(application);
-		Validate.notNull(cronExpression);
 		this.application = application;
 		cronTimerExpression = new CronExpression(DEFAULT_CRON_EXPRESSION);
 	}
@@ -112,9 +110,10 @@ public class SchedulerFacade {
 	 * @throws ParseException 
 	 * @throws SchedulerException 
 	 */
-	public void reschedule(final String cronExpression) throws ParseException, SchedulerException {
+	public void schedule(final String cronExpression) throws ParseException, SchedulerException {
 		Validate.notNull(cronExpression);
 		cronTimerExpression = new CronExpression(cronExpression);
+		scheduler.deleteJob(jobKey);
 		scheduler = null;
 		createSchedulerIfNecessary();
 	}

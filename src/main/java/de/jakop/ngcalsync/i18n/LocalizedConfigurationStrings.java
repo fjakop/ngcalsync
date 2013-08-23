@@ -36,6 +36,12 @@ public interface LocalizedConfigurationStrings {
 	String CONFIG_FILE_HEADER();
 
 	@SuppressWarnings("javadoc")
+	@En("# Cron expression for the recurrence of synchronisation when the scheduler is active\n" + //
+			"# Default is every 15 minutes\n" + //
+			"# see http://quartz-scheduler.org/api/2.0.0/org/quartz/CronExpression.html")
+	String SYNC_RECURRENCE();
+
+	@SuppressWarnings("javadoc")
 	@En("# Types of events to sync\n" + //
 			"# 0 = Normal event\n" + //
 			"# 1 = Anniversary\n" + //

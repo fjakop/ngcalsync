@@ -5,6 +5,8 @@ import de.jakop.ngcalsync.i18n.LocalizedConfigurationStrings.ConfigurationDescri
 // no i18n for now
 enum ConfigurationParameter {
 
+	SYNC_RECURRENCE("sync.recurrence", "0 */15 * * * ?", ConfigurationDescription.get().SYNC_RECURRENCE()), // //$NON-NLS-1$ //$NON-NLS-2$
+
 	SYNC_TYPES("sync.types", "3", ConfigurationDescription.get().SYNC_TYPES()), // //$NON-NLS-1$ //$NON-NLS-2$
 
 	SYNC_END("sync.end", "3m", ConfigurationDescription.get().SYNC_END()), // //$NON-NLS-1$ //$NON-NLS-2$

@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,17 +62,17 @@ public class TrayStarter implements IApplicationStarter {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
 		settings.setUserInputReceiver(UserInputReceiverFactory.createGuiReceiver());
 		try {
-			scheduler = new SchedulerFacade(application, SchedulerFacade.DEFAULT_CRON_EXPRESSION);
+			scheduler = new SchedulerFacade(application);
 			scheduler.pause();
 		} catch (final SchedulerException e) {
 			throw new RuntimeException(e);
 		} catch (final ParseException e) {
 			throw new RuntimeException(e);
 		}
-		moveToTray();
+		moveToTray(settings);
 	}
 
-	private void moveToTray() {
+	private void moveToTray(final Settings settings) {
 
 		final PopupMenu popup = new PopupMenu();
 
@@ -100,19 +101,33 @@ public class TrayStarter implements IApplicationStarter {
 		getTrayIcon().addActionListener(syncActionListener);
 		getTrayIcon().addMouseListener(createLogMouseListener(logWindow));
 
-		schedulerItem.addItemListener(createSchedulerItemListener());
+		schedulerItem.addItemListener(createSchedulerItemListener(settings));
 		logItem.addActionListener(createLogActionListener(logWindow));
 		aboutItem.addActionListener(createAboutActionListener(aboutWindow));
 		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
 	}
 
-	private ItemListener createSchedulerItemListener() {
+	private ItemListener createSchedulerItemListener(final Settings settings) {
+
 		return new ItemListener() {
 
 			@Override
 			public void itemStateChanged(final ItemEvent e) {
 				try {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
+						try {
+							settings.load();
+							scheduler.schedule(settings.getSyncRecurrenceExpression());
+						} catch (final ConfigurationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (final IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (final ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						scheduler.start();
 					} else {
 						scheduler.pause();

@@ -132,8 +132,9 @@ public class SettingsTest {
 		// verify message
 		verify(log, times(1)).info(
 				UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(),
-						"{sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
-								+ "notes.mail.db.file,notes.domino.server," + "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
+						"{sync.recurrence,sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
+								+ "notes.mail.db.file,notes.domino.server,"//
+								+ "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
 								+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
 
 

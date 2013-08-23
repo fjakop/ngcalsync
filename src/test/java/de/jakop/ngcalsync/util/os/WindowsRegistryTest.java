@@ -3,11 +3,13 @@ package de.jakop.ngcalsync.util.os;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
 import org.junit.Test;
 
 /**
@@ -41,7 +43,12 @@ public class WindowsRegistryTest {
 		final IRegistryQueryProcessFactory factory = mock(IRegistryQueryProcessFactory.class);
 		when(factory.createQueryProcess("foo", "bar")).thenThrow(new IOException());
 
-		final String result = new WindowsRegistry(factory).readRegistry("foo", "bar");
+		final WindowsRegistry windowsRegistry = new WindowsRegistry(factory);
+		final Log logMock = mock(Log.class);
+		windowsRegistry.log = logMock;
+		final String result = windowsRegistry.readRegistry("foo", "bar");
+
+		verify(logMock).error("");
 		assertNull(result);
 
 	}
