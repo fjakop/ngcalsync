@@ -2,6 +2,7 @@ package de.jakop.ngcalsync.application;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Observable;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.Validate;
@@ -19,6 +20,7 @@ import de.jakop.ngcalsync.obfuscator.DefaultCalendarEventObfuscator;
 import de.jakop.ngcalsync.obfuscator.ICalendarEventObfuscator;
 import de.jakop.ngcalsync.service.SyncService;
 import de.jakop.ngcalsync.settings.Settings;
+import de.jakop.ngcalsync.tray.SynchronizeState;
 
 /**
  * This is the main application class.
@@ -26,16 +28,13 @@ import de.jakop.ngcalsync.settings.Settings;
  * @author fjakop
  *
  */
-public class Application {
+public class Application extends Observable {
 
 	private final Log log = LogFactory.getLog(getClass());
 
 	private final Settings settings;
-
 	private final SyncService service;
-
 	private final NotesCalendarDaoFactory notesCalendarDaoFactory;
-
 	private final GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
 	/**
@@ -62,24 +61,32 @@ public class Application {
 	 */
 	void synchronize() {
 
-		log.info(UserMessage.get().MSG_SYNC_STARTED());
+		try {
+			setChanged();
+			notifyObservers(SynchronizeState.START);
 
-		final ICalendarEventFilter typeFilter = new EventTypeFilter(settings.getSyncAppointmentTypes());
-		final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
+			log.info(UserMessage.get().MSG_SYNC_STARTED());
 
-		final ICalendarEventFilter[] filters = new ICalendarEventFilter[] { typeFilter };
-		final ICalendarEventObfuscator[] obfuscators = new ICalendarEventObfuscator[] { typeObfuscator };
+			final ICalendarEventFilter typeFilter = new EventTypeFilter(settings.getSyncAppointmentTypes());
+			final ICalendarEventObfuscator typeObfuscator = new DefaultCalendarEventObfuscator(settings.getPrivacySettings());
 
-		final INotesCalendarDAO notesCalendarDao = notesCalendarDaoFactory.createNotesCalendarDao(settings);
-		final IGoogleCalendarDAO googleCalendarDao = googleCalendarDaoFactory.createGoogleCalendarDao(settings);
+			final ICalendarEventFilter[] filters = new ICalendarEventFilter[] { typeFilter };
+			final ICalendarEventObfuscator[] obfuscators = new ICalendarEventObfuscator[] { typeObfuscator };
 
-		service.executeSync(notesCalendarDao, googleCalendarDao, filters, obfuscators, settings);
+			final INotesCalendarDAO notesCalendarDao = notesCalendarDaoFactory.createNotesCalendarDao(settings);
+			final IGoogleCalendarDAO googleCalendarDao = googleCalendarDaoFactory.createGoogleCalendarDao(settings);
 
-		// Update Last Sync Execution Date & Time
-		settings.setSyncLastDateTime(Calendar.getInstance());
-		settings.saveLastSyncDateTime();
+			service.executeSync(notesCalendarDao, googleCalendarDao, filters, obfuscators, settings);
 
-		log.info(UserMessage.get().MSG_SYNC_ENDED());
+			// Update Last Sync Execution Date & Time
+			settings.setSyncLastDateTime(Calendar.getInstance());
+			settings.saveLastSyncDateTime();
+
+			log.info(UserMessage.get().MSG_SYNC_ENDED());
+		} finally {
+			setChanged();
+			notifyObservers(SynchronizeState.STOP);
+		}
 
 	}
 

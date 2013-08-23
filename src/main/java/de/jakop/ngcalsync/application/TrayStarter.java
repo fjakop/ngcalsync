@@ -36,8 +36,7 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.oauth.UserInputReceiverFactory;
 import de.jakop.ngcalsync.settings.Settings;
-import de.jakop.ngcalsync.util.StatefulTrayIcon;
-import de.jakop.ngcalsync.util.StatefulTrayIcon.State;
+import de.jakop.ngcalsync.tray.StatefulTrayIcon;
 import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
 
 /**
@@ -69,10 +68,10 @@ public class TrayStarter implements IApplicationStarter {
 		} catch (final ParseException e) {
 			throw new RuntimeException(e);
 		}
-		moveToTray(settings);
+		moveToTray(settings, application);
 	}
 
-	private void moveToTray(final Settings settings) {
+	private void moveToTray(final Settings settings, final Application application) {
 
 		final PopupMenu popup = new PopupMenu();
 
@@ -82,6 +81,9 @@ public class TrayStarter implements IApplicationStarter {
 		final MenuItem logItem = new MenuItem(UserMessage.get().MENU_ITEM_SHOW_LOG());
 		final MenuItem aboutItem = new MenuItem(UserMessage.get().MENU_ITEM_ABOUT());
 		final MenuItem exitItem = new MenuItem(UserMessage.get().MENU_ITEM_EXIT());
+
+		// let the tray icon listen to sync events for state change
+		application.addObserver(getTrayIcon());
 
 		//Add components to pop-up menu
 		popup.add(syncItem);
@@ -231,7 +233,6 @@ public class TrayStarter implements IApplicationStarter {
 		if (icon == null) {
 			try {
 				icon = new StatefulTrayIcon();
-				icon.setState(State.NORMAL);
 				SystemTray.getSystemTray().add(icon);
 			} catch (final AWTException e) {
 				log.error(TechMessage.get().MSG_TRAY_ICON_NOT_LOADABLE(), e);

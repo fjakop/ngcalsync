@@ -1,9 +1,11 @@
-package de.jakop.ngcalsync.util;
+package de.jakop.ngcalsync.tray;
 
 import java.awt.Image;
 import java.awt.TrayIcon;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
@@ -15,7 +17,7 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
  * Represent system tray icon with multiple states, which are e.g. represented by blinking the icon.
  */
 
-public class StatefulTrayIcon extends TrayIcon {
+public class StatefulTrayIcon extends TrayIcon implements Observer {
 
 	/** blinking interval in milliseconds */
 	private static final long BLINK_INTERVAL_MILLISECONDS = 100L;
@@ -25,17 +27,6 @@ public class StatefulTrayIcon extends TrayIcon {
 
 	private Thread stateThread;
 	private AbstractFinishableRunnable stateRunnable;
-
-
-	/**
-	* States of icon.
-	*/
-	public enum State {
-		/** normal state, i.e. not working */
-		NORMAL,
-		/** blinking state (working) */
-		BLINK;
-	}
 
 	/**
 	* Constructor.
@@ -50,6 +41,7 @@ public class StatefulTrayIcon extends TrayIcon {
 		iconNormal = ImageIO.read(getClass().getResource(Constants.ICON_NORMAL));
 		iconWorking = ImageIO.read(getClass().getResource(Constants.ICON_WORKING));
 
+		setState(SynchronizeState.STOP);
 	}
 
 	/**
@@ -57,15 +49,15 @@ public class StatefulTrayIcon extends TrayIcon {
 	 * 
 	 * @param state
 	 */
-	public void setState(final State state) {
+	public void setState(final SynchronizeState state) {
 
 		if (stateRunnable != null) {
 			stateRunnable.finish();
 		}
 
-		if (state == State.BLINK) {
+		if (state == SynchronizeState.START) {
 			stateRunnable = new BlinkingRunnable();
-		} else if (state == State.NORMAL) {
+		} else if (state == SynchronizeState.STOP) {
 			stateRunnable = new NormalRunnable();
 		} else {
 			throw new IllegalStateException(TechMessage.get().MSG_STATE_NOT_SUPPORTED(state.toString()));
@@ -146,6 +138,14 @@ public class StatefulTrayIcon extends TrayIcon {
 				/* ignore */
 			}
 
+		}
+	}
+
+	@Override
+	public void update(final Observable o, final Object arg) {
+		if (arg instanceof SynchronizeState) {
+			final SynchronizeState event = (SynchronizeState) arg;
+			setState(event);
 		}
 	}
 }

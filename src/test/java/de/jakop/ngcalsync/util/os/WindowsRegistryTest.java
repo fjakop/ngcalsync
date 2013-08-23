@@ -11,6 +11,7 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.junit.Test;
+import org.mockito.Matchers;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class WindowsRegistryTest {
 		windowsRegistry.log = logMock;
 		final String result = windowsRegistry.readRegistry("foo", "bar");
 
-		verify(logMock).error("");
+		verify(logMock).error(Matchers.eq("LocalizedUserStrings.MSG_FAILED_TO_READ_REGISTRY(\"bar\")"), Matchers.any(IOException.class));
 		assertNull(result);
 
 	}
