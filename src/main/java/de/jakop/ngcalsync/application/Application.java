@@ -90,6 +90,9 @@ public class Application extends Observable {
 
 	}
 
+	/**
+	 * @return <code>true</code>, if a restart is supposed
+	 */
 	boolean reloadSettings() {
 
 		try {

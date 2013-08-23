@@ -120,17 +120,15 @@ public class TrayStarter implements IApplicationStarter {
 						try {
 							settings.load();
 							scheduler.schedule(settings.getSyncRecurrenceExpression());
-						} catch (final ConfigurationException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (final IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (final ParseException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							scheduler.start();
+							// in case of any error it is logged and the scheduler is not started
+						} catch (final ConfigurationException ex) {
+							log.error(ex);
+						} catch (final IOException ex) {
+							log.error(ex);
+						} catch (final ParseException ex) {
+							log.error(ex);
 						}
-						scheduler.start();
 					} else {
 						scheduler.pause();
 					}
