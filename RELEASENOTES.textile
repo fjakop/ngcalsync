@@ -1,3 +1,5 @@
+*0.8.0*
+
 Added a scheduler facility in tray mode. The synchronize times can be configured by a cron expression in the settings file.  The default interval is 15 minutes.
 
 Supports the command line argument _-console_, which triggers the synchronization headlessly. 
