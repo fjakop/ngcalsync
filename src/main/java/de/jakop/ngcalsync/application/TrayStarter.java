@@ -54,24 +54,17 @@ public class TrayStarter implements IApplicationStarter {
 
 	private StatefulTrayIcon icon;
 
-	private SchedulerFacade scheduler;
 
 	@Override
 	public void startApplication(final Application application, final Settings settings) {
 		log.debug(TechMessage.get().MSG_START_IN_TRAY_MODE());
 		settings.setUserInputReceiver(UserInputReceiverFactory.createGuiReceiver());
-		try {
-			scheduler = new SchedulerFacade(application);
-			scheduler.pause();
-		} catch (final SchedulerException e) {
-			throw new RuntimeException(e);
-		} catch (final ParseException e) {
-			throw new RuntimeException(e);
-		}
+
 		moveToTray(settings, application);
 	}
 
 	private void moveToTray(final Settings settings, final Application application) {
+
 
 		final PopupMenu popup = new PopupMenu();
 
@@ -97,42 +90,54 @@ public class TrayStarter implements IApplicationStarter {
 		final JFrame logWindow = createLogWindow();
 		final JFrame aboutWindow = createAboutWindow();
 
-		final ActionListener syncActionListener = createSyncActionListener();
+		final ActionListener syncActionListener = createSyncActionListener(application.getScheduler());
 		syncItem.addActionListener(syncActionListener);
 		// sync also on double click
 		getTrayIcon().addActionListener(syncActionListener);
 		getTrayIcon().addMouseListener(createLogMouseListener(logWindow));
 
-		schedulerItem.addItemListener(createSchedulerItemListener(settings));
+		schedulerItem.addItemListener(createSchedulerItemListener(settings, application));
 		logItem.addActionListener(createLogActionListener(logWindow));
 		aboutItem.addActionListener(createAboutActionListener(aboutWindow));
 		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
+
+		// reload settings after log window is initialized
+		application.reloadSettings();
+		schedulerItem.setState(settings.isSchedulerStarted());
+		toggleScheduler(settings.isSchedulerStarted(), settings, application);
+
 	}
 
-	private ItemListener createSchedulerItemListener(final Settings settings) {
+	private void toggleScheduler(final boolean started, final Settings settings, final Application application) {
+
+		try {
+			if (started) {
+				application.reloadSettings();
+				application.getScheduler().schedule(settings.getSyncRecurrenceExpression());
+				application.getScheduler().start();
+			} else {
+				application.getScheduler().pause();
+			}
+			// in case of any error it is logged and the scheduler is not started
+		} catch (final ParseException ex) {
+			log.error(ex);
+		} catch (final SchedulerException ex) {
+			log.error(ex);
+		}
+	}
+
+	private ItemListener createSchedulerItemListener(final Settings settings, final Application application) {
 
 		return new ItemListener() {
 
 			@Override
 			public void itemStateChanged(final ItemEvent e) {
 				try {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						try {
-							settings.load();
-							scheduler.schedule(settings.getSyncRecurrenceExpression());
-							scheduler.start();
-							// in case of any error it is logged and the scheduler is not started
-						} catch (final ConfigurationException ex) {
-							log.error(ex);
-						} catch (final IOException ex) {
-							log.error(ex);
-						} catch (final ParseException ex) {
-							log.error(ex);
-						}
-					} else {
-						scheduler.pause();
-					}
-				} catch (final SchedulerException ex) {
+					final boolean started = e.getStateChange() == ItemEvent.SELECTED;
+					toggleScheduler(started, settings, application);
+					settings.setSchedulerStarted(started);
+					settings.save();
+				} catch (final ConfigurationException ex) {
 					throw new RuntimeException(ex);
 				}
 			}
@@ -184,7 +189,7 @@ public class TrayStarter implements IApplicationStarter {
 		};
 	}
 
-	private ActionListener createSyncActionListener() {
+	private ActionListener createSyncActionListener(final SchedulerFacade scheduler) {
 		final ActionListener syncActionListener = new ActionListener() {
 
 			@Override

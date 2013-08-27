@@ -1,6 +1,7 @@
 package de.jakop.ngcalsync.application;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Observable;
 
@@ -8,6 +9,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.SchedulerException;
 
 import de.jakop.ngcalsync.filter.EventTypeFilter;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
@@ -34,6 +36,7 @@ public class Application extends Observable {
 
 	private final Settings settings;
 	private final SyncService service;
+	private final SchedulerFacade scheduler;
 	private final NotesCalendarDaoFactory notesCalendarDaoFactory;
 	private final GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
@@ -54,6 +57,20 @@ public class Application extends Observable {
 		this.service = service;
 		this.notesCalendarDaoFactory = notesCalendarDaoFactory;
 		this.googleCalendarDaoFactory = googleCalendarDaoFactory;
+
+		try {
+			scheduler = new SchedulerFacade(this);
+		} catch (final ParseException e) {
+			throw new RuntimeException(e);
+		} catch (final SchedulerException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+
+	SchedulerFacade getScheduler() {
+		return scheduler;
 	}
 
 	/**

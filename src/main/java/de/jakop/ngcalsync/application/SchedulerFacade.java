@@ -36,7 +36,7 @@ public class SchedulerFacade {
 	private final Application application;
 
 	private boolean started = false;
-	private Scheduler scheduler;
+	private final Scheduler scheduler;
 	private JobKey jobKey;
 	private CronExpression cronTimerExpression;
 
@@ -44,11 +44,14 @@ public class SchedulerFacade {
 	 * 
 	 * @param application
 	 * @throws ParseException
+	 * @throws SchedulerException 
 	 */
-	public SchedulerFacade(final Application application) throws ParseException {
+	public SchedulerFacade(final Application application) throws ParseException, SchedulerException {
 		Validate.notNull(application);
 		this.application = application;
 		cronTimerExpression = new CronExpression(DEFAULT_CRON_EXPRESSION);
+		scheduler = new StdSchedulerFactory().getScheduler();
+		scheduler.start();
 	}
 
 	/**
@@ -57,7 +60,6 @@ public class SchedulerFacade {
 	 * @throws SchedulerException
 	 */
 	public void start() throws SchedulerException {
-		createSchedulerIfNecessary();
 		started = true;
 		scheduler.resumeJob(jobKey);
 	}
@@ -68,7 +70,6 @@ public class SchedulerFacade {
 	 * @throws SchedulerException
 	 */
 	public void pause() throws SchedulerException {
-		createSchedulerIfNecessary();
 		started = false;
 		scheduler.pauseJob(jobKey);
 	}
@@ -79,7 +80,6 @@ public class SchedulerFacade {
 	 * @throws SchedulerException
 	 */
 	public void triggerNow() throws SchedulerException {
-		createSchedulerIfNecessary();
 
 		if (isJobRunning()) {
 			return;
@@ -114,32 +114,27 @@ public class SchedulerFacade {
 		Validate.notNull(cronExpression);
 		cronTimerExpression = new CronExpression(cronExpression);
 		scheduler.deleteJob(jobKey);
-		scheduler = null;
-		createSchedulerIfNecessary();
-	}
 
-	private void createSchedulerIfNecessary() throws SchedulerException {
-		if (scheduler == null) {
-			scheduler = new StdSchedulerFactory().getScheduler();
-			final JobDataMap syncDataMap = new JobDataMap();
-			syncDataMap.put(SynchronizeJob.APPLICATION, application);
+		final JobDataMap syncDataMap = new JobDataMap();
+		syncDataMap.put(SynchronizeJob.APPLICATION, application);
 
-			final JobDetail job = JobBuilder.newJob(SynchronizeJob.class) //
-					.withIdentity(SYNC_JOB_NAME, SYNC_GROUP_NAME) //
-					.setJobData(syncDataMap)//
-					.build();
+		final JobDetail job = JobBuilder.newJob(SynchronizeJob.class) //
+				.withIdentity(SYNC_JOB_NAME, SYNC_GROUP_NAME) //
+				.setJobData(syncDataMap)//
+				.build();
 
-			jobKey = job.getKey();
+		jobKey = job.getKey();
 
-			final Trigger trigger = TriggerBuilder.newTrigger() //
-					.withIdentity(SYNC_TRIGGER_NAME, SYNC_GROUP_NAME) //
-					.withSchedule(CronScheduleBuilder.cronSchedule(cronTimerExpression)) //
-					.forJob(job) //
-					.build();
+		final Trigger trigger = TriggerBuilder.newTrigger() //
+				.withIdentity(SYNC_TRIGGER_NAME, SYNC_GROUP_NAME) //
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronTimerExpression)) //
+				.forJob(job) //
+				.build();
 
-			scheduler.scheduleJob(job, trigger);
+		scheduler.scheduleJob(job, trigger);
+
+		if (!started) {
 			scheduler.pauseJob(jobKey);
-			scheduler.start();
 		}
 	}
 

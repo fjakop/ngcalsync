@@ -42,6 +42,10 @@ public interface LocalizedConfigurationStrings {
 	String SYNC_RECURRENCE();
 
 	@SuppressWarnings("javadoc")
+	@En("# Start the scheduler on application startup")
+	String SYNC_SCHEDULER_START();
+
+	@SuppressWarnings("javadoc")
 	@En("# Types of events to sync\n" + //
 			"# 0 = Normal event\n" + //
 			"# 1 = Anniversary\n" + //

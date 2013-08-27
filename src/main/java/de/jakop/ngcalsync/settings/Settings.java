@@ -66,6 +66,15 @@ public class Settings {
 	}
 
 	/**
+	 * Save the curent configuration
+	 * 
+	 * @throws ConfigurationException
+	 */
+	public void save() throws ConfigurationException {
+		configuration.save();
+	}
+
+	/**
 	 * @return <code>true</code>, if a restart is supposed
 	 * @throws IOException
 	 * @throws ConfigurationException 
@@ -389,7 +398,19 @@ public class Settings {
 		this.userInputReceiver = userInputReceiver;
 	}
 
+	/**
+	 * @param started whether the scheduler is/should be started
+	 */
+	public void setSchedulerStarted(final boolean started) {
+		configuration.setProperty(ConfigurationParameter.SYNC_SCHEDULER_START.getKey(), Boolean.valueOf(started));
+	}
 
+	/**
+	 * @return whether the scheduler is/should be started
+	 */
+	public boolean isSchedulerStarted() {
+		return configuration.getBoolean(ConfigurationParameter.SYNC_SCHEDULER_START.getKey(), false);
+	}
 
 	/* for JUnit-Tests */
 	protected Calendar getProgramStartTime() {
@@ -433,4 +454,6 @@ public class Settings {
 		int periodType;
 		int periodLength;
 	}
+
+
 }
