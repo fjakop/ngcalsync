@@ -42,7 +42,7 @@ import de.jakop.ngcalsync.util.logging.Log4JSwingAppender;
 /**
  * Starts the application without immediate synchronisation and moves it to the system tray
  * where the user can produce a popup menu for synchronisation, exit, log etc.
- * 
+ *
  * @author fjakop
  *
  */
@@ -111,9 +111,9 @@ public class TrayStarter implements IApplicationStarter {
 	private void toggleScheduler(final boolean started, final Settings settings, final Application application) {
 
 		try {
+			application.reloadSettings();
+			application.getScheduler().schedule(settings.getSyncRecurrenceExpression());
 			if (started) {
-				application.reloadSettings();
-				application.getScheduler().schedule(settings.getSyncRecurrenceExpression());
 				application.getScheduler().start();
 			} else {
 				application.getScheduler().pause();
@@ -197,7 +197,7 @@ public class TrayStarter implements IApplicationStarter {
 				try {
 					scheduler.triggerNow();
 				} catch (final SchedulerException ex) {
-					log.error(ex);
+					log.error("", ex);
 				}
 			}
 		};
@@ -265,8 +265,8 @@ public class TrayStarter implements IApplicationStarter {
 
 	/**
 	 * Makes a {@link Component} visible, when a logging event with a {@link Level} greater
-	 * or equal a given {@link Level} is observed. 
-	 * 
+	 * or equal a given {@link Level} is observed.
+	 *
 	 * @author fjakop
 	 */
 	private class LogLevelObserver implements Observer {
@@ -275,7 +275,7 @@ public class TrayStarter implements IApplicationStarter {
 		private final Component componentToShow;
 
 		/**
-		 * 
+		 *
 		 * @param popupThreshold
 		 * @param componentToShow
 		 */
