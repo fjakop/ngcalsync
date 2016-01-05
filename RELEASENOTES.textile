@@ -2,7 +2,7 @@
 
 Move to Java 7 as minimum required runtime version.
 
-Sheduler state is persisted in the settings file.
+Scheduler state is persisted in the settings file.
 
 *0.8.0*
 
