@@ -20,7 +20,7 @@
 	</licenses>
 	<scm>
 		<connection>scm:git:git@github.com:fjakop/ngcalsync.git</connection>
-		<developerConnection>scm:git@github.com:fjakop/ngcalsync.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:fjakop/ngcalsync.git</developerConnection>
 		<url>https://github.com/fjakop/ngcalsync</url>
 	</scm>
 	<url>https://github.com/fjakop/ngcalsync</url>
