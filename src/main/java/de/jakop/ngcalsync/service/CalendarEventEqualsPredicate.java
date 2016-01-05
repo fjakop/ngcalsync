@@ -2,6 +2,7 @@ package de.jakop.ngcalsync.service;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.Validate;
@@ -61,7 +62,7 @@ class CalendarEventEqualsPredicate implements Predicate<CalendarEvent> {
 	 * @return a condensed representation of the event
 	 */
 	public static String format(final CalendarEvent doc) {
-		final DateFormat df = DateFormat.getDateTimeInstance();
+		final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.GERMANY);
 		return new StringBuilder()//
 				.append(doc.getEventType() == null ? null : doc.getEventType().getName())//
 				.append(": ")// //$NON-NLS-1$
