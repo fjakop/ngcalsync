@@ -22,20 +22,19 @@
 		<connection>scm:git:git@github.com:fjakop/ngcalsync.git</connection>
 		<developerConnection>scm:git:git@github.com:fjakop/ngcalsync.git</developerConnection>
 		<url>https://github.com/fjakop/ngcalsync</url>
+		<tag></tag>
 	</scm>
 	<url>https://github.com/fjakop/ngcalsync</url>
 
 	<groupId>de.jakop</groupId>
 	<artifactId>ngcalsync</artifactId>
-	<version>0.9.0-SNAPSHOT</version>
+	<version>0.10.0-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-
 	<build>
-
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
