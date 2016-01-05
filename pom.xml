@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<description>Synchronize anonymized Lotus Notes calendar events to your Google calendar. See http://sourceforge.net/projects/ngcalsync/</description>
+	<description>Synchronize anonymized Lotus Notes calendar events to your Google calendar. See https://github.com/fjakop/ngcalsync</description>
 	<developers>
 		<developer>
 			<name>fjakop</name>
@@ -116,9 +116,9 @@
 	<dependencies>
 		<!-- Extern Compile -->
 		<dependency>
-			<groupId>net.sourceforge.collections</groupId>
-			<artifactId>collections-generic</artifactId>
-			<version>4.01</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
