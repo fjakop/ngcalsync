@@ -2,13 +2,14 @@ package de.jakop.ngcalsync.calendar;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Value object for calendar events
  */
 public class CalendarEvent {
 
-	private final static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+	private final static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.GERMANY);
 	private final static String toStringFormat = "" + // //$NON-NLS-1$
 			"ID             : %s%n" + // //$NON-NLS-1$
 			"Title          : %s%n" + // //$NON-NLS-1$
@@ -180,7 +181,7 @@ public class CalendarEvent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if event's type is all day event or anniversary
 	 */
 	public boolean isAllDay() {
