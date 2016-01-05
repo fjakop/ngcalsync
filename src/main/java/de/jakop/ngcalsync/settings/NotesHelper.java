@@ -3,7 +3,7 @@ package de.jakop.ngcalsync.settings;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.collections15.map.HashedMap;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;

@@ -1,8 +1,6 @@
 package de.jakop.ngcalsync.google;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,8 +28,8 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * Accesses Google calendar events 
- * 
+ * Accesses Google calendar events
+ *
  * @author fjakop
  *
  */
@@ -46,11 +44,8 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	private com.google.api.services.calendar.model.Calendar calendar;
 
-	private final static SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
-
-
 	/**
-	 * 
+	 *
 	 * @param settings
 	 */
 	GoogleCalendarDAO(final Settings settings) {
@@ -113,9 +108,8 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 			final Calendar sdt = settings.getSyncStartDate();
 			final Calendar edt = settings.getSyncEndDate();
 
-			// datetimes are in RFC3339-format
-			final String startDateTime = new DateTime(sdt.getTime(), sdt.getTimeZone()).toStringRfc3339();
-			final String endDateTime = new DateTime(edt.getTime(), edt.getTimeZone()).toStringRfc3339();
+			final DateTime startDateTime = new DateTime(sdt.getTime(), sdt.getTimeZone());
+			final DateTime endDateTime = new DateTime(edt.getTime(), edt.getTimeZone());
 
 			final Events googleEvents = service.events().list(getCalendar().getId())//
 					.setTimeMin(startDateTime).setTimeMax(endDateTime)//
@@ -134,8 +128,6 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 			}
 		} catch (final IOException e) {
 			throw new SynchronisationException(e);
-		} catch (final ParseException e) {
-			throw new SynchronisationException(e);
 		}
 
 		return events;
@@ -144,7 +136,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	/**
 	 * retrieves the calendar for the given name (summary)
-	 *  
+	 *
 	 * @return den Kalender
 	 */
 	private com.google.api.services.calendar.model.Calendar getCalendar() {
@@ -188,8 +180,8 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 			edt.setTimeInMillis(sdt.getTimeInMillis());
 			edt.add(Calendar.DAY_OF_YEAR, 1);
 
-			startTime.setDate(dateFormatDateOnly.format(sdt.getTime()));
-			endTime.setDate(dateFormatDateOnly.format(edt.getTime()));
+			startTime.setDate(new DateTime(sdt.getTime()));
+			endTime.setDate(new DateTime(edt.getTime()));
 
 			startTime.setDateTime(null);
 			endTime.setDateTime(null);
@@ -210,7 +202,7 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 
 	}
 
-	private CalendarEvent convGoogleEvent(final Event googleEvent) throws ParseException {
+	private CalendarEvent convGoogleEvent(final Event googleEvent) {
 
 		final CalendarEvent myEvent = new CalendarEvent();
 		myEvent.setTitle(googleEvent.getSummary());
@@ -229,8 +221,8 @@ class GoogleCalendarDAO implements IGoogleCalendarDAO {
 		if (googleEvent.getStart().getDateTime() == null) {
 			// all day event - no DateTime, only Date present
 			myEvent.setEventType(EventType.ALL_DAY_EVENT);
-			sdt = new DateTime(dateFormatDateOnly.parse(googleEvent.getStart().getDate()));
-			edt = new DateTime(dateFormatDateOnly.parse(googleEvent.getEnd().getDate()));
+			sdt = googleEvent.getStart().getDate();
+			edt = googleEvent.getEnd().getDate();
 		} else {
 			// "timed" event - DateTime present
 			sdt = googleEvent.getStart().getDateTime();

@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections15.CollectionUtils;
-import org.apache.commons.collections15.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +30,7 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
- * Access to Lotus Notes calendar events 
+ * Access to Lotus Notes calendar events
  *
  * @author fjakop
  */
@@ -61,14 +61,15 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 
 
 	/**
-	 * 
-	 * @param dominoServer 
+	 *
+	 * @param dominoServer
 	 * @param mailDatabase
-	 * @param startDateTime 
-	 * @param endDateTime 
+	 * @param startDateTime
+	 * @param endDateTime
 	 * @param openDatabaseStrategy
 	 */
-	NotesCalendarDAO(final IOpenDatabaseStrategy openDatabaseStrategy, final String dominoServer, final String mailDatabase, final Calendar startDateTime, final Calendar endDateTime) {
+	NotesCalendarDAO(final IOpenDatabaseStrategy openDatabaseStrategy, final String dominoServer, final String mailDatabase, final Calendar startDateTime,
+			final Calendar endDateTime) {
 		mailDb = openDatabaseStrategy.openDatabase(dominoServer, mailDatabase);
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
@@ -189,7 +190,7 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 			}
 			bd.setLocation(loc);
 
-			// "OrgConfidential" == 1 Private 
+			// "OrgConfidential" == 1 Private
 			final String markPrivate = doc.getItemValueString(FIELDNAME_PRIVATE);
 			bd.setPrivate(StringUtils.trimToEmpty(markPrivate).equals("1")); //$NON-NLS-1$
 

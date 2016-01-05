@@ -1,7 +1,7 @@
 package de.jakop.ngcalsync.i18n;
 
-import c10n.C10N;
-import c10n.annotations.En;
+import com.github.rodionmoiseev.c10n.C10N;
+import com.github.rodionmoiseev.c10n.annotations.En;
 
 /**
  * Contains localisation of all strings that are visible in the configuration file(s).

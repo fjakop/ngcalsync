@@ -8,7 +8,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.util.Charsets;
 import com.google.common.base.Preconditions;
 
 import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
@@ -81,7 +84,7 @@ public class GoogleOAuth2DAO {
 	private GoogleClientSecrets clientSecrets = null;
 
 	/**
-	 * 
+	 *
 	 * @param transport HTTP transport
 	 * @param jsonFactory JSON factory
 	 * @param receiver verification code receiver
@@ -99,9 +102,9 @@ public class GoogleOAuth2DAO {
 	 * Authorizes the installed application to access user's protected data.
 	 *
 	 * @param scopes OAuth 2.0 scopes
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	private Credential authorizeViaWeb(final Iterable<String> scopes, final String user) throws IOException {
+	private Credential authorizeViaWeb(final Collection<String> scopes, final String user) throws IOException {
 		// get client secrets
 		final GoogleClientSecrets secrets = getClientSecrets(RESOURCE_LOCATION);
 
@@ -154,13 +157,13 @@ public class GoogleOAuth2DAO {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param scopes
 	 * @param user
-	 * @return the user's credential containing the access token, if successfully authorized 
+	 * @return the user's credential containing the access token, if successfully authorized
 	 * @throws IOException
 	 */
-	public Credential authorize(final Iterable<String> scopes, final String user) throws IOException {
+	public Credential authorize(final Collection<String> scopes, final String user) throws IOException {
 		final FileCredentialStore credentialStore = new FileCredentialStore(userSecretsFile);
 		Credential credential = new GoogleCredential.Builder() //
 				.setJsonFactory(jsonFactory) //
@@ -246,10 +249,11 @@ public class GoogleOAuth2DAO {
 		if (clientSecrets == null) {
 			final InputStream inputStream = getClass().getResourceAsStream(location);
 			Preconditions.checkNotNull(inputStream, TechMessage.get().MSG_MISSING_RESOURCE(location));
-			clientSecrets = GoogleClientSecrets.load(jsonFactory, inputStream);
+			clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(inputStream, Charsets.UTF_8));
 			Preconditions.checkArgument(//
 					!clientSecrets.getDetails().getClientId().startsWith("[[") && // //$NON-NLS-1$
-							!clientSecrets.getDetails().getClientSecret().startsWith("[["), TechMessage.get().MSG_ENTER_CLIENT_ID_AND_SECRET(location)); //$NON-NLS-1$
+							!clientSecrets.getDetails().getClientSecret().startsWith("[["), //$NON-NLS-1$
+					TechMessage.get().MSG_ENTER_CLIENT_ID_AND_SECRET(location));
 		}
 		return clientSecrets;
 	}

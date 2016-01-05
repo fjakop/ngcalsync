@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections15.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +23,7 @@ import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * Synchronizes from {@link INotesCalendarDAO} into the {@link IGoogleCalendarDAO}
- * 
+ *
  * @author fjakop
  *
  */
@@ -32,10 +32,10 @@ public class SyncService {
 	private final Log log = LogFactory.getLog(getClass());
 
 	/**
-	 * 
+	 *
 	 * @param notesDao
 	 * @param googleDao
-	 * @param settings 
+	 * @param settings
 	 */
 	public void executeSync(final INotesCalendarDAO notesDao, final IGoogleCalendarDAO googleDao, final ICalendarEventFilter[] filters, final ICalendarEventObfuscator[] obfuscators,
 			final Settings settings) {

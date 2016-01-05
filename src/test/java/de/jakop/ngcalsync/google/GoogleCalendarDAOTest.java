@@ -37,9 +37,9 @@ import de.jakop.ngcalsync.settings.Settings;
 
 /**
  * This test class uses intensive mocking, therefore it is split into several subclasses which run
- * as a test suite. I decided not to use different source files because of convenience to 
+ * as a test suite. I decided not to use different source files because of convenience to
  * MoreUnit-plugin's test detection and association under Eclipse.
- *  
+ *
  * @author fjakop
  *
  */
@@ -79,7 +79,7 @@ public class GoogleCalendarDAOTest {
 
 	/**
 	 * Tests the getEntries' logic
-	 *  
+	 *
 	 * @author fjakop
 	 */
 	public static class GetEventsTest {
@@ -104,13 +104,13 @@ public class GoogleCalendarDAOTest {
 
 			after.setTimeInMillis(now.getTimeInMillis() + 1);
 
-			// Settings creates Calendar (service) 
+			// Settings creates Calendar (service)
 			doReturn(calendar).when(settings).getGoogleCalendarService();
 			doReturn("mycal").when(settings).getGoogleCalendarName();
 			doReturn(now).when(settings).getSyncStartDate();
 			doReturn(after).when(settings).getSyncEndDate();
 
-			// Calendar (Service) creates 
+			// Calendar (Service) creates
 			// --> CalendarList
 			// --> Calendars
 			// --> Events
@@ -126,7 +126,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -145,7 +145,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -196,7 +196,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -228,8 +228,8 @@ public class GoogleCalendarDAOTest {
 
 			final SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("yyyy-MM-dd");
 			event1.getStart().setDateTime(null);
-			event1.getStart().setDate(dateFormatDateOnly.format(now.getTime()));
-			event1.getEnd().setDate(dateFormatDateOnly.format(after.getTime()));
+			event1.getStart().setDate(new DateTime(now.getTime()));
+			event1.getEnd().setDate(new DateTime(after.getTime()));
 
 			final IGoogleCalendarDAO dao = new GoogleCalendarDAO(settings);
 
@@ -252,7 +252,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -314,8 +314,8 @@ public class GoogleCalendarDAOTest {
 				}
 			}).when(events).list(Matchers.eq("myModelCal-id"));
 
-			doReturn(list).when(list).setTimeMin(Matchers.eq(new DateTime(start.getTime(), start.getTimeZone()).toStringRfc3339()));
-			doReturn(list).when(list).setTimeMax(Matchers.eq(new DateTime(end.getTime(), end.getTimeZone()).toStringRfc3339()));
+			doReturn(list).when(list).setTimeMin(Matchers.eq(new DateTime(start.getTime(), start.getTimeZone())));
+			doReturn(list).when(list).setTimeMax(Matchers.eq(new DateTime(end.getTime(), end.getTimeZone())));
 			doReturn(list).when(list).setMaxResults(Integer.valueOf(65535));
 			doReturn(list).when(list).setOrderBy(Matchers.eq("starttime"));
 			doReturn(list).when(list).setSingleEvents(Boolean.TRUE);
@@ -330,7 +330,7 @@ public class GoogleCalendarDAOTest {
 
 	/**
 	 * Tests the insert's logic
-	 *  
+	 *
 	 * @author fjakop
 	 */
 	public static class InsertTest {
@@ -367,10 +367,10 @@ public class GoogleCalendarDAOTest {
 			doReturn(new Integer(15)).when(settings).getReminderMinutes();
 			doReturn("mycal").when(settings).getGoogleCalendarName();
 
-			// Settings creates Calendar (service) 
+			// Settings creates Calendar (service)
 			doReturn(calendar).when(settings).getGoogleCalendarService();
 
-			// Calendar (Service) creates 
+			// Calendar (Service) creates
 			// --> CalendarList
 			// --> Calendars
 			// --> Events
@@ -385,7 +385,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -403,14 +403,14 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
 		public void testInsert_InsertThrowsIOException() throws Exception {
 
 
-			// Calendar (Service) creates 
+			// Calendar (Service) creates
 			// --> CalendarList
 			// --> Calendars
 			// --> Events
@@ -436,7 +436,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -455,7 +455,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test
@@ -474,7 +474,7 @@ public class GoogleCalendarDAOTest {
 		}
 
 		/**
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		@Test

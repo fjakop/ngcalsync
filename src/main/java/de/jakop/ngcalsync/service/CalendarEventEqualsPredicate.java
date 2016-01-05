@@ -3,7 +3,7 @@ package de.jakop.ngcalsync.service;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-import org.apache.commons.collections15.Predicate;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.Validate;
 
 import de.jakop.ngcalsync.calendar.CalendarEvent;

@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
 import de.jakop.ngcalsync.Constants;
@@ -30,9 +30,9 @@ import de.jakop.ngcalsync.oauth.IUserInputReceiver;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
- * 
+ *
  * @author fjakop
- * 
+ *
  */
 public class Settings {
 
@@ -52,9 +52,9 @@ public class Settings {
 	private Calendar syncStartDate;
 
 	/**
-	 * 
+	 *
 	 * @param fileAccessor
-	 * @param notesHelper 
+	 * @param notesHelper
 	 */
 	public Settings(final IFileAccessor fileAccessor, final Log log, final NotesHelper notesHelper) {
 		Validate.notNull(fileAccessor);
@@ -67,7 +67,7 @@ public class Settings {
 
 	/**
 	 * Save the curent configuration
-	 * 
+	 *
 	 * @throws ConfigurationException
 	 */
 	public void save() throws ConfigurationException {
@@ -77,7 +77,7 @@ public class Settings {
 	/**
 	 * @return <code>true</code>, if a restart is supposed
 	 * @throws IOException
-	 * @throws ConfigurationException 
+	 * @throws ConfigurationException
 	 */
 	public boolean load() throws IOException, ConfigurationException {
 
@@ -123,7 +123,7 @@ public class Settings {
 	/**
 	 * Checks for missing keys in configuration files. Missing keys are added with default values.
 	 * Upon missing key detection the program will print a message.
-	 * 
+	 *
 	 * @param settingsFile
 	 * @return <code>true</code>, if at least one key was added and the configuration was upgraded
 	 * @throws ConfigurationException
@@ -157,7 +157,7 @@ public class Settings {
 	}
 
 	/**
-	 * 
+	 *
 	 * Creates the file with the necessary native environment information, e.g. path to Lotus Notes
 	 * if necessary.
 	 *
@@ -335,7 +335,7 @@ public class Settings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the settings for protecting privacy of event's data
 	 */
 	public PrivacySettings getPrivacySettings() {
@@ -351,7 +351,7 @@ public class Settings {
 
 	/**
 	 * Liefert den Zugriff auf den Google-Kalender
-	 * 
+	 *
 	 * @return the service
 	 */
 	public com.google.api.services.calendar.Calendar getGoogleCalendarService() {
@@ -373,8 +373,9 @@ public class Settings {
 						fileAccessor.getFile(Constants.FILENAME_USER_SECRETS));
 				final Credential credential = googleOAuth2DAO.authorize(scopes, getGoogleAccountName());
 
-				calendarService = com.google.api.services.calendar.Calendar.builder(httpTransport, jsonFactory).setApplicationName(Constants.APPLICATION_NAME)
-						.setHttpRequestInitializer(credential).build();
+				calendarService = new com.google.api.services.calendar.Calendar.Builder(httpTransport, jsonFactory, credential)//
+						.setApplicationName(Constants.APPLICATION_NAME)//
+						.build();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -383,7 +384,7 @@ public class Settings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the current {@link IUserInputReceiver}
 	 */
 	public IUserInputReceiver getVerificationCodeReceiver() {
@@ -391,7 +392,7 @@ public class Settings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param userInputReceiver the curent {@link IUserInputReceiver}
 	 */
 	public void setUserInputReceiver(final IUserInputReceiver userInputReceiver) {

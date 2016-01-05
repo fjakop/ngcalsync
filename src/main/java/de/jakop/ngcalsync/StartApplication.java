@@ -11,10 +11,10 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import c10n.C10N;
-import c10n.C10NConfigBase;
-import c10n.annotations.DefaultC10NAnnotations;
-import c10n.annotations.En;
+import com.github.rodionmoiseev.c10n.C10N;
+import com.github.rodionmoiseev.c10n.C10NConfigBase;
+import com.github.rodionmoiseev.c10n.annotations.DefaultC10NAnnotations;
+import com.github.rodionmoiseev.c10n.annotations.En;
 
 import de.jakop.ngcalsync.application.Application;
 import de.jakop.ngcalsync.application.ConsoleDirectStarter;

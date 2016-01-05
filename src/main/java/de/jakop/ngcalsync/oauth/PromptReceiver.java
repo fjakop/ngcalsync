@@ -16,14 +16,14 @@ class PromptReceiver implements IUserInputReceiver {
 	private final PrintStream out;
 
 	/**
-	 * 
+	 *
 	 */
 	public PromptReceiver() {
 		this(System.in, System.out);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param in
 	 * @param out
 	 */
@@ -37,7 +37,9 @@ class PromptReceiver implements IUserInputReceiver {
 		String code;
 		do {
 			out.print(message);
-			code = new Scanner(in).nextLine();
+			final Scanner scanner = new Scanner(in);
+			code = scanner.nextLine();
+			scanner.close();
 		} while (code.isEmpty());
 		return code;
 	}
