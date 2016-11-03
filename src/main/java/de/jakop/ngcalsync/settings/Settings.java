@@ -96,6 +96,8 @@ public class Settings {
 			return restart;
 		}
 
+		syncStartDate = readSyncStartDate();
+		syncEndDate = readSyncEndDate();
 
 		// letzte Synchronisierung lesen
 		final File file = fileAccessor.getFile(Constants.FILENAME_LAST_SYNC_TIME);
@@ -113,9 +115,6 @@ public class Settings {
 		}
 
 		syncLastDateTime.setTimeInMillis(Long.parseLong(line.trim()));
-
-		syncStartDate = readSyncStartDate();
-		syncEndDate = readSyncEndDate();
 
 		return false;
 	}

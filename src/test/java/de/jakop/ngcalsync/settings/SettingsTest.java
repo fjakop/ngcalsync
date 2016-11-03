@@ -3,6 +3,7 @@ package de.jakop.ngcalsync.settings;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -34,7 +35,7 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -90,7 +91,7 @@ public class SettingsTest {
 
 	/**
 	 * Verifies that environment file is created if missing.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testFirstStart_EnvironmentFileMissing_IsCreated_ProgramExits() throws Exception {
@@ -119,7 +120,7 @@ public class SettingsTest {
 
 	/**
 	 * Verifies that settings file is created preset with defaults on first start.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testFirstStart_SettingsFileMissing_IsCreated_ProgramExits() throws Exception {
@@ -130,12 +131,11 @@ public class SettingsTest {
 		loadSettings(true);
 
 		// verify message
-		verify(log, times(1)).info(
-				UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(),
-						"{sync.recurrence,sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
-								+ "notes.mail.db.file,notes.domino.server,"//
-								+ "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
-								+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
+		verify(log, times(1)).info(UserMessage.get().MSG_CONFIGURATION_UPGRADED(settingsFile.getAbsolutePath(),
+				"{sync.recurrence,sync.types,sync.end,sync.start,sync.transfer.title,sync.transfer.description,sync.transfer.location," //
+						+ "notes.mail.db.file,notes.domino.server,"//
+						+ "google.calendar.reminderminutes,google.calendar.name,google.account.email," //
+						+ "proxy.host,proxy.port,proxy.user,proxy.password}"));
 
 
 		// verify that all parameters are set with their defaults
@@ -144,7 +144,7 @@ public class SettingsTest {
 
 	/**
 	 * Verifies that missing keys are automatically created and preset with defaults.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testParameterAdded_FileIsUpgraded_ProgramExits() throws Exception {
@@ -168,7 +168,7 @@ public class SettingsTest {
 
 	/**
 	 * Verifies that no message is logged if configuration is up to date.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testConfigurationIsUpToDate_NoMessageLogged() throws Exception {
@@ -188,7 +188,7 @@ public class SettingsTest {
 
 	/**
 	 * Verifies that every configuration parameter can be obtained by its getter and its default value.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetValuesWithDefaults() throws Exception {
@@ -227,8 +227,8 @@ public class SettingsTest {
 	/**
 	 * Verifies that the parameter 'sync.types' is obtained as string array, because it may contain
 	 * multiple values.
-	 * 
-	 * @throws Exception 
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetSyncAppointmentTypes_ParsedAsStringArray() throws Exception {
@@ -241,7 +241,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -262,7 +262,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -284,7 +284,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -306,7 +306,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -328,7 +328,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -347,7 +347,7 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -364,7 +364,25 @@ public class SettingsTest {
 	}
 
 	/**
-	 * 
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testLoad_NoSyncLastDateTimeFile_SyncStartAndEndAreNotNull() throws Exception {
+
+		lastSyncDateFile.delete();
+
+		// #1 for creating the default config file
+		loadSettings(true);
+		// #2 for testing (no restart)
+		final Settings settings = loadSettings(false);
+
+		assertNotNull(settings.getSyncEndDate());
+		assertNotNull(settings.getSyncStartDate());
+	}
+
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -382,7 +400,7 @@ public class SettingsTest {
 
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
