@@ -205,7 +205,7 @@ public class Settings {
 	}
 
 	/**
-	 * @return cron expression for the recurrence of synchronisation when the scheduler is active
+	 * @return cron expression for the recurrence of synchronisation when the scheduler is active""
 	 */
 	public String getSyncRecurrenceExpression() {
 		return configuration.getString(ConfigurationParameter.SYNC_RECURRENCE.getKey());
@@ -410,6 +410,13 @@ public class Settings {
 	 */
 	public boolean isSchedulerStarted() {
 		return configuration.getBoolean(ConfigurationParameter.SYNC_SCHEDULER_START.getKey(), false);
+	}
+
+	/**
+	 * @return the pop up threshold level
+	 */
+	public String getPopupThresholdLevel() {
+		return configuration.getString(ConfigurationParameter.POPUP_THRESHOLD_LEVEL.getKey(), "INFO"); //$NON-NLS-1$
 	}
 
 	/* for JUnit-Tests */

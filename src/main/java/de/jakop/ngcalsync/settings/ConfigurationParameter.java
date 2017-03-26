@@ -37,7 +37,8 @@ enum ConfigurationParameter {
 
 	PROXY_USER("proxy.user", "", ConfigurationDescription.get().PROXY_USER()), // //$NON-NLS-1$ //$NON-NLS-2$
 
-	PROXY_PASSWORD("proxy.password", "", ConfigurationDescription.get().PROXY_PASSWORD()); //$NON-NLS-1$ //$NON-NLS-2$
+	PROXY_PASSWORD("proxy.password", "", ConfigurationDescription.get().PROXY_PASSWORD()), //$NON-NLS-1$ //$NON-NLS-2$
+	POPUP_THRESHOLD_LEVEL("popup.threshold.level", "", ConfigurationDescription.get().POPUP_THRESHOLD_LEVEL()); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private final String key;
 	private final String defaultvalue;
