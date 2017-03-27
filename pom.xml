@@ -1,3 +1,31 @@
+<!--
+
+    Copyright © 2012, Frank Jakop
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+          notice, this list of conditions and the following disclaimer in the
+          documentation and/or other materials provided with the distribution.
+        * Neither the name of the <organization> nor the
+          names of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -5,25 +33,31 @@
 	<developers>
 		<developer>
 			<name>fjakop</name>
+			<email>frank.jakop@arxes-tolina.de</email>
 		</developer>
 	</developers>
+	
 	<inceptionYear>2012</inceptionYear>
+	
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/fjakop/ngcalsync/issues</url>
 	</issueManagement>
+	
 	<licenses>
 		<license>
 			<name>BSD License</name>
 			<url>https://github.com/fjakop/ngcalsync/blob/master/LICENSE</url>
 		</license>
 	</licenses>
+	
 	<scm>
 		<connection>scm:git:git@github.com:fjakop/ngcalsync.git</connection>
 		<developerConnection>scm:git:git@github.com:fjakop/ngcalsync.git</developerConnection>
 		<url>https://github.com/fjakop/ngcalsync</url>
 		<tag></tag>
 	</scm>
+	
 	<url>https://github.com/fjakop/ngcalsync</url>
 
 	<groupId>de.jakop</groupId>
@@ -32,6 +66,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<license-maven-plugin.version>3.0</license-maven-plugin.version>
 	</properties>
 
 	<build>
@@ -40,7 +78,7 @@
 				<directory>src/main/resources</directory>
 			</resource>
 			<resource>
-				<directory>.</directory>
+				<directory>${project.basedir}</directory>
 				<includes>
 					<include>LICENSE</include>
 					<include>README*</include>
@@ -51,13 +89,40 @@
 
 		<plugins>
 			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-maven-plugin.version}</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<failIfUnknown>true</failIfUnknown>
+					<header>com/mycila/maven/plugin/license/templates/BSD-3.txt</header>
+					<properties>
+						<owner>Frank Jakop</owner>
+						<email>frank.jakop@arxes-tolina.de</email>
+					</properties>
+					<excludes>
+						<exclude>**/README.textile</exclude>
+						<exclude>**/RELEASENOTES.textile</exclude>
+						<exclude>src/test/resources/**</exclude>
+						<exclude>src/main/resources/**</exclude>
+						<exclude>repo/**</exclude>
+						<exclude>launch-config/**</exclude>
+						<exclude>LICENSE</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -239,43 +304,45 @@
 		</profile>
 
 		<profile>
-			<id>coverage</id>
+			<id>coverage-per-test</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>2.5.1</version>
-						<configuration>
-							<check>
-								<!-- <branchRate>85</branchRate> -->
-								<!-- <lineRate>85</lineRate> -->
-								<haltOnFailure>true</haltOnFailure>
-								<totalBranchRate>58</totalBranchRate>
-								<totalLineRate>65</totalLineRate>
-								<!-- <packageLineRate>85</packageLineRate> -->
-								<!-- <packageBranchRate>85</packageBranchRate> -->
-								<regexes>
-									<regex>
-										<pattern>de.jakop.ngcalsync.util.os.*</pattern>
-										<branchRate>0</branchRate>
-										<lineRate>0</lineRate>
-									</regex>
-								</regexes>
-							</check>
-						</configuration>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<execution>
-								<phase>package</phase>
+								<id>pre-test</id>
 								<goals>
-									<goal>clean</goal>
-									<goal>check</goal>
+									<goal>prepare-agent</goal>
 								</goals>
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+						<configuration>
+							<properties>
+								<property>
+									<name>listener</name>
+									<value>org.sonar.java.jacoco.JUnitListener</value>
+								</property>
+							</properties>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.sonarsource.java</groupId>
+					<artifactId>sonar-jacoco-listeners</artifactId>
+					<version>${sonar-jacoco-listeners.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 </project>
