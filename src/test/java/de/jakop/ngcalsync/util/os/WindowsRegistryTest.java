@@ -40,10 +40,11 @@ import org.junit.Test;
 import org.mockito.Matchers;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class WindowsRegistryTest {
 
 	/**

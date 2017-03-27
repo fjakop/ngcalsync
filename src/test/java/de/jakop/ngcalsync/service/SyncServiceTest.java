@@ -58,10 +58,11 @@ import de.jakop.ngcalsync.settings.Settings;
 import de.jakop.ngcalsync.util.file.IFileAccessor;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class SyncServiceTest {
 
 	/** expected exception */
@@ -79,7 +80,7 @@ public class SyncServiceTest {
 	private final Calendar after = Calendar.getInstance();
 
 	/**
-	 * 
+	 *
 	 */
 	@Before
 	public void before() {
@@ -89,7 +90,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -99,7 +100,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -109,7 +110,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -119,7 +120,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -135,7 +136,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -163,7 +164,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -191,7 +192,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -236,7 +237,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -262,7 +263,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -302,7 +303,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -330,7 +331,7 @@ public class SyncServiceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

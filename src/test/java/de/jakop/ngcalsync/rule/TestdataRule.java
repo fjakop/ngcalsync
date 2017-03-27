@@ -33,11 +33,12 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * {@link TestRule} to access files under src/test/resources according tothe package and class name 
+ * {@link TestRule} to access files under src/test/resources according tothe package and class name
  * of the curent test class.
  *
  * @author fjakop
  */
+@SuppressWarnings("nls")
 public class TestdataRule implements TestRule {
 
 	private String classpath;
@@ -47,7 +48,7 @@ public class TestdataRule implements TestRule {
 	 * Given that a file named 'foo/bar.txt' is to be accessed by a test method <code>testSomething()</code>in a
 	 * class named <code>de.jakop.my.CoolTest</code> the file 'src/test/resources/de/jakop/my/CoolTest/testSomething/foo/bar.txt'
 	 * is returned.
-	 * 
+	 *
 	 * @param pathname the relative path to the file
 	 * @return the file
 	 */

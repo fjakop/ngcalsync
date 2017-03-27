@@ -45,10 +45,11 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class CalendarEventEqualsPredicateTest {
 
 	/** */
@@ -336,7 +337,7 @@ public class CalendarEventEqualsPredicateTest {
 		assertFalse(new CalendarEventEqualsPredicate(event).evaluate(compareTo));
 	}
 
-	/** 
+	/**
 	 * @throws Exception
 	 */
 	@Test
@@ -350,7 +351,7 @@ public class CalendarEventEqualsPredicateTest {
 		assertEquals("LocalizedUserStrings.REMINDER: 31.12.0002 00:00:00 -> 31.12.0002 00:00:00", CalendarEventEqualsPredicate.format(event));
 	}
 
-	/** 
+	/**
 	 * @throws Exception
 	 */
 	@Test

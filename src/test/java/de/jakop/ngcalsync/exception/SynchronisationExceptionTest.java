@@ -31,14 +31,15 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class SynchronisationExceptionTest {
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -49,7 +50,7 @@ public class SynchronisationExceptionTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

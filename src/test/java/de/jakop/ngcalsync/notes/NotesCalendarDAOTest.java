@@ -50,10 +50,11 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class NotesCalendarDAOTest {
 
 	@Mock
@@ -74,7 +75,7 @@ public class NotesCalendarDAOTest {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Test
 	public void testRecurringEntriesDates() {

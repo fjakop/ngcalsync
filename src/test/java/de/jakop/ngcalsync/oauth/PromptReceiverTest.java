@@ -38,14 +38,15 @@ import org.junit.Test;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class PromptReceiverTest {
 
 	/**
-	* 
+	*
 	* @throws Exception
 	*/
 	@Test

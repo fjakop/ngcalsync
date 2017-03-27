@@ -26,6 +26,8 @@
  */
 package de.jakop.ngcalsync.application;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
 import java.awt.Component;
@@ -223,7 +225,7 @@ public class TrayStarter implements IApplicationStarter {
 				try {
 					scheduler.triggerNow();
 				} catch (final SchedulerException ex) {
-					log.error("", ex);
+					log.error(EMPTY, ex);
 				}
 			}
 		};

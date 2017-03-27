@@ -37,10 +37,11 @@ import org.junit.Test;
 import de.jakop.ngcalsync.Constants;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class DefaultFileAccessorTest {
 
 	private TempFileManager manager;
@@ -60,7 +61,7 @@ public class DefaultFileAccessorTest {
 
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

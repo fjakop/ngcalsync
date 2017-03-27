@@ -38,6 +38,7 @@ import org.junit.Test;
  *
  * @author fjakop
  */
+@SuppressWarnings("nls")
 public class DefaultRegistryQueryProcessFactoryTest {
 
 	@SuppressWarnings("javadoc")

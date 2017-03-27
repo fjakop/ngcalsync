@@ -40,10 +40,11 @@ import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.settings.PrivacySettings;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class DefaultCalendarEventObfuscatorTest {
 
 	/** expected exception */
@@ -51,7 +52,7 @@ public class DefaultCalendarEventObfuscatorTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -61,7 +62,7 @@ public class DefaultCalendarEventObfuscatorTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -85,7 +86,7 @@ public class DefaultCalendarEventObfuscatorTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

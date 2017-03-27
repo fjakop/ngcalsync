@@ -69,6 +69,7 @@ import de.jakop.ngcalsync.settings.Settings;
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 @RunWith(Suite.class)
 @SuiteClasses({ InsertTest.class, GetEventsTest.class })
 public class GoogleCalendarDAOTest {

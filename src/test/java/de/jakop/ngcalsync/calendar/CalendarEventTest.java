@@ -35,10 +35,11 @@ import java.util.Calendar;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author fjakop
- * 
+ *
  */
+@SuppressWarnings("nls")
 public class CalendarEventTest {
 
 	private final static String toStringFormat = "" + //
@@ -52,7 +53,7 @@ public class CalendarEventTest {
 			"EventType      : %s";
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -62,7 +63,7 @@ public class CalendarEventTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -95,7 +96,7 @@ public class CalendarEventTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -121,7 +122,7 @@ public class CalendarEventTest {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Test
 	public void testSetGetLocationTitleContentPrivate() {

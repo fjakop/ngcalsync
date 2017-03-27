@@ -31,16 +31,17 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class TempFileManager {
 
 	private File tempdir;
 
 	/**
-	 * 
+	 *
 	 * @return a temporary directory which is not yet created
 	 */
 	public File getTempDir() {

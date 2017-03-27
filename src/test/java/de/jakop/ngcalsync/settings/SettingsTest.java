@@ -65,6 +65,7 @@ import de.jakop.ngcalsync.util.file.IFileAccessor;
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class SettingsTest {
 
 	/** expected exception */

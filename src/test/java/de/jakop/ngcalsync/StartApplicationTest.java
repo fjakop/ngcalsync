@@ -37,10 +37,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
+@SuppressWarnings("nls")
 public class StartApplicationTest {
 
 	/** expect an exception */
@@ -50,7 +51,7 @@ public class StartApplicationTest {
 
 	/**
 	 * No arguments on the command line result in no options.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -67,7 +68,7 @@ public class StartApplicationTest {
 
 	/**
 	 * Invalid arguments on the command line result in an exception.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -84,7 +85,7 @@ public class StartApplicationTest {
 
 	/**
 	 * Argument "-console" is valid.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -102,7 +103,7 @@ public class StartApplicationTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -112,7 +113,7 @@ public class StartApplicationTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

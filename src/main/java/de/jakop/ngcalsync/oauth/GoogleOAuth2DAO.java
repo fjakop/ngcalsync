@@ -243,10 +243,8 @@ public class GoogleOAuth2DAO {
 		}
 
 		private void save() {
-			try {
-				final FileWriter writer = new FileWriter(secretsFile);
+			try (final FileWriter writer = new FileWriter(secretsFile);) {
 				getProperties().store(writer, null);
-				writer.close();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
