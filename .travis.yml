@@ -1,4 +1,18 @@
 language: java
+
+addons:
+  sonarqube:
+    organization: "fjakop-github"
+    token:
+      secure: "gFGoG61MrgPnLbfOgJWJRxcCL3xkWwrefSd3eV7TGylsouQYCMmyWf/1ttDT6l2BOIO/FpADRxugre6CdmYHaZ/ncUshl07FZ9KkIZGV3uteLjd10BlybBjSFCTQMqGJ6/zWx3SnwPSHLLTkbrozdz4QlWD8Jnx7CksfdfBauJJpvNlA5ijHgixBjcF02WTT7wM7IbxP7TGqhscEud9+S+FeKGKP+bPm3HDT6xSIWT13EzeosoDodGYHViT7NUWoVHQHr62oKkK0o4Pdw+pFodUX6GrergK5nUfhYU7gpDR3nweLm9v/cxLaTKMvzIHyR9rvZYHR/TQFYXcv8pemV+r51aEdPEmeeLgMLN2UxM5sijLB74gu6Vflix5v5nglJEVobGcw58QnLE0/jwuseJ18ejYHr9nY1d+ve/0dLZIf2NZUu+ST9DrT+8Irx3/RdIN23RxbabVofaQKTpWBcuqoo/+Wof697IvWr8L4tp7qTRgMH0jHzazUo6fsVXZ8BOTWFGNG30FPZJwu7oFAm1LV2TiaHH9w0jaJPTRD4ES+MgGVISPJswKlC1yR1J3sD4hfRFdgQFMroqEKDd27FeS870slwNu2qxJGZyu5LjH0ZDtNjJfq5vhE3UVUrM3ytFzB2167rinGvipC1s2Pujk2onl7Cd4O+KTwdSsjUc8="
+
+jdk:
+  - oraclejdk8
+  
+script:
+  # JaCoCo is used to have code coverage, the agent has to be activated
+  - mvn clean verify sonar:sonar -Pcoverage-per-test
+
 deploy:
   provider: releases
   api_key:

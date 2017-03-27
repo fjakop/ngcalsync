@@ -52,7 +52,7 @@
 	</licenses>
 	
 	<scm>
-		<connection>scm:git:git@github.com:fjakop/ngcalsync.git</connection>
+		<connection>scm:git:https://github.com/fjakop/ngcalsync.git</connection>
 		<developerConnection>scm:git:git@github.com:fjakop/ngcalsync.git</developerConnection>
 		<url>https://github.com/fjakop/ngcalsync</url>
 		<tag></tag>
@@ -69,7 +69,10 @@
 		<java.version>1.7</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+		<jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
 		<license-maven-plugin.version>3.0</license-maven-plugin.version>
+		<sonar-jacoco-listeners.version>4.2</sonar-jacoco-listeners.version>
 	</properties>
 
 	<build>
