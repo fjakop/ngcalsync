@@ -56,7 +56,7 @@ public class StatefulTrayIcon extends TrayIcon implements Observer {
 
 	/**
 	* Constructor.
-	* 
+	*
 	* @throws java.io.IOException if an I/O error occurs while reading the icon image resources
 	*/
 	public StatefulTrayIcon() throws IOException {
@@ -72,7 +72,7 @@ public class StatefulTrayIcon extends TrayIcon implements Observer {
 
 	/**
 	 * Sets the tray icon to the given state. Waits for the previous state to terminate.
-	 * 
+	 *
 	 * @param state
 	 */
 	public void setState(final SynchronizeState state) {

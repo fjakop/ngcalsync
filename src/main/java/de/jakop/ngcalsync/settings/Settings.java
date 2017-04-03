@@ -231,7 +231,7 @@ public class Settings {
 	}
 
 	/**
-	 * @return cron expression for the recurrence of synchronisation when the scheduler is active""
+	 * @return cron expression for the recurrence of synchronisation when the scheduler is active
 	 */
 	public String getSyncRecurrenceExpression() {
 		return configuration.getString(ConfigurationParameter.SYNC_RECURRENCE.getKey());

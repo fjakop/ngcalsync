@@ -46,7 +46,7 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
  * <li>Windows XP</li>
  * <li>Windows 7</li>
  * </ul>
- * 
+ *
  * @author fjakop
  *
  */
@@ -60,7 +60,7 @@ public final class WindowsRegistry {
 	private final IRegistryQueryProcessFactory processFactory;
 
 	/**
-	 * 
+	 *
 	 * @param processFactory
 	 */
 	public WindowsRegistry(final IRegistryQueryProcessFactory processFactory) {
@@ -70,7 +70,7 @@ public final class WindowsRegistry {
 
 	/**
 	 * Reads the value of the registry key at the given location
-	 * 
+	 *
 	 * @param location path in the registry
 	 * @param key registry key
 	 * @return registry value or null if not found

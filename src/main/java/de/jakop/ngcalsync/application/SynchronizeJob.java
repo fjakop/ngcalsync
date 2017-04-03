@@ -32,7 +32,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * Job for actually executing the synchronisation. Triggered by the {@link SchedulerFacade}
- * 
+ *
  * @author fjakop
  */
 public class SynchronizeJob implements Job {

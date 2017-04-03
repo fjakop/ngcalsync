@@ -30,7 +30,7 @@ import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
  * Types of Events
- * 
+ *
  * @author fjakop
  */
 public enum EventType {
@@ -68,7 +68,7 @@ public enum EventType {
 	}
 
 	/**
-	 * Creates {@link EventType} for integer value 
+	 * Creates {@link EventType} for integer value
 	 * @param type
 	 * @return the created {@link EventType}
 	 * @throws IllegalArgumentException for invalid integer value

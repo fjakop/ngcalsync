@@ -47,7 +47,7 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  * Facade for a quartz-scheduler and trigger which accepts a cron string and triggers the
  * synchronisation at given times.
- * 
+ *
  * @author fjakop
  */
 public class SchedulerFacade {
@@ -67,10 +67,10 @@ public class SchedulerFacade {
 	private CronExpression cronTimerExpression;
 
 	/**
-	 * 
+	 *
 	 * @param application
 	 * @throws ParseException
-	 * @throws SchedulerException 
+	 * @throws SchedulerException
 	 */
 	public SchedulerFacade(final Application application) throws ParseException, SchedulerException {
 		Validate.notNull(application);
@@ -82,7 +82,7 @@ public class SchedulerFacade {
 
 	/**
 	 * (Re-)starts the scheduling
-	 *  
+	 *
 	 * @throws SchedulerException
 	 */
 	public void start() throws SchedulerException {
@@ -92,7 +92,7 @@ public class SchedulerFacade {
 
 	/**
 	 * Pauses the scheduling
-	 * 
+	 *
 	 * @throws SchedulerException
 	 */
 	public void pause() throws SchedulerException {
@@ -102,7 +102,7 @@ public class SchedulerFacade {
 
 	/**
 	 * Triggers synchronisation right now, if not already running.
-	 * 
+	 *
 	 * @throws SchedulerException
 	 */
 	public void triggerNow() throws SchedulerException {
@@ -131,10 +131,10 @@ public class SchedulerFacade {
 	 * <tr><td>Every day from 9-17 o'clock every 30 min.</td><td>0 *&frasl;30 9-17 * * ?</td><tr>
 	 * <tr><td>From MON to FRI 8-18 o'clock every hour </td><td>0 * 8-18 * * MON-FRI</td><tr>
 	 * </table>
-	 * 
+	 *
 	 * @param cronExpression
-	 * @throws ParseException 
-	 * @throws SchedulerException 
+	 * @throws ParseException
+	 * @throws SchedulerException
 	 */
 	public void schedule(final String cronExpression) throws ParseException, SchedulerException {
 		Validate.notNull(cronExpression);

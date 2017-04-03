@@ -55,7 +55,7 @@ import de.jakop.ngcalsync.settings.PrivacySettings;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -88,8 +88,8 @@ public class ApplicationTest {
 		doReturn(googleCalendarDao).when(googleCalendarDaoFactory).createGoogleCalendarDao(settings);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -98,8 +98,8 @@ public class ApplicationTest {
 		new Application(null, null, null, null);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -108,8 +108,8 @@ public class ApplicationTest {
 		new Application(mock(Settings.class), null, null, null);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -118,8 +118,8 @@ public class ApplicationTest {
 		new Application(mock(Settings.class), service, null, null);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -130,8 +130,8 @@ public class ApplicationTest {
 
 
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -145,8 +145,8 @@ public class ApplicationTest {
 				(ICalendarEventObfuscator[]) Matchers.any(), Matchers.eq(settings));
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -159,8 +159,8 @@ public class ApplicationTest {
 		verifyNoMoreInteractions(settings);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -177,8 +177,8 @@ public class ApplicationTest {
 		verifyNoMoreInteractions(settings);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @throws Exception
 	 */
 	@Test

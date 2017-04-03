@@ -28,7 +28,7 @@ package de.jakop.ngcalsync.oauth;
 
 /**
  * Creates {@link IUserInputReceiver}s for different use-cases.
- * 
+ *
  * @author fjakop
  *
  */

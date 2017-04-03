@@ -35,7 +35,7 @@ import org.junit.rules.ExpectedException;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -46,7 +46,7 @@ public class EventTypeTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -59,7 +59,7 @@ public class EventTypeTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -70,7 +70,7 @@ public class EventTypeTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -83,7 +83,7 @@ public class EventTypeTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

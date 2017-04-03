@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
 import de.jakop.ngcalsync.i18n.LocalizedUserStrings.UserMessage;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */

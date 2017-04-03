@@ -66,10 +66,10 @@ import org.apache.log4j.spi.LoggingEvent;
  * log4j.appender.gui.layout.ConversionPattern=%5p - %m%n
  * log4j.rootLogger = DEBUG, gui
  * </pre>
- * 
+ *
  * Access to a configured named instance by code:
  * <pre>((GUIAppender) Logger.getRootLogger().getAppender("gui"))</pre>
- *  * 
+ *  *
  * @author fjakop
  */
 public class Log4JSwingAppender extends AppenderSkeleton {
@@ -164,7 +164,7 @@ public class Log4JSwingAppender extends AppenderSkeleton {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the panel which shows the log entries
 	 */
 	public JComponent getLogPanel() {

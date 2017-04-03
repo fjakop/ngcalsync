@@ -29,7 +29,7 @@ package de.jakop.ngcalsync.notes;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -38,7 +38,7 @@ public class NotesCalendarDaoFactory {
 	private final IOpenDatabaseStrategy openDatabaseStrategy;
 
 	/**
-	 * 
+	 *
 	 * @param openDatabaseStrategy
 	 */
 	public NotesCalendarDaoFactory(final IOpenDatabaseStrategy openDatabaseStrategy) {
@@ -47,7 +47,7 @@ public class NotesCalendarDaoFactory {
 
 	/**
 	 * Creates a {@link NotesCalendarDAO}
-	 * 
+	 *
 	 * @param settings
 	 * @return a new {@link NotesCalendarDAO}
 	 */

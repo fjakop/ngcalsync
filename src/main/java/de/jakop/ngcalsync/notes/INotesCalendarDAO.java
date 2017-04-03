@@ -34,7 +34,7 @@ import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 
 
 /**
- * Access to Lotus Notes calendar events 
+ * Access to Lotus Notes calendar events
  *
  * @author fjakop
  */
@@ -42,7 +42,7 @@ public interface INotesCalendarDAO {
 
 	/**
 	 * Reads all calendar events matched by the filters
-	 * 
+	 *
 	 * @param filters
 	 * @return all matching events
 	 */

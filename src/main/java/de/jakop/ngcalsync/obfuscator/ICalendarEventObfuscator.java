@@ -30,7 +30,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 
 /**
  * Obfuscate some of the {@link CalendarEvent}'s values.
- * 
+ *
  * @author fjakop
  */
 public interface ICalendarEventObfuscator {

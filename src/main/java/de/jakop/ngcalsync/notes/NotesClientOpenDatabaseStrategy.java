@@ -32,24 +32,24 @@ import de.bea.domingo.DNotesFactory;
 import de.bea.domingo.DSession;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
 public class NotesClientOpenDatabaseStrategy implements IOpenDatabaseStrategy {
 
 	@Override
-	public DDatabase openDatabase(String dominoServer, String database) {
+	public DDatabase openDatabase(final String dominoServer, final String database) {
 
 		try {
-			DNotesFactory factory = DNotesFactory.getInstance();
-			DSession notesSession = factory.getSession();
-			DDatabase db = notesSession.getDatabase(dominoServer, database);
+			final DNotesFactory factory = DNotesFactory.getInstance();
+			final DSession notesSession = factory.getSession();
+			final DDatabase db = notesSession.getDatabase(dominoServer, database);
 			if (db.isOpen() == false) {
 				db.open();
 			}
 			return db;
-		} catch (DNotesException e) {
+		} catch (final DNotesException e) {
 			throw new RuntimeException(e);
 		}
 	}

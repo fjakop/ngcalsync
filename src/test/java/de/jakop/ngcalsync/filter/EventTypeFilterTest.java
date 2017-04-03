@@ -41,7 +41,7 @@ import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -57,7 +57,7 @@ public class EventTypeFilterTest {
 	private EventTypeFilter filter;
 
 	/**
-	 * 
+	 *
 	 */
 	@Before
 	public void before() {
@@ -65,7 +65,7 @@ public class EventTypeFilterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -77,7 +77,7 @@ public class EventTypeFilterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -93,7 +93,7 @@ public class EventTypeFilterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -106,7 +106,7 @@ public class EventTypeFilterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

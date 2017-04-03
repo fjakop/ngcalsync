@@ -52,7 +52,7 @@ import de.jakop.ngcalsync.tray.SynchronizeState;
 
 /**
  * This is the main application class.
- * 
+ *
  * @author fjakop
  *
  */
@@ -67,11 +67,11 @@ public class Application extends Observable {
 	private final GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
 	/**
-	 * 
-	 * @param settings 
+	 *
+	 * @param settings
 	 * @param service
-	 * @param notesCalendarDaoFactory 
-	 * @param googleCalendarDaoFactory 
+	 * @param notesCalendarDaoFactory
+	 * @param googleCalendarDaoFactory
 	 */
 	public Application(final Settings settings, final SyncService service, final NotesCalendarDaoFactory notesCalendarDaoFactory,
 			final GoogleCalendarDaoFactory googleCalendarDaoFactory) {

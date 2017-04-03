@@ -27,7 +27,7 @@
 package de.jakop.ngcalsync;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */

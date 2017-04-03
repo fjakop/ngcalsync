@@ -38,7 +38,7 @@ import com.github.rodionmoiseev.c10n.annotations.En;
  * <li>dialog or prompt messages</li>
  * <li>event type names</li>
  * </ul>
- * 
+ *
  * @author fjakop
  *
  */
@@ -46,7 +46,7 @@ public interface LocalizedUserStrings {
 
 	/**
 	 * static convenience getter for {@link LocalizedUserStrings}
-	 * 
+	 *
 	 * @author fjakop
 	 *
 	 */

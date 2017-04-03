@@ -35,7 +35,7 @@ import com.github.rodionmoiseev.c10n.annotations.En;
  * <li>log entries of level DEBUG down to TRACE</li>
  * <li>runtime exception messages</li>
  * </ul>
- * 
+ *
  * @author fjakop
  *
  */
@@ -43,7 +43,7 @@ public interface LocalizedTechnicalStrings {
 
 	/**
 	 * static convenience getter for {@link LocalizedTechnicalStrings}
-	 * 
+	 *
 	 * @author fjakop
 	 *
 	 */
@@ -82,7 +82,7 @@ public interface LocalizedTechnicalStrings {
 	/* Google */
 
 	/**
-	 * @param location {0} 
+	 * @param location {0}
 	 */
 	@En("Please enter your client ID and secret from the Google APIs Console in {0}.")
 	String MSG_ENTER_CLIENT_ID_AND_SECRET(String location);

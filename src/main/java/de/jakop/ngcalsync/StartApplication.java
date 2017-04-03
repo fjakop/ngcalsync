@@ -58,7 +58,7 @@ import de.jakop.ngcalsync.util.file.DefaultFileAccessor;
 /**
  * Starts the application which synchronizes the Lotus Notes calendar events to
  * a configured Google calendar.
- * 
+ *
  * @author fjakop
  *
  */
@@ -98,11 +98,11 @@ public final class StartApplication {
 
 
 	/**
-	 * 
+	 *
 	 * @param args
 	 * @throws IOException
-	 * @throws ConfigurationException 
-	 * @throws ParseException 
+	 * @throws ConfigurationException
+	 * @throws ParseException
 	 */
 	public static void main(final String[] args) throws IOException, ConfigurationException, ParseException {
 

@@ -33,9 +33,9 @@ package de.jakop.ngcalsync.oauth;
  */
 public interface IUserInputReceiver {
 
-	/** 
-	 * Waits for a verification code. 
-	 * 
+	/**
+	 * Waits for a verification code.
+	 *
 	 * @param message the message presented to the user
 	 */
 	String waitForUserInput(String message);

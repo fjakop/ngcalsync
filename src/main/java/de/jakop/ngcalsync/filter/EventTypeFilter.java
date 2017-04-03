@@ -36,7 +36,7 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 
 /**
  * Filters {@link CalendarEvent}s by {@link de.jakop.ngcalsync.calendar.EventType}.
- * 
+ *
  * @author fjakop
  */
 public class EventTypeFilter implements ICalendarEventFilter {
@@ -46,7 +46,7 @@ public class EventTypeFilter implements ICalendarEventFilter {
 
 
 	/**
-	 * 
+	 *
 	 * @param acceptedType
 	 */
 	public EventTypeFilter(final int... acceptedType) {

@@ -34,14 +34,14 @@ import org.junit.Test;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
 public class NotesCalendarDaoFactoryTest {
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

@@ -40,7 +40,7 @@ import org.mockito.MockitoAnnotations;
 import de.jakop.ngcalsync.settings.Settings;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -56,7 +56,7 @@ public class ConsoleDirectStarterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -71,7 +71,7 @@ public class ConsoleDirectStarterTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

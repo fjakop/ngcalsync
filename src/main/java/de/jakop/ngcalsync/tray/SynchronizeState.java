@@ -27,8 +27,8 @@
 package de.jakop.ngcalsync.tray;
 
 /**
- * The current state of the synchronisation. 
- * 
+ * The current state of the synchronisation.
+ *
  * @author fjakop
  *
  */

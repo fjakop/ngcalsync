@@ -35,7 +35,7 @@ import de.jakop.ngcalsync.i18n.LocalizedTechnicalStrings.TechMessage;
 
 /**
  * Default implementation of {@link IRegistryQueryProcessFactory}.
- * 
+ *
  * @author fjakop
  *
  */

@@ -28,7 +28,7 @@ package de.jakop.ngcalsync.settings;
 
 /**
  * Encapsulates settings for protecting privacy of event's data.
- * 
+ *
  * @author fjakop
  *
  */
@@ -39,7 +39,7 @@ public class PrivacySettings {
 	private final boolean transferLocation;
 
 	/**
-	 * 
+	 *
 	 * @param transferTitle
 	 * @param transferDescription
 	 * @param transferLocation
@@ -51,7 +51,7 @@ public class PrivacySettings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if the event's title is to be transferred to Google
 	 */
 	public boolean isTransferTitle() {
@@ -59,7 +59,7 @@ public class PrivacySettings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if the event's description is to be transferred to Google
 	 */
 	public boolean isTransferDescription() {
@@ -67,7 +67,7 @@ public class PrivacySettings {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if the event's location is to be transferred to Google
 	 */
 	public boolean isTransferLocation() {

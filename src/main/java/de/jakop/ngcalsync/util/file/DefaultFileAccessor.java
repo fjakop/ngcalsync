@@ -32,7 +32,7 @@ import de.jakop.ngcalsync.Constants;
 
 /**
  * Provides access to the settings directory and its files.
- *  
+ *
  * @author fjakop
  */
 public class DefaultFileAccessor implements IFileAccessor {

@@ -28,8 +28,6 @@ package de.jakop.ngcalsync.application;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
 import java.awt.Component;

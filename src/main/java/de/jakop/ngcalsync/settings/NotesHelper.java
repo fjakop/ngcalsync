@@ -43,7 +43,7 @@ import de.jakop.ngcalsync.util.os.DefaultRegistryQueryProcessFactory;
 import de.jakop.ngcalsync.util.os.WindowsRegistry;
 
 /**
- * 
+ *
  * @author fjakop
  *
  */
@@ -52,7 +52,7 @@ public class NotesHelper {
 	private final Log log = LogFactory.getLog(NotesHelper.class);
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if Lotus Notes native library could be loaded from os path
 	 */
 	public boolean isNotesInSystemPath() {
@@ -76,7 +76,7 @@ public class NotesHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code>, if Lotus Notes java classes could be loaded from the classpath
 	 */
 	public boolean isNotesInClassPath() {
@@ -96,9 +96,9 @@ public class NotesHelper {
 	}
 
 	/**
-	 * Obtains Lotus Notes installation path. For MS Windows it is read from registry, other os require 
+	 * Obtains Lotus Notes installation path. For MS Windows it is read from registry, other os require
 	 * the user to enter the path.
-	 * 
+	 *
 	 * @return the installation path
 	 */
 	public String getLotusNotesPath(final IUserInputReceiver receiver) {
@@ -135,7 +135,7 @@ public class NotesHelper {
 
 	private String findFromWindowsRegistry() {
 
-		// Map of possible Lotus Notes locations in the Windows registry 
+		// Map of possible Lotus Notes locations in the Windows registry
 		final Map<String, String> registryKeys = new HashedMap<String, String>();
 		registryKeys.put("HKEY_LOCAL_MACHINE\\Software\\Lotus\\Notes", "Path"); //$NON-NLS-1$//$NON-NLS-2$
 		registryKeys.put("HKEY_CURRENT_USER\\Software\\Lotus\\Notes\\Installer", "PROGDIR"); //$NON-NLS-1$ //$NON-NLS-2$
