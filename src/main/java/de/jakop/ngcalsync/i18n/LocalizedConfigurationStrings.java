@@ -64,7 +64,7 @@ public interface LocalizedConfigurationStrings {
 	@SuppressWarnings("javadoc")
 	@En("# Cron expression for the recurrence of synchronisation when the scheduler is active\n" + //
 			"# Default is every 15 minutes\n" + //
-			"# see http://quartz-scheduler.org/api/2.0.0/org/quartz/CronExpression.html")
+			"# see http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html")
 	String SYNC_RECURRENCE();
 
 	@SuppressWarnings("javadoc")
@@ -147,7 +147,7 @@ public interface LocalizedConfigurationStrings {
 	String PROXY_PASSWORD();
 
 	@SuppressWarnings("javadoc")
-	@En("# When new logentry is equals or higher the threshold level the application log window will get visible")
+	@En("# When new logentry is equals or higher the threshold level the application log window will get visible. Sensible values include INFO, WARN, ERROR")
 	String POPUP_THRESHOLD_LEVEL();
 
 }

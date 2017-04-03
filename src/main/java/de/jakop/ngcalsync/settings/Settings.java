@@ -442,7 +442,7 @@ public class Settings {
 	 * @return the pop up threshold level
 	 */
 	public String getPopupThresholdLevel() {
-		return configuration.getString(ConfigurationParameter.POPUP_THRESHOLD_LEVEL.getKey(), "INFO"); //$NON-NLS-1$
+		return configuration.getString(ConfigurationParameter.POPUP_THRESHOLD_LEVEL.getKey(), "WARN"); //$NON-NLS-1$
 	}
 
 	/* for JUnit-Tests */

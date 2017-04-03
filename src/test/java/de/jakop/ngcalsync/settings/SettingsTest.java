@@ -443,6 +443,21 @@ public class SettingsTest {
 		assertEquals(1287, settings.getSyncLastDateTime().getTimeInMillis());
 	}
 
+	/**
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testDefaults_getPopupThresholdLevel() throws Exception {
+
+		// #1 for creating the default config file
+		loadSettings(true);
+		// #2 for testing (no restart)
+		final Settings settings = loadSettings(false);
+
+		assertEquals("WARN", settings.getPopupThresholdLevel());
+	}
+
 	private void verifyAllParametersAreSetWithDefaults() throws ConfigurationException {
 
 		final PropertiesConfiguration configuration = new PropertiesConfiguration();
