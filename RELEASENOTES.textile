@@ -1,3 +1,9 @@
+*0.10.0*
+
+The threshold on which the log popup window is shown is now configurable according to the message severity (default ist WARN) (contributed by s-eckey)
+
+Fixed arbitrary NPE while collecting calendar entries from notes (contributed by s-eckey)
+
 *0.9.0*
 
 Move to Java 7 as minimum required runtime version.

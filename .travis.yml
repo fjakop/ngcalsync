@@ -11,14 +11,15 @@ jdk:
   
 script:
   # JaCoCo is used to have code coverage, the agent has to be activated
-  - mvn clean verify sonar:sonar -Pcoverage-per-test
+  - mvn clean install sonar:sonar -Pcoverage-per-test
 
 deploy:
   provider: releases
   api_key:
-    secure: ${apikey}
+    secure: nPyE+hGlWoA4rjyr5JxXNucCapuwdcHu3ksMiVZHScmFd1dcZYeRPhK4396c2994lkJy28kHz+gMEoHEkz57z8dJmZcprqf+6dBiONVNcULSByQv+Ak5Ui/yaskYywg6srAQdcBfc9MuU7HyN9JiCW3iNBsp5coO4YEFXD1o7U97Nd745r4EIH9AoKJq/tfef2STcJoBZ5ZAExwWpCmtLDmb4y1zKmvjBdy4nwi907WKBWqeLJNjgLuvAD+Q1GVzSTHJIXfXjj+ne4pxURSG9mJEKIFPa+Mt7dhgjZ/eVmKjEREMlUnERvcrvl4ZJ2TYe/Zw9WkT9CQI15QZ/aLgtjTIry71Dqj0brERn9Vuozlsn2SchrzekaqKGZ68P0ZDi+uJzLasdtk5HYT6mV5YQH+REzjl0iA2NrAsCtuLPiuUkcfjZzeI4g7icamf2GZ3DsNUap04RZiBaLxgXrcyyhDx+y5O9wg3AkYVfCnWy8f9FKdRJXqtmMG/jQmiUT1E4a4cV1eSuyXmZ3n5uieientvEqpNqpdlONPAlgmmBxfMxbYOOv88PZSoi116FIkkqVh07Xrac3qKLY039Tf4SirAtyMXp+98tnr19VqmEo0AytOCLxiNS9bK5Dl0vaOWqhMkFCljVgbWZ752mqlYgVDgRZT4D0r1LIzTplg/yqg=
   file: target/*.zip
   file_glob: true
   on:
-    tags: true
     repo: fjakop/ngcalsync
+    tags: true
+  skip_cleanup: true
