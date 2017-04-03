@@ -31,7 +31,7 @@ import com.github.rodionmoiseev.c10n.annotations.En;
 
 /**
  * Contains localisation of all strings that are visible in the configuration file(s).
- * 
+ *
  * @author fjakop
  *
  */
@@ -39,7 +39,7 @@ public interface LocalizedConfigurationStrings {
 
 	/**
 	 * static convenience getter for {@link LocalizedConfigurationStrings}
-	 * 
+	 *
 	 * @author fjakop
 	 *
 	 */
@@ -122,7 +122,7 @@ public interface LocalizedConfigurationStrings {
 
 	@SuppressWarnings("javadoc")
 	@En("# Google calendar name to sync with (e.g. \"work\")\n" + //
-			"# WARNING #\n" + // 
+			"# WARNING #\n" + //
 			"# This calendar's events will be deleted if not present in Lotus Notes")
 	String GOOGLE_CALENDAR_NAME();
 
@@ -145,5 +145,9 @@ public interface LocalizedConfigurationStrings {
 	@SuppressWarnings("javadoc")
 	@En("# Password, if the proxy requires authentication")
 	String PROXY_PASSWORD();
+
+	@SuppressWarnings("javadoc")
+	@En("# When new logentry is equals or higher the threshold level the application log window will get visible")
+	String POPUP_THRESHOLD_LEVEL();
 
 }

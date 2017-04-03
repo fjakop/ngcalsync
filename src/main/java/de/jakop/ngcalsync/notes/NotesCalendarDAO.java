@@ -151,26 +151,28 @@ class NotesCalendarDAO implements INotesCalendarDAO {
 			final DViewEntry viewEntry = viewEntries.next();
 			final DDocument currentWorkDoc = viewEntry.getDocument();
 
-			log.debug(TechMessage.get().MSG_PROCESSING_DOCUMENT_UNID(currentWorkDoc.getUniversalID()));
+			if (currentWorkDoc != null) {
+				log.debug(TechMessage.get().MSG_PROCESSING_DOCUMENT_UNID(currentWorkDoc.getUniversalID()));
 
-			// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
-			if (!processedNotesDocuments.contains(currentWorkDoc.getUniversalID())) {
+				// ist es schon prozessiert worden (ein Notes-Dokument kann mehrfach auftreten, wenn es wiederholend ist)
+				if (!processedNotesDocuments.contains(currentWorkDoc.getUniversalID())) {
 
-				if (FLAG_APPOINTMENT.equals(currentWorkDoc.getItemValueString(FIELDNAME_FORM))) {
-					// If this is a conflict document, skip to next document.
-					if (currentWorkDoc.hasItem(FIELDNAME_CONFLICT)) {
-						log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_CONFLICT_DOCUMENT(currentWorkDoc.getUniversalID()));
-						continue;
+					if (FLAG_APPOINTMENT.equals(currentWorkDoc.getItemValueString(FIELDNAME_FORM))) {
+						// If this is a conflict document, skip to next document.
+						if (currentWorkDoc.hasItem(FIELDNAME_CONFLICT)) {
+							log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_CONFLICT_DOCUMENT(currentWorkDoc.getUniversalID()));
+							continue;
+						}
+
+						final Collection<CalendarEvent> convDocs = convDoc(currentWorkDoc);
+						entries.addAll(convDocs);
+						processedNotesDocuments.add(currentWorkDoc.getUniversalID());
+					} else {
+						log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_NOT_AN_APPOINTMENT(currentWorkDoc.getUniversalID()));
 					}
-
-					final Collection<CalendarEvent> convDocs = convDoc(currentWorkDoc);
-					entries.addAll(convDocs);
-					processedNotesDocuments.add(currentWorkDoc.getUniversalID());
 				} else {
-					log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_IS_NOT_AN_APPOINTMENT(currentWorkDoc.getUniversalID()));
+					log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_ALREADY_PROCESSED(currentWorkDoc.getUniversalID()));
 				}
-			} else {
-				log.debug(TechMessage.get().MSG_DOCUMENT_WITH_UNID_ALREADY_PROCESSED(currentWorkDoc.getUniversalID()));
 			}
 		}
 

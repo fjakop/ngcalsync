@@ -28,6 +28,8 @@ package de.jakop.ngcalsync.application;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
 import java.awt.Component;
@@ -115,7 +117,9 @@ public class TrayStarter implements IApplicationStarter {
 		popup.add(exitItem);
 		getTrayIcon().setPopupMenu(popup);
 
-		final JFrame logWindow = createLogWindow();
+		application.reloadSettings();
+
+		final JFrame logWindow = createLogWindow(Level.toLevel(settings.getPopupThresholdLevel(), Level.INFO));
 		final JFrame aboutWindow = createAboutWindow();
 
 		final ActionListener syncActionListener = createSyncActionListener(application.getScheduler());
@@ -129,8 +133,6 @@ public class TrayStarter implements IApplicationStarter {
 		aboutItem.addActionListener(createAboutActionListener(aboutWindow));
 		exitItem.addActionListener(createExitActionListener(logWindow, aboutWindow));
 
-		// reload settings after log window is initialized
-		application.reloadSettings();
 		schedulerItem.setState(settings.isSchedulerStarted());
 		toggleScheduler(settings.isSchedulerStarted(), settings, application);
 
@@ -243,11 +245,11 @@ public class TrayStarter implements IApplicationStarter {
 		return aboutWindow;
 	}
 
-	private JFrame createLogWindow() {
+	private JFrame createLogWindow(final Level popupThreshold) {
 		final JFrame logWindow = new JFrame(UserMessage.get().TITLE_SYNC_LOG_WINDOW());
 		final Log4JSwingAppender appender = new Log4JSwingAppender();
 		appender.setLayout(new PatternLayout(LOG4J_PATTERN));
-		appender.addObserver(new LogLevelObserver(Level.INFO, logWindow));
+		appender.addObserver(new LogLevelObserver(popupThreshold, logWindow));
 		final Logger rootLogger = Logger.getRootLogger();
 		rootLogger.addAppender(appender);
 		rootLogger.setLevel(Level.INFO);
