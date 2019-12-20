@@ -154,6 +154,18 @@
 						<goals>
 							<goal>shade</goal>
 						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -235,9 +247,9 @@
 
 		<!-- Notes Stuff -->
 		<dependency>
-			<groupId>de.bea</groupId>
+			<groupId>de.jakop.lotus</groupId>
 			<artifactId>domingo</artifactId>
-			<version>1.5.1</version>
+			<version>1.5.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Google Stuff -->
@@ -261,14 +273,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>project.local</id>
-			<name>project</name>
-			<url>file:${project.basedir}/repo</url>
-		</repository>
-	</repositories>
 
 	<profiles>
 		<profile>

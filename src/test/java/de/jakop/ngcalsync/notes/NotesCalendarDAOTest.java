@@ -41,11 +41,11 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.bea.domingo.DDatabase;
-import de.bea.domingo.DDocument;
-import de.bea.domingo.DView;
-import de.bea.domingo.DViewEntry;
-import de.bea.domingo.util.GregorianDateTime;
+import de.jakop.lotus.domingo.DDatabase;
+import de.jakop.lotus.domingo.DDocument;
+import de.jakop.lotus.domingo.DView;
+import de.jakop.lotus.domingo.DViewEntry;
+import de.jakop.lotus.domingo.util.GregorianDateTime;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.filter.ICalendarEventFilter;
 

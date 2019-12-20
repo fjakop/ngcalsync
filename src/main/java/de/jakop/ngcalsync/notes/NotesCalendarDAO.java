@@ -42,12 +42,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.bea.domingo.DDatabase;
-import de.bea.domingo.DDocument;
-import de.bea.domingo.DView;
-import de.bea.domingo.DViewEntry;
-import de.bea.domingo.service.NotesServiceRuntimeException;
-import de.bea.domingo.util.GregorianDateTime;
+import de.jakop.lotus.domingo.DDatabase;
+import de.jakop.lotus.domingo.DDocument;
+import de.jakop.lotus.domingo.DView;
+import de.jakop.lotus.domingo.DViewEntry;
+import de.jakop.lotus.domingo.service.NotesServiceRuntimeException;
+import de.jakop.lotus.domingo.util.GregorianDateTime;
 import de.jakop.ngcalsync.calendar.CalendarEvent;
 import de.jakop.ngcalsync.calendar.EventType;
 import de.jakop.ngcalsync.exception.SynchronisationException;

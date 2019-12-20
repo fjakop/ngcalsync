@@ -26,7 +26,7 @@
  */
 package de.jakop.ngcalsync.notes;
 
-import de.bea.domingo.DDatabase;
+import de.jakop.lotus.domingo.DDatabase;
 
 /**
  *

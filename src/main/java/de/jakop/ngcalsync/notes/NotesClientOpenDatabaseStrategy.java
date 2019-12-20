@@ -26,10 +26,10 @@
  */
 package de.jakop.ngcalsync.notes;
 
-import de.bea.domingo.DDatabase;
-import de.bea.domingo.DNotesException;
-import de.bea.domingo.DNotesFactory;
-import de.bea.domingo.DSession;
+import de.jakop.lotus.domingo.DDatabase;
+import de.jakop.lotus.domingo.DNotesException;
+import de.jakop.lotus.domingo.DNotesFactory;
+import de.jakop.lotus.domingo.DSession;
 
 /**
  *
