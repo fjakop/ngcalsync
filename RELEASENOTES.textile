@@ -1,3 +1,5 @@
+Switch to de.jakop.lotus.domingo hosted on Maven Central and remove checked-in binaries.
+
 *0.10.0*
 
 The threshold on which the log popup window is shown is now configurable according to the message severity (default ist WARN) (contributed by s-eckey)
