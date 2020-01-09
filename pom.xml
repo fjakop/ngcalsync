@@ -250,6 +250,12 @@
 			<groupId>de.jakop.lotus</groupId>
 			<artifactId>domingo</artifactId>
 			<version>1.5.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ibm.lotus</groupId>
+					<artifactId>Notes</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Google Stuff -->
