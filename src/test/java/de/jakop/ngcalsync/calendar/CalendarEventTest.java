@@ -92,7 +92,7 @@ public class CalendarEventTest {
 		calendarEvent.setStartDateTime(startDateTime);
 		calendarEvent.setTitle(title);
 
-		assertEquals(String.format(toStringFormat, id, title, content, "10.06.12 11:00", "10.06.12 13:00", location, "06.06.12 10:22", EventType.MEETING), calendarEvent.format());
+		assertEquals(String.format(toStringFormat, id, title, content, "10.06.2012 11:00", "10.06.2012 13:00", location, "06.06.2012 10:22", EventType.MEETING), calendarEvent.format());
 	}
 
 	/**

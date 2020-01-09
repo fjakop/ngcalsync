@@ -348,7 +348,7 @@ public class CalendarEventEqualsPredicateTest {
 		when(event.getEndDateTime()).thenReturn(date);
 		when(event.getEventType()).thenReturn(EventType.REMINDER);
 
-		assertEquals("LocalizedUserStrings.REMINDER: 31.12.0002 00:00:00 -> 31.12.0002 00:00:00", CalendarEventEqualsPredicate.format(event));
+		assertEquals("LocalizedUserStrings.REMINDER: 31.12.0002 00:00 -> 31.12.0002 00:00", CalendarEventEqualsPredicate.format(event));
 	}
 
 	/**
