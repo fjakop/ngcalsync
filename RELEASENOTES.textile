@@ -1,3 +1,5 @@
+Discontinued support for Java < 8
+
 Switch to de.jakop.lotus.domingo hosted on Maven Central and remove checked-in binaries.
 
 *0.10.0*
